@@ -1,0 +1,15 @@
+Tom Crowfoot
+10037477
+CPSC 453 
+
+Program will compile with 'make'.
+Run program with './ObjViewer [objfile.obj] [texturefile]'.
+Code was used from the TA's for the course.
+Program can do File Reading requirement.
+Program has all viewing requirements.
+Program has all Affine Transformation requirements.
+Program has all Lighting requirements.
+Bonus was not implemented.
+Program loads textures.
+Program has multisampling.
+Program has texture filtering.

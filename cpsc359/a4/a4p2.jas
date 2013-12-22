@@ -1,0 +1,247 @@
+// Tom Crowfoot 10037477
+// Etienne Pitout 10075802
+// Program to test the IFODD and POWER instructions
+
+.constant
+OBJREF 0x40
+.end-constant
+
+.main
+.var
+total				// total of the multiply
+quotient			// quotent of division
+remainder		   	// remainder of division
+input1
+input2
+.end-var
+start:	
+	BIPUSH 0x3
+	IFODD test1
+	BIPUSH 0x5
+	BIPUSH 0x4
+	POWER
+	ISTORE total
+	LDC_W OBJREF
+	ILOAD total
+	INVOKEVIRTUAL print
+	HALT
+test1:
+	BIPUSH 0x3
+	BIPUSH 0x4
+	POWER
+	ISTORE total
+	LDC_W OBJREF
+	ILOAD total
+	INVOKEVIRTUAL print
+	HALT
+.end-main
+
+// param print(total), returns void
+.method print(total)
+.var
+place
+index
+p					// leading 0 check flag
+.end-var
+print: 	
+	BIPUSH 0x9			
+	ISTORE index			
+	BIPUSH 0x0			// init p
+	ISTORE p
+	ILOAD total
+	IFLT isneg
+pos:					// total is positive
+	BIPUSH 0x1			// comparison bit
+	ISTORE place
+print1:	
+	BIPUSH 0x0
+	ILOAD index			// index = index - 1
+	BIPUSH 0x1
+	ISUB
+	DUP
+	IFEQ pall			// if index = 0 goto pall
+	ISTORE index
+	ILOAD total			// else
+	ILOAD place
+	IAND				// if 1st bit of current nibble is zero (total & place)
+	IFEQ print2			// goto print2
+	BIPUSH 0x1			// else set first bit of character
+	IADD
+print2: 
+	ILOAD place			// place = place << 1 
+	DUP
+	IADD
+	ISTORE place
+	ILOAD total
+	ILOAD place
+	IAND				// if 2nd bit of current nibble is zero (total & place)
+	IFEQ print3			// goto print3
+	BIPUSH 0x2			// else set second bit of character
+	IADD	
+print3: 
+	ILOAD place			// place = place << 1
+	DUP
+	IADD
+	ISTORE place
+	ILOAD total
+	ILOAD place
+	IAND				// if 3rd bit of current nibble is zero (total & place)
+	IFEQ print4			// goto print4
+	BIPUSH 0x4			// else set second bit of character
+	IADD	
+print4: 
+	ILOAD place			// place = place << 1
+	DUP
+	IADD
+	ISTORE place
+	ILOAD total
+	ILOAD place
+	IAND				// if 4th bit of current nibble is zero (total & place)
+	IFEQ print5			// goto print5
+	BIPUSH 0x8			// else set second bit of character
+	IADD	
+print5: 
+	ILOAD place			// place = place << 1
+	DUP
+	IADD
+	ISTORE place
+	GOTO print1	
+pall:   
+	POP				// Pop off leading 0's
+	POP
+	BIPUSH 0x9
+	ISTORE index
+pall1:	
+	ILOAD index			// index = index - 1
+	BIPUSH 0x1
+	ISUB
+	DUP
+	IFEQ return			// if index = 0  return
+	ISTORE index
+	DUP
+	BIPUSH 0xa			// else if character < 0xa goto pall1
+	ISUB
+	IFLT pall2
+	BIPUSH 0x37			// else convert character to "A"-"F"
+	IADD
+	OUT				// print character
+	GOTO pall1			// goto pall (prepare & print next character)
+pall2:	
+	BIPUSH 0x30			// convert character to "0"-"9"
+	IADD
+	DUP
+	BIPUSH	0x30			// 0 character
+	IF_ICMPEQ checkzero
+	BIPUSH 0x1
+	ISTORE p			// no more leading 0's
+doprint:
+	OUT				// print character
+	GOTO pall1
+noprint:
+	POP
+	GOTO pall1			// goto pall1 (prepare & print next character)
+return:	
+	BIPUSH 0xa			// print cr
+	ILOAD p
+	IFEQ print0
+ret2:
+	OUT
+	IRETURN				// no return value
+isneg:
+	ILOAD total			// changing total to positive so it will print
+	NEG
+	ISTORE total
+	BIPUSH	0x2D			// '-' character
+	OUT				// print the first character as '-'
+	GOTO pos			// continue to print the number regularly as if it was positive
+	     				// end result is now -0000... instead of ffff....
+checkzero:
+	ILOAD p
+	IFEQ noprint			// the 0 is a leading 0, dont print it
+	GOTO doprint			// the 0 is not leading, print it
+print0:
+	BIPUSH 0x30
+	OUT
+	GOTO ret2
+.end-method
+
+// param getnum() returns int
+.method getnum()
+.var
+a
+n					// negative flag
+.end-var
+	BIPUSH 0x0			// initialize a
+	DUP
+	ISTORE n
+    	ISTORE a
+geta:	
+	IN				// read key press
+	DUP				// duplicate key for comparison
+	BIPUSH 0xa			// if key = cr,
+	IF_ICMPEQ return		// return
+	DUP
+	BIPUSH 0x2D
+	IF_ICMPEQ neg
+	DUP
+	BIPUSH 0x30			// if key < "0"
+	ISUB				
+	IFLT geta4			// goto geta4 (key is not a hex digit)
+   	DUP
+	BIPUSH 0x3a			// else if key < ":"
+	ISUB				
+	IFLT geta2			// goto geta2 (key is numeric character - "0"-"9")
+	DUP
+	BIPUSH 0x41			// else if key < "A"
+	ISUB			
+	IFLT geta4			// goto geta4 (key is not a hex digit)
+	DUP
+	BIPUSH 0x46			// else if key > "F"
+	SWAP			  
+	ISUB			
+	IFLT geta4			// goto geta4 (key is not a hex digit)
+	DUP				// else (key is letter - "A"-"F")
+	OUT				// print key
+	BIPUSH 0x37			// convert key from character to number
+	ISUB			
+	GOTO geta3			// goto geta3
+geta2:  
+	DUP
+	OUT				// print key (numeric character)
+	BIPUSH 0x30			// convert key from character to number
+	ISUB
+geta3:  
+	ILOAD a				// shift a left 8 bits
+	DUP
+	IADD
+	DUP
+	IADD
+	DUP
+	IADD
+	DUP
+	IADD
+	IADD				// add key to a
+	ISTORE a
+	GOTO geta			// get next key
+geta4:	
+	POP				// pop invalid character
+	GOTO geta			// get next key
+return: 
+	ILOAD n
+	BIPUSH 0x1
+	IF_ICMPEQ neg2
+ret:
+	OUT				// print cr
+	ILOAD a				// load a as return value
+	IRETURN				// return
+neg:
+	OUT
+	BIPUSH 0x1
+	ISTORE n			// number entered is negative
+	GOTO geta
+neg2:
+	ILOAD a
+	NEG				// 2's compliment as a was negative
+	ISTORE a
+	GOTO ret	
+.end-method

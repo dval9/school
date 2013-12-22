@@ -1,0 +1,352 @@
+// Tom Crowfoot 10037477
+// Etienne Pitout 10075802
+// Method to calculate exponentials
+
+.constant
+OBJREF 0x40		
+.end-constant
+
+.main					// start of program
+
+.var				   	// local variables for main program
+total					// total of calculation, used to print
+input1					
+input2									
+.end-var
+
+start:	
+	LDC_W OBJREF
+	INVOKEVIRTUAL getnum		// get input 1
+	ISTORE input1
+	LDC_W OBJREF
+	INVOKEVIRTUAL getnum		// get input 2
+	ISTORE input2
+	LDC_W OBJREF
+	ILOAD input1
+	ILOAD input2
+	INVOKEVIRTUAL power		// do calculation
+	ISTORE total
+	LDC_W OBJREF
+	ILOAD total
+	INVOKEVIRTUAL print		// print result
+	HALT
+.end-main
+
+// param power(base,exponent) returns base to the power of exponent
+.method power(base,exponent)
+.var
+total					// result
+i					// loop counter
+n					// 1 if base is negative, else 0
+e					// 1 if exponent is odd, else 0
+.end-var
+	BIPUSH 0x0
+	ISTORE n
+	ILOAD exponent
+	IFEQ expzero			// anything to power 0 is 1
+	ILOAD exponent
+	IFLT expneg			// any number to negative exponent will be less than 1, so return 0
+	ILOAD base
+	IFLT baseneg
+init:
+	ILOAD base			// total = base
+	ISTORE total
+loopcheck:
+	ILOAD exponent			// do loop exponent-1 times
+	BIPUSH 0x1
+	IF_ICMPEQ return		// exponent == 1
+loop:
+	LDC_W OBJREF			// call imul method 
+	ILOAD total			// total >=base should always be true
+	ILOAD base
+	INVOKEVIRTUAL imul
+	ISTORE total			// store result into total
+	IINC exponent -1		// dec loop count
+	GOTO loopcheck
+expzero:
+	BIPUSH 0x1			// anything to power 0 = 1
+	ISTORE total
+	GOTO return
+expneg:
+	BIPUSH 0x0			// return 0, as exponent was negative
+	ISTORE total
+	GOTO return
+baseneg:
+	BIPUSH 0x1			// switch base to positive for computation
+	ISTORE n			// will have to turn result negative if exponent is odd
+	ILOAD base
+	NEG
+	ISTORE base
+	ILOAD exponent			// base was negative, need to check if exponent is odd/even
+	ISTORE e			// as odd exponent needs to return negative result
+exploop:
+	ILOAD e				// subtract 2 from the exponent
+	BIPUSH 0x2			// eventually will be 0 or -1
+	ISUB
+	DUP
+	ISTORE e
+	IFEQ init			// if 0 exponent was even so dont have to change e
+	ILOAD e
+	IFLT expodd			// if neg exponent was odd, so store 1 in e
+	GOTO exploop
+expodd:
+	BIPUSH 0x1			// storing 1 in e as it was odd
+	ISTORE e
+	GOTO init
+return:
+	ILOAD e
+	BIPUSH 0x1			// check if should return negative result
+	IF_ICMPEQ negresult
+ret2:
+	ILOAD total			// return with total on top of stack
+	IRETURN
+negresult:
+	ILOAD total			// make total negative if needed
+	NEG
+	ISTORE total
+	GOTO ret2
+.end-method
+// param imul(int1,int2) returns int1*int2, should always have int1>=int2>=0
+.method imul(int1,int2)
+.var
+m					// multiplication result
+i 				   	// loop counter
+c 				   	// value of min param
+o 				   	// the other number
+.end-var
+imul:
+	BIPUSH 0x0
+	DUP
+	ISTORE m
+	ISTORE i
+	ILOAD int1
+	ISTORE o
+	ILOAD int2
+	ISTORE c
+loop:					// check if i < c
+	ILOAD i
+	ILOAD c
+	ISUB				// i - c
+	IFLT loop-body 			// i - c < 0
+	GOTO return
+loop-body:
+	ILOAD m
+	ILOAD o
+	IADD
+	ISTORE m			// m = m + o
+	IINC i 0x1
+	GOTO loop
+return:
+	ILOAD m				// put m on the stack
+	IRETURN			
+.end-method
+
+// param print(total), returns void
+.method print(total)
+.var
+place
+index
+p					// leading 0 check flag
+.end-var
+print: 	
+	BIPUSH 0x9			
+	ISTORE index			
+	BIPUSH 0x0			// init p
+	ISTORE p
+	ILOAD total
+	IFLT isneg
+pos:					// total is positive
+	BIPUSH 0x1			// comparison bit
+	ISTORE place
+print1:	
+	BIPUSH 0x0
+	ILOAD index			// index = index - 1
+	BIPUSH 0x1
+	ISUB
+	DUP
+	IFEQ pall			// if index = 0 goto pall
+	ISTORE index
+	ILOAD total			// else
+	ILOAD place
+	IAND				// if 1st bit of current nibble is zero (total & place)
+	IFEQ print2			// goto print2
+	BIPUSH 0x1			// else set first bit of character
+	IADD
+print2: 
+	ILOAD place			// place = place << 1 
+	DUP
+	IADD
+	ISTORE place
+	ILOAD total
+	ILOAD place
+	IAND				// if 2nd bit of current nibble is zero (total & place)
+	IFEQ print3			// goto print3
+	BIPUSH 0x2			// else set second bit of character
+	IADD	
+print3: 
+	ILOAD place			// place = place << 1
+	DUP
+	IADD
+	ISTORE place
+	ILOAD total
+	ILOAD place
+	IAND				// if 3rd bit of current nibble is zero (total & place)
+	IFEQ print4			// goto print4
+	BIPUSH 0x4			// else set second bit of character
+	IADD	
+print4: 
+	ILOAD place			// place = place << 1
+	DUP
+	IADD
+	ISTORE place
+	ILOAD total
+	ILOAD place
+	IAND				// if 4th bit of current nibble is zero (total & place)
+	IFEQ print5			// goto print5
+	BIPUSH 0x8			// else set second bit of character
+	IADD	
+print5: 
+	ILOAD place			// place = place << 1
+	DUP
+	IADD
+	ISTORE place
+	GOTO print1	
+pall:   
+	POP				// Pop off leading 0's
+	POP
+	BIPUSH 0x9
+	ISTORE index
+pall1:	
+	ILOAD index			// index = index - 1
+	BIPUSH 0x1
+	ISUB
+	DUP
+	IFEQ return			// if index = 0  return
+	ISTORE index
+	DUP
+	BIPUSH 0xa			// else if character < 0xa goto pall1
+	ISUB
+	IFLT pall2
+	BIPUSH 0x37			// else convert character to "A"-"F"
+	IADD
+	OUT				// print character
+	GOTO pall1			// goto pall (prepare & print next character)
+pall2:	
+	BIPUSH 0x30			// convert character to "0"-"9"
+	IADD
+	DUP
+	BIPUSH	0x30			// 0 character
+	IF_ICMPEQ checkzero
+	BIPUSH 0x1
+	ISTORE p			// no more leading 0's
+doprint:
+	OUT				// print character
+	GOTO pall1
+noprint:
+	POP
+	GOTO pall1			// goto pall1 (prepare & print next character)
+return:	
+	BIPUSH 0xa			// print cr
+	ILOAD p
+	IFEQ print0
+ret2:
+	OUT
+	IRETURN				// no return value
+isneg:
+	ILOAD total			// changing total to positive so it will print
+	NEG
+	ISTORE total
+	BIPUSH	0x2D			// '-' character
+	OUT				// print the first character as '-'
+	GOTO pos			// continue to print the number regularly as if it was positive
+	     				// end result is now -0000... instead of ffff....
+checkzero:
+	ILOAD p
+	IFEQ noprint			// the 0 is a leading 0, dont print it
+	GOTO doprint			// the 0 is not leading, print it
+print0:
+	BIPUSH 0x30
+	OUT
+	GOTO ret2
+.end-method
+
+// param getnum() returns int
+.method getnum()
+.var
+a
+n					// negative flag
+.end-var
+	BIPUSH 0x0			// initialize a
+	DUP
+	ISTORE n
+    	ISTORE a
+geta:	
+	IN				// read key press
+	DUP				// duplicate key for comparison
+	BIPUSH 0xa			// if key = cr,
+	IF_ICMPEQ return		// return
+	DUP
+	BIPUSH 0x2D
+	IF_ICMPEQ neg
+	DUP
+	BIPUSH 0x30			// if key < "0"
+	ISUB				
+	IFLT geta4			// goto geta4 (key is not a hex digit)
+   	DUP
+	BIPUSH 0x3a			// else if key < ":"
+	ISUB				
+	IFLT geta2			// goto geta2 (key is numeric character - "0"-"9")
+	DUP
+	BIPUSH 0x41			// else if key < "A"
+	ISUB			
+	IFLT geta4			// goto geta4 (key is not a hex digit)
+	DUP
+	BIPUSH 0x46			// else if key > "F"
+	SWAP			  
+	ISUB			
+	IFLT geta4			// goto geta4 (key is not a hex digit)
+	DUP				// else (key is letter - "A"-"F")
+	OUT				// print key
+	BIPUSH 0x37			// convert key from character to number
+	ISUB			
+	GOTO geta3			// goto geta3
+geta2:  
+	DUP
+	OUT				// print key (numeric character)
+	BIPUSH 0x30			// convert key from character to number
+	ISUB
+geta3:  
+	ILOAD a				// shift a left 8 bits
+	DUP
+	IADD
+	DUP
+	IADD
+	DUP
+	IADD
+	DUP
+	IADD
+	IADD				// add key to a
+	ISTORE a
+	GOTO geta			// get next key
+geta4:	
+	POP				// pop invalid character
+	GOTO geta			// get next key
+return: 
+	ILOAD n
+	BIPUSH 0x1
+	IF_ICMPEQ neg2
+ret:
+	OUT				// print cr
+	ILOAD a				// load a as return value
+	IRETURN				// return
+neg:
+	OUT
+	BIPUSH 0x1
+	ISTORE n			// number entered is negative
+	GOTO geta
+neg2:
+	ILOAD a
+	NEG				// 2's compliment as a was negative
+	ISTORE a
+	GOTO ret	
+.end-method
