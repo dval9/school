@@ -1,6 +1,7 @@
 %{
 int charCount = 1;
 int success = 0;
+FILE *outfile;
 %}
 
 %x COMMENT
@@ -18,25 +19,26 @@ int success = 0;
 [ \t]+ charCount += yyleng;
 "%".* charCount += yyleng;
 "/*" {yy_push_state(COMMENT);charCount += yyleng;}
-if {printf("[IF,%s,%d,%d] ", yytext, yylineno-1, charCount-1);charCount += yyleng;} /* all the valid tokens for M- */
-then {printf("[THEN,%s,%d,%d] ", yytext, yylineno-1, charCount-1);charCount += yyleng;}
-while {printf("[WHILE,%s,%d,%d] ", yytext, yylineno-1, charCount-1);charCount += yyleng;}
-do {printf("[DO,%s,%d,%d] ", yytext, yylineno-1, charCount-1);charCount += yyleng;}
-input {printf("[INPUT,%s,%d,%d] ", yytext, yylineno-1, charCount-1);charCount += yyleng;}
-else {printf("[ELSE,%s,%d,%d] ", yytext, yylineno-1, charCount-1);charCount += yyleng;}
-begin {printf("[BEGIN,%s,%d,%d] ", yytext, yylineno-1, charCount-1);charCount += yyleng;}
-end {printf("[END,%s,%d,%d] ", yytext, yylineno-1, charCount-1);charCount += yyleng;}
-write {printf("[WRITE,%s,%d,%d] ", yytext, yylineno-1, charCount-1);charCount += yyleng;}
-[a-zA-Z][0-9a-zA-Z]* {printf("[ID,%s,%d,%d] ", yytext, yylineno-1, charCount-1);charCount += yyleng;}
-[0-9]+ {printf("[NUM,%s,%d,%d] ", yytext, yylineno-1, charCount-1);charCount += yyleng;}
-"+" {printf("[ADD,%s,%d,%d] ", yytext, yylineno-1, charCount-1);charCount += yyleng;}
-":=" {printf("[ASSIGN,%s,%d,%d] ", yytext, yylineno-1, charCount-1);charCount += yyleng;}
-"-" {printf("[SUB,%s,%d,%d] ", yytext, yylineno-1, charCount-1);charCount += yyleng;}
-"*" {printf("[MUL,%s,%d,%d] ", yytext, yylineno-1, charCount-1);charCount += yyleng;}
-"/" {printf("[DIV,%s,%d,%d] ", yytext, yylineno-1, charCount-1);charCount += yyleng;}
-"(" {printf("[LPAR,%s,%d,%d] ", yytext, yylineno-1, charCount-1);charCount += yyleng;}
-")" {printf("[RPAR,%s,%d,%d] ", yytext, yylineno-1, charCount-1);charCount += yyleng;}
-";" {printf("[SEMICOLON,%s,%d,%d] ", yytext, yylineno-1, charCount-1);charCount += yyleng;}
+if {fprintf(outfile, "[IF,%s,%d,%d] ", yytext, yylineno-1, charCount-1);charCount += yyleng;} /* all the valid tokens for M- */
+then {fprintf(outfile, "[THEN,%s,%d,%d] ", yytext, yylineno-1, charCount-1);charCount += yyleng;}
+while {fprintf(outfile, "[WHILE,%s,%d,%d] ", yytext, yylineno-1, charCount-1);charCount += yyleng;}
+do {fprintf(outfile, "[DO,%s,%d,%d] ", yytext, yylineno-1, charCount-1);charCount += yyleng;}
+input {fprintf(outfile, "[INPUT,%s,%d,%d] ", yytext, yylineno-1, charCount-1);charCount += yyleng;}
+else {fprintf(outfile, "[ELSE,%s,%d,%d] ", yytext, yylineno-1, charCount-1);charCount += yyleng;}
+begin {fprintf(outfile, "[BEGIN,%s,%d,%d] ", yytext, yylineno-1, charCount-1);charCount += yyleng;}
+end {fprintf(outfile, "[END,%s,%d,%d] ", yytext, yylineno-1, charCount-1);charCount += yyleng;}
+write {fprintf(outfile, "[WRITE,%s,%d,%d] ", yytext, yylineno-1, charCount-1);charCount += yyleng;}
+[a-zA-Z][0-9a-zA-Z]* {fprintf(outfile, "[ID,%s,%d,%d] ", yytext, yylineno-1, charCount-1);charCount += yyleng;}
+[0-9]+[a-zA-Z]+ {fprintf(outfile, "\nlex: invalid \"%s\" found %d:%d\n", yytext, yylineno-1, charCount-1);charCount += yyleng;}
+[0-9]+ {fprintf(outfile, "[NUM,%s,%d,%d] ", yytext, yylineno-1, charCount-1);charCount += yyleng;}
+"+" {fprintf(outfile, "[ADD,%s,%d,%d] ", yytext, yylineno-1, charCount-1);charCount += yyleng;}
+":=" {fprintf(outfile, "[ASSIGN,%s,%d,%d] ", yytext, yylineno-1, charCount-1);charCount += yyleng;}
+"-" {fprintf(outfile, "[SUB,%s,%d,%d] ", yytext, yylineno-1, charCount-1);charCount += yyleng;}
+"*" {fprintf(outfile, "[MUL,%s,%d,%d] ", yytext, yylineno-1, charCount-1);charCount += yyleng;}
+"/" {fprintf(outfile, "[DIV,%s,%d,%d] ", yytext, yylineno-1, charCount-1);charCount += yyleng;}
+"(" {fprintf(outfile, "[LPAR,%s,%d,%d] ", yytext, yylineno-1, charCount-1);charCount += yyleng;}
+")" {fprintf(outfile, "[RPAR,%s,%d,%d] ", yytext, yylineno-1, charCount-1);charCount += yyleng;}
+";" {fprintf(outfile, "[SEMICOLON,%s,%d,%d] ", yytext, yylineno-1, charCount-1);charCount += yyleng;}
 "\n" charCount=1;
 "*/" {printf("\nlex: extra \"%s\" found %d:%d\n", yytext, yylineno-1, charCount-1);charCount += yyleng;success = 1;} /* too many comments */
 . {printf("\nlex: invalid character \"%s\" %d:%d\n", yytext, yylineno-1, charCount-1);charCount += yyleng;success = 1;} /* char not a defined token */
@@ -54,10 +56,12 @@ if(!yyin){
 printf("lex: error opening file\n");
 exit(1);
 }
-printf("[PROG,$,%d,%d] ", -1, 0); /* add end of file character for parising */
+outfile = fopen("temp_file_for_parsing", "w+");
+fprintf(outfile, "[PROG,$,%d,%d] ", -1, 0); /* add end of file character for parising */
 yylex();
-printf("[EOFCHAR,$,%d,%d] ", yylineno-1, charCount-1); /* add end of file character for parising */
-printf("\n"); /* make sure prompt starts on new line after program is done */
+fprintf(outfile, "[EOFCHAR,$,%d,%d] ", yylineno-1, charCount-1); /* add end of file character for parising */
+fclose(outfile);
+//printf("\n"); /* make sure prompt starts on new line after program is done */
 return success;
 }
 

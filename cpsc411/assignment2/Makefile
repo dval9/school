@@ -1,11 +1,7 @@
-all: flex rdp
-
-flex:
-	flex parser.l
-	cc -o lexer lex.yy.c
-	rm lex.yy.c
-
-rdp:	
-	cc -o rdp rdp.c
+all: 
+	@flex parser.l
+	@cc -o lexer lex.yy.c
+	@rm lex.yy.c
+	@cc -o rdp rdp.c
 clean:
-	rm lexer rdp
+	@rm lexer rdp
