@@ -1,0 +1,8 @@
+#!/bin/bash
+make
+./lexer $1
+if [ $? -eq 0 ]
+    then ./rdp temp_file_for_parsing $2
+fi
+rm temp_file_for_parsing
+make clean
