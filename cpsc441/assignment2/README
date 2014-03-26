@@ -1,0 +1,22 @@
+Tom Crowfoot
+10037477
+CPSC 441
+Assignment 2
+
+To compile the programs, run the makefile.
+To run the server: ./server <N> <P> <C> <Port> <Filename> [debug]
+N is the number of connections the server will allow, P is the number of peers that can talk to eachother at once, C is the size of a 'chunk' of the file, Port is the port the server will run on, Filename is the file that will be copied. M is automatically calculated based on the file length and C.
+To run a peer: ./peer <ServerIP:Port> [debug]
+ServerIP:Port should be written exactly as such, e.g. "0.0.0.0:12345"
+
+The program is designed with a pull-based implementation. I choose this instead of push-based, because it allowed me to put the work onto each client to make sure they get what they require, and keep the server simple.
+
+The program supports the 2 connections and 2 peers for the dolittle file.
+The program supports the 8 connections and 8 peers for the 32KB file.
+The bonus is not implemented, and does not work.
+
+I implemented the program with UDP. I choose UDP because I felt it was not necessary to have the persistant connections and data streams that come with TCP, as I was only sending single packets of data at once. Using UDP allowed the code to be much more simple, and shorter, it scales well as it doesn't have to keep track of connections, it is highly portable as everything supports UDP. The downside of using UDP is that I was not able to implement the bonus, as I could not send packets with 8192 bytes, where with TCP that would have been easier using a data stream.
+
+The program was tested on my laptops loopback, which runs linux-3.12, and running the server on the csc.cpsc.ucalgary.ca server and the clients on my laptop.
+The testing was done by running the program, and diffing the copied files to the original and hoping that they are the same.
+Everything for the requirements seems to work, but the bonus does not.
