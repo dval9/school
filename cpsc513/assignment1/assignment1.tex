@@ -1,0 +1,88 @@
+\documentclass{assignment}
+\usepackage{amsmath,amssymb,amsfonts}
+
+\coursetitle{Computability}
+\courselabel{CPSC 513}
+\exercisesheet{Homework \#1}{}
+\student{Tom Crowfoot - 10037477}
+\semester{Winter 2015}
+
+\begin{document}
+\begin{problemlist}
+
+  \pbitem
+  \begin{problem}
+  \end{problem}
+  \begin{answer}
+    \\
+    \begin{enumerate}
+    \item
+      \begin{equation*}
+        lcm(n,m) = \prod_{p} p^{max(e_i,f_i)}
+      \end{equation*}
+      \begin{equation*}
+        gcd(n,m) = \prod_{p} p^{min(e_i,f_i)}
+      \end{equation*}
+    \item
+      If $n,m$ are co-prime, then:\\
+      \begin{equation*}
+        lcm(n,m) = \frac{n*m}{gcd(n,m)}=n*m
+      \end{equation*}
+    \item 
+      \begin{align*}
+        &lcm(n,m)*gcd(n,m)\\
+        =&\prod_{p} p^{max(e_i,f_i)} * \prod_{p} p^{min(e_i,f_i)}\\
+        =&\prod_{p} p^{e_i+f_i}\\
+        =&\prod_{p} p^{e_i}*\prod_{p} p^{f_i}\\
+        =&n*m
+        \end{align*}
+    \item
+      Let $p$ be the predicate such that:\\
+      $p(x_1,x_2)=1$ if $x_1*x_2 \neq 0$\\
+      $p(x_1,x_2)=0$ otherwise\\
+      This is primitive recursive, because multipulcation is.\\
+      Let $div$ be the predicate such that:\\
+      $div(x_1,x_2)=1$ if $x_1 mod x_2 = 0$\\
+      $div(x_1,x_2)=0$ otherwise\\
+      This is primitive recursive, as modulus is primitive recursive.\\
+      Let $f$ be the function such that:\\
+      $f(x_1,x_2) = \begin{cases}
+        x_1 + x_2 &\mbox{if } p(x_1,x_2)=0\\
+        x_1 * x_2 &\mbox{if } x_1 = 1 x_2 > 0 \mbox{ or } x_2 = 1 x_1 > 0\\
+        min_{t\le x_1*x_2} div(x_1,t) \land div(x_2,t) &\mbox{otherwise}\\
+      \end{cases}$
+      \\
+      Case 1 is primitive recursive as addition is primitive recursive.\\
+      Case 2 is primitive recursive as multipulcation is primitive recursive.\\
+      Case 3 is primitive recursive, because it is the bounded minimization of primitive recursive predicates.\\
+      Then $lcm(x_1,x_2)=f(x_1,x_2)$, and is therefore primitive recursive.\\
+      Let $g$ be the function such that:\\
+      $g(x_1,x_2) = \begin{cases}
+        x_1 + x_2 &\mbox{if } p(x_1,x_2)=0\\
+        quo(x_1*x_2, lcm(x_1,x_2)) &\mbox{otherwise}
+      \end{cases}$
+      \\
+      Case 1 is primitive recursive as addition is primitive recursive.
+      Case 2 is primitive recursive, as multipulcation is primitive recursive, lcm is primitive recursive, quo is the quotient function defined in class which is also primitive recursive.\\
+      Then $gcd(x_1,x_2)=g(x_1,x_2)$, and is therefore primitive recursive.\\
+    \end{enumerate}
+  \end{answer}
+
+  \pbitem
+  \begin{problem}
+  \end{problem}
+  \begin{answer}
+    \\
+    Define the pairing function $<x_1,x_2>$, so that we also have the primitive recursive functions $l(<x_1,x_2>)=x_1$ and $r(<x_1,x_2>)=x_2$.\\
+    Let $f(0) = l(<F_0,F_1>)$\\
+    Then recursively define:
+    \begin{align*}
+      f(t+1) =& l(<F_{t+1},F_{t+2}>)\\
+      =& l(<F_{t+1},F_{t} + F_{t+1}>)\\
+      =& l(<r(f(t)),l(f(t)) + r(f(t))>)
+    \end{align*}
+    Since $r,l,+$ are all primitive recursive, then $f$ is also primitive recursive.
+  \end{answer}
+  
+\end{problemlist}
+\end{document}

@@ -1,0 +1,155 @@
+\documentclass{assignment}
+
+\coursetitle{Design and Analysis of Algorithms 1}
+\courselabel{CPSC 413}
+\exercisesheet{Home Work \#5}{individual version}
+\student{Tom Crowfoot - 10037477}
+\semester{Winter 2014}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage[linesnumbered,noline]{algorithm2e}
+\usepackage{mathtools}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+
+\begin{document}
+\begin{problemlist}
+
+\pbitem
+\begin{problem}
+\end{problem}
+\begin{answer}
+\\
+\begin{enumerate}
+\item
+\begin{align*}
+T(n)=&T(\floor{n/2})+T(\floor{n/4})+T(\floor{n/8})+n\\
+=&T(n/2)+T(n/4)+T(n/8)+n\\
+=&T(7n/8)+n\\
+=&T(7^2n/8^2)+7n/8+n\\
+=&T(7^3n/8^3)+7^2n/8^2+7n/8+n\\
+\end{align*}
+So a guess is $n\sum_{i=0}\frac{7}{8}^i=n\frac{1}{1-7/8}\in \Theta (n)$\\
+\item
+Claim: $T(n)=T(\floor{n/2})+T(\floor{n/4})+T(\floor{n/8})+n\le c*n$\\
+Base case: If $n<1000$, then $T(n)=a \le c*n=c*1000$\\
+So pick $a=c$.\\
+IH: $T(k)=T(\floor{k/2})+T(\floor{k/4})+T(\floor{k/8})+k\le a*k$ for $k < n$\\
+\begin{align*}
+T(n)=&T(\floor{n/2})+T(\floor{n/4})+T(\floor{n/8})+n\\
+\le&a*n/2+a*n/4+a*n/8+n\\
+=&a*15n/8\\
+\le&c*n\\
+\Rightarrow&a*15n=c*8n\\
+\end{align*}
+So pick $2a=c$, and then $T(n)=O(n)$.\\
+
+Base case: If $n<1000$, then $T(n)=a \ge c*n=c*1000$\\
+So pick $a=c*1000$.\\
+IH: $T(k)=T(\floor{k/2})+T(\floor{k/4})+T(\floor{k/8})+k\ge a*k$ for $k\le n$\\
+\begin{align*}
+T(n)=&T(\floor{n/2})+T(\floor{n/4})+T(\floor{n/8})+n\\
+\ge&a*n/2+a*n/4+a*n/8+n\\
+=&a*15n/8\\
+\ge&c*n\\
+\Rightarrow&a*15n=c*8n\\
+\end{align*}
+So pick $a=c$, and then $T(n)=\Omega (n)$.\\
+
+Thus $T(n) = \Theta (n)$.\\
+\end{enumerate}
+\end{answer}
+
+\clearpage
+\pbitem
+\begin{problem}
+\end{problem}
+\begin{answer}
+\\
+\begin{enumerate}
+\item
+$T(n)=2T(n/2)+n^3$, $a=2$, $b=2$, $log_22=1$, $f(n)=n^3=\Omega (n^{1+\epsilon})$, $2(n^3/8)\le cn^3$, $c=1/4$.\\
+Thus $T(n) = \Theta(f(n)) = \Theta(n^3)$.\\ 
+\item
+$T(n)=2T(n/2)+n$, $a=2$, $b=2$, $log_22=1$, $f(n)=n=\Theta (n^1)$.\\
+Thus $T(n) = \Theta(nlogn)$.\\
+\item
+$T(n)=2T(n/2)+\sqrt(n)$, $a=2$, $b=2$, $log_22=1$, $f(n)=\sqrt(n)=O(n^{1-\epsilon})$.\\
+Thus $T(n)=\Theta(n)$.\\
+\item
+$T(n)=4T(n/8)+\sqrt{n}log^2n$, $a=4$, $b=8$, $log_84=2/3$, $f(n)=\sqrt{n}log^2n=O(n^{2/3}-\epsilon)$.\\
+Thus $T(n)=\Theta (n^{2/3})$.\\
+\item
+$T(n)=16T(n/7)+n^2$, $a=16$, $b=7$, $f(n)=n^2=\Omega (n^{log_7 16 + \epsilon})$, $16(n^2/49)\le cn^2$, $k=16/49$.\\
+Thus $T(n)=\Theta (n^2)$.\\
+\end{enumerate}
+\end{answer}
+
+\clearpage
+\pbitem
+\begin{problem}
+\end{problem}
+\begin{answer}
+\\
+\begin{enumerate}
+\item
+Strassen's Algorithm can be modified by first taking the $n\times n$ matrix, say A, and extending it's size to a power of two, filling in the new spots with zeros. That is if A is $n\times n$, where $n \neq 2^i$ for some integer i, then $2^{k-1} \le n \le 2^k$ and we can create a new matrix B of size $2^k\times 2^k$, where the new matrix has elements $b_{ij}=a_{ij}$ for $i=[0..n],j=[0..n]$ and $b_{ij}=0$ for $i=[n+1..k],j=[n+1..k]$. Having done this for both matrices you wish to multiply, apply the algorithm, and then extract the $n\times n$ elements from the result to get the desired result.\\
+\item
+The modification to the algorithm is to increase the input size from $n$ to $k$. Then the new runtime of the algorithm will be $\Theta (k^{lg 7})$. However $k<2n$, so we get $\Theta ((2n)^{lg 7})=\Theta (2^{lg 7}n^{lg 7})=\Theta (n^{lg 7})$.\\
+\end{enumerate}
+\end{answer}
+
+\clearpage
+\pbitem
+\begin{problem}
+\end{problem}
+\begin{answer}
+\\
+\begin{enumerate}
+\item
+Pre-conditions: Two arrays X \& Y, length(X)=length(Y)=n, all elements in X \& Y distinct, X \& Y sorted ascending order.\\
+Post-conditions: The median of the two arrays, x.\\
+\item
+Find the median of two sorted arrays.\\
+\IncMargin{3em}
+\begin{algorithm}
+  int median(X, Y)\\\{\\
+  \Indp
+  m1 = X[n/2]\;
+  m2 = Y[n/2]\;
+  \uIf{$length~X~==~1~and~length~Y~==~1$}{
+    \Return{min(X[0], Y[0])}
+  }
+  \uElseIf{$m1 == m2$}{
+    \Return{m1}
+  }
+  \uElseIf{$m1 > m2$}{
+    \Return{median(X[0..n/2], Y[n/2..n])}
+  }
+  \uElseIf{$m1 < m2$}{
+    \Return{median(X[n/2..n], Y[0..n/2])}
+  }
+  \Indm
+  \}
+\end{algorithm}
+\DecMargin{3em}
+\item
+Base case: $n=1$\\
+If $n=1$, both arrays consist of only one element.\\
+The algorithm will return the minimum of these two, which will be the median.\\
+Base case: $m1=m2$\\
+If the median of the first array equals the median of the second array, we found the median, and the algorithm returns.\\
+IH: assume the algorithm is correct for all input size $k < n$.\\
+Let X have median $m1$, Y have median $m2$, and length of X and Y be $n$. If $m1=m2$ the algorithm will return the correct median. If $m1 > m2$, the algorithm will call itself on input size $n/2$, so that will return the correct median by assumption. If $m1 < m2$, the algorithm will call itself on input size $n/2$, so that will return the correct median by assumption. Thus the algorithm will always return the correct solution, and terminate. $\Box$\\
+\item
+All linex except 11 and 14 are constant time operations. Line 11 calls the function recursively on an input of size $n/2$, line 14 also calls the function recursively on an input of size $n/2$, however only one of these will ever be called. We then get the recurrence relation:\\
+$T(n)=T(n/2) + c$\\
+\item
+Using the Master Theorem on $T(n)=T(n/2) + c$, we get $a=1$, $b=2$, $log_21=0$, $f(n)=c=\Theta (n^0)$.\\
+Thus $T(n)=\Theta (n^0lg n)=\Theta (lg n)$.\\
+\end{enumerate}
+\end{answer}
+
+\end{problemlist}
+\end{document}

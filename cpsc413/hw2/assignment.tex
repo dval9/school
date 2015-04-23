@@ -1,0 +1,293 @@
+\documentclass{assignment}
+
+\coursetitle{Design and Analysis of Algorithms 1}
+\courselabel{CPSC 413}
+\exercisesheet{Home Work \#2}{}
+\student{Tom Crowfoot - 10037477
+\\Etienne Pitout - 10075802
+\\Ryan Lam - 10104038
+\\Julie Katayama - 10092143
+\\Thomas King - 10074105}
+\semester{Winter 2014}
+\usepackage{amsmath}
+
+\begin{document}
+
+\begin{center}
+\renewcommand{\arraystretch}{2}
+\begin{tabular}{|c|c|c|} \hline
+Problem & Marks \\ \hline \hline
+1 & \\ \hline
+2 & \\ \hline
+3 & \\ \hline
+4 & \\ \hline
+5 & \\ \hline
+6 & \\ \hline
+7 & \\ \hline
+8 & \\ \hline \hline
+Total & \\ \hline
+\end{tabular}
+\end{center}
+
+\bigskip
+
+\begin{problemlist}
+\clearpage
+\pbitem
+\begin{problem}
+Suppose you have algorithms with the five running times listed below. (Assume these are the exact running times.) How much slower do each of these algorithms get when you (a) double the input size, or (b) increase the input size by one?\\
+(a) $n^2$\\
+(b) $n^3$\\
+(c) $100n^2$\\
+(d) $nlogn$\\
+(e) $2^n$\\
+\end{problem}
+\begin{answer}
+\\
+If you double the input of (a), $(2n)^2=4n^2$, so it will be $4n^2/n^2=4$ times slower. If you increase the size by one, $(n+1)^2=n^2+2n+1$ so it will be $(n^2+2n+1)/n^2$ times slower.\\
+If you double the input of (b), $(2n)^3=8n^3$, so it will be $8n^3/n^3=8$ times slower. If you increase the size by one, $(n+1)^3=n^3+3n^2+3n+1$ so it will be $(n^3+3n^2+3n+1)/n^3$ times slower.\\
+If you double the input of (c), $100(2n)^2=400n^2$, so it will be $400n^2/100n^2=4$ times slower. If you increase the size by one, $100(n+1)^2=100n^2+200n+100$ so it will be $(100n^2+200n+100)/100n^2$ times slower.\\
+If you double the input of (d), $(2n)log(2n)=2(n+nlogn)$, so it will be $(2n+2nlogn)/nlogn$ times slower. If you increase the size by one, $(n+1)log(n+1)=nlog(n+1)+log(n+1)$ so it will be $(nlog(n+1)+log(n+1))/nlogn$ times slower.\\
+If you double the input of (e), $2^{2n}=4^n$, so it will be $4^n/2^n=2^n$ times slower. If you increase the size by one, $2^{n+1}=2^n*2$ so it will be $2^n*2/2^n=2$ times slower.
+\end{answer}
+\clearpage
+\pbitem
+\begin{problem}
+Take the following list of functions and arrange them in ascending order of growth rate. That is, if function $g(n)$ immediately follows function $f(n)$ in your list, then it should be the case that $f(n)$ is $O(g(n))$.\\
+$f_1(n)=n^{2.5}$\\
+$f_2(n)=\sqrt{2n}$\\
+$f_3(n)=n+10$\\
+$f_4(n)=10^n$\\
+$f_5(n)=100^n$\\
+$f_6(n)=n^2logn$\\
+\end{problem}
+\begin{answer}
+\\
+$f_1$, $f_2$, $f_3$, and $f_6$ are all polynomial, thus grow slower than the exponentials. $f_2$ has the smallest exponent, $1/2$ and thus is the slowest. $f_3$ has the next lowest exponent: $1$ and $f_6$ follows with an exponent of $2$, the log does not affect the growth. $f_1$ is the slowest exponential with an exponent of $2.5$. The exponentials are slower than the polynomials and $f_5$ is slower than $f_4$ because it has a bigger base. Thus our ordering is as follows:\\
+$f_2(n), f_3(n), f_6(n), f_1(n), f_4(n), f_5(n)$\\
+\end{answer}
+\clearpage
+\pbitem
+\begin{problem}
+Take the following list of functions and arrange them in ascending order of growth rate. That is, if function $g(n)$ immediately follows function $f(n)$ in your list, then it should be the case that $f(n)$ is $O(g(n))$.\\
+$g_1(n)=2^{\sqrt{logn}}$\\
+$g_2(n)=2^n$\\
+$g_3(n)=n^{4/3}$\\
+$g_4(n)=n(logn)^3$\\
+$g_5(n)=n^{logn}$\\
+$g_6(n)=2^{2^n}$\\
+$g_7(n)=2^{n^2}$\\
+\end{problem}
+\begin{answer}
+\\
+$g_1$ simplifies to an almost linear function so it grows slowest. $g_4$ and $g_3$ are both polynomial, so they are next, where $g_4$ is logarithmic so it grows slower than $g_3$. $g_5$ has a logarithm for it's exponential growth, so it grows slower than $g_2$, while $g_7$ has a polynomial exponent causing it to grow slower than $g_6$ thas an exponential exponent.\\
+$g_1(n), g_4(n), g_3(n), g_5(n), g_2(n), g_7(n), g_6(n)$\\
+\end{answer}
+\clearpage
+\pbitem
+\begin{problem}
+Assume you have functions $f$ and $g$ such that $f(n)$ is $O(g(n))$. For each of the following statements, decide whether you think it is true or false and give a proof or counterexample.\\
+(a) $log_2 f(n)$ is $O(log_2 g(n))$\\
+(b) $2^{f(n)}$ is $O(2^{g(n)})$\\
+(c) $f(n)^2$ is $O(g(n)^2)$\\
+\end{problem}
+\begin{answer}
+\\
+For case (a):True for $g(n) > 1$.\\
+\begin{align*}
+log(f(n)) &\le log(c\cdot g(n))= log(c) + log(g(n))\\
+& \le log(c)\cdot log(g(n)) + log(g(n))\\
+& = (log(c) + 1)\cdot log(g(n))\\
+\end{align*}
+So $c'=log(c)+1$ and $n_0'=n_0$\\
+If $g(n) \le 1$, then it is false.\\
+\begin{align*}
+log(f(n)) &\le log(c\cdot g(n))= log(c) + log(g(n))\\
+& > log(c)\cdot log(g(n)) + log(g(n))\\
+& = (log(c) + 1)\cdot log(g(n))\\
+\end{align*}
+If $g(n) \le 1$ then $log(g(n)) \le 0$ so $0\ge(log(c) + 1)\cdot log(g(n))$.\\
+Thus, it is false.\\
+
+For case (b): False.\\
+Assume that $f(n)=O(g(n))$, so let $f(n) = 2n$ and $g(n) = n$,\\
+Then $\exists c, n_{0} \geq 0$ such that $f(n) \leq c*g(n), n \geq n_{0}$.
+So $2n \le c\cdot n$ for $c\ge 2, n_0 \ge 0$\\
+\begin{align*}
+2^{2n}&\le  c'\cdot 2^{n}\\
+log(2^{2n})&\le  log(c'\cdot 2^{ n})\\
+2n &\le log(c')+ n\\
+n & \le log(c')\\
+\end{align*}
+This then is a contradiction, so it is false.\\
+\clearpage
+For case (c): True. 
+Assume that $f(n) \in O(g(n))$,\\
+Then $\exists c', n_{0}' \geq 0$ such that $f^{2}(n) \leq c'g^{2}(n), n \geq n_{0}'$.\\
+By assumption, $\exists c, n_{0} \geq 0$ such that $f(n) \leq c*g(n), n \geq n_{0}$.\\
+$f(n) \leq c*g(n)$\\
+$f^{2}(n) \leq c^{2}g^{2}(n)$\\
+\\Thus, $c' = c^{2}$ and $n_{0}' = n_{0}$
+\end{answer}
+\clearpage
+\pbitem
+\begin{problem}
+Prove the following statements directly from the definitions or using the Limit Test.\\
+(a) $2n^2+\sqrt{n}=\Omega (n)$\\
+(b) $5n^3+3.5n^2-7n+19=O(n^3)$\\
+(c) $n^4=O(2^n)$\\
+(d) $20n^2 + nlogn=\Theta (n^2)$\\
+\end{problem}
+\begin{answer}
+\\
+For (a):\\
+\begin{align*}
+&\lim_{n\rightarrow \infty} \frac{2n^2 + \sqrt{n}}{n}\\
+&=lim_{n\rightarrow \infty} \frac{2n + n^{-1/2}}{1}\\
+&=\infty
+\end{align*}
+As the limit goes to infinity, it is $\Omega (n)$.\\
+For (b):\\
+\begin{align*}
+&\lim_{x \to \infty} \frac{5n^3+3.5n^2-7n+19}{n^3}\\
+&=\lim_{x \to \infty} \frac{5+3.5n^{-1}-7n^{-2}+19}{1}\\
+&=5
+\end{align*}
+As the limit is a constant number, it is $\Theta (n^3)$ which implys $O(n^3)$.\\
+For (c):\\
+\begin{align*}
+&\lim_{x \to \infty} \frac{n^4}{2^n}\\
+&\lim_{x \to \infty} \frac{4n^3}{2^nlog(2)}\\
+&\lim_{x \to \infty} \frac{12n^2}{2^nlog^2(2)}\\
+&\lim_{x \to \infty} \frac{24n}{2^nlog^3(2)}\\
+&\lim_{x \to \infty} \frac{24}{2^nlog^4(2)}\\
+&=0
+\end{align*}
+As the limit is 0, it is $O(2^n)$.\\
+\clearpage
+For (d):\\
+\begin{align*}
+&\lim_{x \to \infty} \frac{20n^2+nlogn}{n^2}\\
+&=\lim_{x \to \infty} \frac{20+logn/n}{1}\\
+&=20
+\end{align*}
+As the limit is a constant number, it is $\Theta (n^2)$.\\
+\end{answer}
+\clearpage
+\pbitem
+\begin{problem}
+\end{problem}
+Recall the Gale-Shapley Stable Matching algorithm from Chapter 1. Section 2.3 describes more detail on the implementation of the Gale-Shapley algorithm, namely the data structures to use. Rewrite the Gale-Shapley algorithm to explicitely se these data strucures using the following steps.\\
+(a) Define clearly the input or arguments for the algorithm. This includes the data structures used and the type of data stored in the data structure.\\
+(b) Show how to implement line 1 in the algorithm. How will you denote that a man or woman is free? What data structure will you use? How will you initialize this? As a result of this operation, what is the running time of this single line in the algorithm?\\
+(c) Show how to implement line 2 in the algorithm. How will you determine if there is a free man that hasn't preposed to all women yet? What is the cost of checking this condition?\\
+(d) Show how to implement line 3 im the algorithm. How will you choose a free man that hasn't preposed to all women? What is the cost of this choice?\\
+(e) Show how to implement line 4 and what the cost of this implementation is.\\
+(f) Show how to implement the condition in line 5. How will you determine if a woman is free? What is the cost of checking this operation?\\
+(g) Show how to implement line 6. How will you keep track of engaged pairs? What data structure will be used to store these? What is the cost of adding a pair?\\
+(h) Show how to implement line 7. How will you determine who $w$ is engaged to? What is the cost of this operation?\\
+(i) Show how to implement line 9. How do you indicate that $m$ remains free? (Possibly you do nothing here.) What is the cost of this operation?\\
+(j) Show how to implement line 11. This may be the same as line 6. What is the cost of this operation?\\
+(k) Show how to implement line 12. How does $m'$ move from being engaged and part of a pair to being free again? What is the cost of this operation?\\
+(l) Show how to implement line 16. What is the cost of this operation?\\
+(m) Define the runtime of the entire algorithm as a function by:\\
+$\bullet$Adding the costs of lines 2 to 12.\\
+$\bullet$Multiplying this last result by the number of times the loop is executed.\\
+$\bullet$Adding the costs of lines 1 and 16 to this result.\\
+(n) What is the tight $(\Theta)$ asymptotic runtime of this implementation of the Gale-Shapley Stable Matching algorithm? Prove that your bound is correct.\\
+\begin{answer}
+\\
+(a): The inputs to the algorithm will be a linked-list of men, and an array of women. The number of men and women must be the same. The man structure will contain a linked-list of preferences, and a name to identify the man, and who he is engaged to. The women structure will contain an array of preferences, and a boolean value for if she is engaged, and a name to identify the woman, and who she is engaged to.\\
+(b): The list of men should be initialized as required by the preconditions, as should the array of women, and the value that they are free. The running time of this step then is constant time, as no work is required.\\
+(c): Use a while loop, where the stopping condition is that the linked-list of men is empty. To determine if a man has not proposed to all women, he will be in the linked-list. It will cost constant time to check if there are any men in the list.\\
+\clearpage
+(d): Get the head of the list, and he will be a free man, call this m. This operation will cost constant time.\\
+(e): Get the head of m's preference list, this will be the highest remaining women in his preference list that he has not yet proposed to, call this w. This will cost constant time to preform.\\
+(f): Get the element w of the array of women, check the structures boolean value. If the boolean value says she is free, she is free, else not. This is a constant time operation.\\
+(g): Add the pair to a new array for the output of the algorithm, at posisition of m. Update the boolean value and her partner in the woman structure, update the parenter for the man. This will keep track of who is engaged. All the operations are constant time operations.\\
+(h): There is nothing to implement for this step, if the conditional in line 5 is false, this will execute. This is a constant time operation.\\
+(i): As the woman is already engaged, get the preference value for for that woman of her current partner. Get the value of the woman's preference of the new man that is proposing to her. If she prefers her current partner over the new one, place the new man back into the end of the linked-list of men. As the man is now back in the linked-list this signifies that he is still free. This is a constant time operation.\\
+(j): If the conditional in line 8 is false, then we will update the status of the new man to engaged to the woman, update the woman to engaged to the new man. Remove the old pair from the final output array from element m', and add the new pair to the array at element m. This will be a constant time operation.\\
+(k): Clear the status of who the man is engaged to, and place him back into the linked-list of men at the end. This is a constant time operation.\\
+(l): As the while loop is done, the array of pairs will be full. Return a reference to this newly created array. This is a constant time operation.\\
+(m): Lines 2 through 12 are all constant time operations. Worst case the loop will be executed $n^2$ times. Lines 1 and 16 are both constant time. Thus the total runtime of the algorithm is $n^2$. \\
+(n): The algorithm runs in $\Theta (n^2)$. We counted the total operations of the algorithm as $n^2$, so if $f(n)=n^2$ is the runtime of the algorithm, and $g(n)=n^2$, then $\lim_{n\rightarrow \infty} f(n)/g(n) = 1$ so $f(n)=\Theta g(n)$.\\
+\end{answer}
+\clearpage
+\pbitem
+\begin{problem}
+Consider the following basic problem. You're given an array $A$ consisting of $n$ integers $A[1],A[2],...,A[n]$. You'd like to output a two-dimensional $n$-by-$n$ array $B$ in which $B[i,j]$(for $i<j$) contains the sum of array entries $A[i]$ through $A[j]$--that is, the sum $A[i]+A[i+1]+...+A[j]$. (The value of array entry $B[i,j]$ is left unspecified whenever $i\ge j$, so it doesn't matter what is ouput for these falues.) Here's a simple algorithm to solve this problem.\\
+$For~i=1,2,...,n$\\
+$For~j=i+1,i+2,...,n$\\
+$Add~up~array~entries~A[i]~through~A[j]$\\
+$Store~the~result~in~B[i,j]$\\
+$End~for$\\
+$End~for$\\
+(a) For some function $f$ that you should choose, give a bound of the form $O(f(n))$ on the running time of this algorithm on an input of size $n$ (i.e., a bound on the number of operations preformed by the algorithm).\\
+(b) For this same function $f$, show that the running time of the algorithm on an input of size $n$ is also $\Omega (f(n))$. (This shows an asymptotically tight bound of $\Theta (f(n))$ on the running time.)\\
+(c) Although the algorithm you analyzed in parts (a) and (b) is the most natural way to solve the problem--after all, it just iterates through the relevant entries of the array $B$, filling in a value for each--it contains some highly unnecessary sources of inefficiency. Give a different algorithm to solve this problem, with an asymptotically better running time. In other words, you should design an algorithm with running time $O(g(n))$, where $lim_{n\rightarrow \infty}g(n)/f(n)=0$.
+\end{problem}
+\begin{answer}
+\\
+For (a):\\
+The cost of the inner loop can be generalized to $(n-i)(n+1-i)/2$ iterations. The total cost of the algorithm is then $\Sigma_{i=1}^n (n-i)(n+1-i)/2$ which is kind of like $g(n)=n(n-i)(n+1-i)/2$. Then for $f(n)=n^3$ we find $\lim_{n\rightarrow \infty}g(n)/f(n)=n^3-2n^2i+n^2-ni+ni^2/n^3=1$ so it is $\Theta (n^3)$ which implys $O(n^3)$.\\\\
+For (b):\\
+The cost of the algorithm calculated in part (a) is the exact cost, and it was found to be in $\Theta (n^3)$, which implys that it is in $\Omega (n^3)$.\\\\
+For (c):\\
+$For~i=1..n$\\
+$~~~~B[i,i+1]=A[i]+A[i+1]$\\
+$~~~~For~j=i+2..n$\\
+$~~~~~~~~B[i,j]=B[i,j-1]+A[j]$\\
+$~~~~End~for$\\
+$End~for$\\
+$lim_{n\rightarrow \infty}n^2/n^3=0$, thus the new algorithm is in $O(f(n))$.\\
+\end{answer}
+\clearpage
+\pbitem
+\begin{problem}
+Give a worst-case analysis of the following (admitedly sub-optimal, but still useful for analysis practice!) algorithm:\\
+$\bullet$Problem: Create an ordered copy of an array\\
+$\bullet$Precondition: $X$ is an unordered integer array $X=[x_0,x_1,...,x_{n-1}]$ whose elements are of some ordered type\\
+$\bullet$Postconditions: Array $A$ contains the elements of $X$ in ascending order, $X$ is unmodified\\
+$ORDEREDARRAY(X)$\\
+1~$A[0]=X[0]$\\
+1~$for~i=1~to~n-1$\\
+2~~~~~$k=BINARYSEARCH(A,i,X[i])$\\
+3~~~~~$for~j=i~down~to~k+1$\\
+4~~~~~~~~~$A[j]=A[j-1]$\\
+5~~~~~$A[k]=X[i]$\\
+6~$return~A$\\
+For the purposes of this assignment, assume that $BINARYSEARCH(A,k,x)$ takes $\Theta(logk)$ steps, where the input array $A$ has $k$ elements. $BINARYSEARCH$ returns the index in the array here $x$ should be inserted to maintain ascending order.\\
+Your analysis should contain the following:\\
+(a) An expression of the runtime function of the algorithm (should invlove a sum).\\
+(b) An asymptotic upper bound on the runtime of the algorithm. Here you must prove the upper bound. For example, to state that $2n+3\in O(n)$ is not sufficent, you must prove this.\\
+(c) An asymptotic lower bound on the runtime of the algorithm. Here again you must prove your result.\\
+(d) An asymptotic tight bound on the runtime of the algorithm.\\
+\end{problem}
+\begin{answer}
+\clearpage
+For (a):\\
+Line 1 will take one operation to complete. The outer for loop on line one will take $n-1$ iterations. Line two takes $log~i$ operations complete, as array $A$ contains $i$ elements. In worst case, the inner for loop on line 3 will take $i$ iterations, as the element to replace would always be at the beginning of the array. Line 4 would take one operation to complete. Line 5 will take one operation to complete. Line 6 will take one operation to complete.\\
+\begin{align*}
+&c_1 + \sum_{i=1}^{n-1} (log~i+c_4*i+c_5) + c_6\\
+&c_1 + \sum_{i=1}^{n-1} log~i + \sum_{i=1}^{n-1}c_4*i + \sum_{i=1}^{n-1}c_5 + c_6\\
+&c_1 + \sum_{i=1}^{n-1} log~i + \frac{c_4(n-1)(n)}{2} + c_5(n-1) + c_6\\
+&\frac{c_4n^2-c_4n}{2} + log((n-1)!) + c_5n-c_5 + c_6 + c_1\\
+\end{align*}
+where $c_1$ is the cost of line 1, $c_4$ is the cost of line 4, $c_5$ is the cost of line 5, and $c_6$ is the cost of line 6.\\\\
+For (b):\\
+The upper bound for the runtime is $O(n^2)$.
+\begin{align*}
+&\lim_{n\rightarrow \infty}(\frac{c_4n^2-c_4n}{2} + log((n-1)!) + c_5n-c_5 + c_6 + c_1)/(n^2)\\
+&=\lim_{n\rightarrow \infty}(c_4/2 - c_4/2n + log((n-1)!)/n^2 + c_5/n-c_5/n^2+c_6/n^2+c_1/n^2)/1\\
+&=c_4/2\\
+\end{align*}
+As the limit goes to a constant, the runtime is in $\Theta (n^2)$, which implys it is in $O(n^2)$.\\\\
+For (c):\\
+As proved in (b), the runtime is in $\Theta (n^2)$, which implys it is in $\Omega (n^2)$.\\\\
+For (d):\\
+As proved in (b), the runtime is in $\Theta (n^2)$.
+\end{answer}
+
+\end{problemlist}
+\end{document}

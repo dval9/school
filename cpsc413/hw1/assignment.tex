@@ -1,0 +1,92 @@
+\documentclass{assignment}
+
+\coursetitle{Design and Analysis of Algorithms 1}
+\courselabel{CPSC 413}
+\exercisesheet{Home Work \#1}{}
+\student{Tom Crowfoot - 10037477}
+\semester{Winter 2014}
+
+\begin{document}
+
+\begin{center}
+\renewcommand{\arraystretch}{2}
+\begin{tabular}{|c|c|c|} \hline
+Problem & Marks \\ \hline \hline
+1 & \\ \hline
+2 & \\ \hline
+3 & \\ \hline
+4 & \\ \hline
+5 & \\ \hline
+6 & \\ \hline
+7 & \\ \hline \hline
+Total & \\ \hline
+\end{tabular}
+\end{center}
+
+\bigskip
+
+\begin{problemlist}
+
+\pbitem
+\begin{problem}
+Give a precise definition of the Stable Matching Problem as described on p.3-4 of the textbook.
+\end{problem}
+\begin{answer}
+\\Pre-conditions: \\
+$M=\{m_1,m_2,...,m_n\}$ of $n$ men.\\
+$W=\{w_1,w_2,...,w_n\}$ of $n$ women.\\
+For each man, an ordered list of all women in $W$.\\
+For each woman, an ordered list of all men in $M$.\\
+Post-conditions:\\
+Set $S$ of ordered pairs $(m,w)\in M \times W$ such that each $m\in M$ and $w\in W$ appear in at most one par of $S$.\\
+Perfect matching: \\
+Matching such that each $m\in M$ and $w\in W$ appear in exactly once in $S$.\\
+Instability(with respect to a perfect matching $S$):\\
+$(m,w)\in M\times W$ such that $m$ and $w$ prefer each other to their assigned partners in $S$.\\
+$(m,w'),~(m',w)\in S$ but $m$ prefers $w$ to $w'$ and $w$ prefers $m$ to $m'~\Rightarrow$ $m$ and $w$ will leave current partners and be happier.
+\end{answer}
+
+\pbitem
+\begin{problem}
+Decide whether you think the following statement is true or false. If it is true, give a short explanation. If it is false, give a counterexample.\\
+True or false? In every instance of the Stable Matching Problem, there is a stable matching containing a pair $(m,w)$ such that $m$ is ranked first on the preference list of $w$ and $w$ is ranked first on the preference list of $m$.
+\end{problem}
+\begin{answer}
+\\False. Consider the example with $M=\{m_1,m_2\},~W=\{w_1,w_2\}$ and preferences $m_1:w_1,w_2$\\$m_2:w_2,w_1$\\$w_1:m_2,m_1$\\$w_2:m_1,m_2$.\\
+Then the first stable matching $S_1=\{(m_1,w_1),(m_2,w_2)\}$ and the second stable matching is $S_2=\{(m_1,w_2),(m_2,w_1)\}$.\\
+Clearly these are the only stable matchings, and in both cases, only either men or women get their first choices, and not both.
+\end{answer}
+
+\pbitem
+\begin{problem}
+Decide whether you think the following statement is true or false. If it is true, give a short explanation. If it is false, give a counterexample.\\
+True or false? Consider an instance of the Stable Matching Problem in which there exists a man $m$ and a woman $w$ such that $m$ is ranked first on the preference list of $w$ and $w$ is ranked first on the preference list of $m$. Then in every stable matching $S$ for this instance, the pair $(m,w)$ belongs to $S$.
+\end{problem}
+\begin{answer}
+\\True. If the $m$ from $(m,w)$ has $w$ as his first choice, and the $w$ from $(m,w)$ has $m$ as his first choice, then there is no improvements to this matching, so it will always be in $S$.
+\end{answer}
+
+\pbitem
+\begin{problem}
+How many times will the while loop in the Stable Matching algorithm as presented on page 6 of the text be executed? Assume that set $M$ contains $n$ men and $W$ contains $n$ women. Explain your answer.
+\end{problem}
+\begin{answer}
+\\In the best case the while loop will be executed $n$ times, when each man is paired with his first choice. In the worst case, each woman will have their preferences opposite to that of the men. This will then cause the first man to have to propose to $n$ women, the second man to propose to $n-1$ women, and so on resulting in $\frac{n(n+1)}{2}$ iterations.
+\end{answer}
+
+\pbitem
+\begin{problem}
+For every set of TV shows and ratings, is there always a stable pair of schedules? Resolve this question by doing one of the following two things:\\
+(a) give an algorithm that, for any set of TV shows and associated ratings, produces a stable pair of schedules; or\\
+(b) give an example of a set of TV shows and associated raitings for which there is no stable pair of schedules.
+\end{problem}
+\begin{answer}
+\\No, there is not always a stable pair of schedules. Consider the example:\\
+Let the networks be called $A$ and $B$, and schedules $S$ and $T$ respectively.\\
+Let $A$ have the shows with their corresponding raitings as $S=\{(s_1,4),(s_2,2)\}$.\\
+Let $B$ have the shows with their corresponding raitings as $T=\{(t_1,3),(t_2,5)\}$.\\
+If $A$ and $B$ present their schedules as $(S,T)$ then each will get one time slot. However, if $B$ modifies their submission to $T'=\{(t_2,5),(t_1,3)\}$, they will get both time slots in the matching $(S,T')$. In responce, $A$ could similarly reorder their submission to get one slot back. Thus there is no stable matching.
+\end{answer}
+
+\end{problemlist}
+\end{document}

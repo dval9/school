@@ -1,0 +1,122 @@
+\documentclass{assignment}
+\usepackage{amsmath,amssymb,amsfonts}
+
+\coursetitle{Computability}
+\courselabel{CPSC 513}
+\exercisesheet{Homework \#2}{}
+\student{Tom Crowfoot - 10037477
+Micah Sia - 10033871}
+\semester{Winter 2015}
+
+\begin{document}
+\begin{problemlist}
+
+  \pbitem
+  \begin{problem}
+  \end{problem}
+  \begin{answer}
+    \begin{enumerate}    
+    \item
+      Let $f(0) = x_{0}$ where $x_{0}$ is the least element in the set MONOTONE. Since MONOTONE is recursive, the predicate $\Phi_{n}$ is total and computable.
+      So now let, 
+      \[
+      f(x+1) =
+      \begin{cases}
+    	x+1, 		& \text{if } \Phi_{n}(x+1) = 1\\
+    	f(x)	,		& \text{otherwise}
+      \end{cases}
+      \]
+      We can see that $f$ is recursive since $f$ is in the range of MONOTONE and so $f(x)$ can easily be expressed as
+      \[
+      f(x) =
+      \begin{cases}
+    	x_{0}, 		& \text{if } x \leq x_{0}\\
+    	(\text{max } i)_{\leq x}[\Phi_{n}(i) = 1],		& \text{otherwise}
+      \end{cases}
+      \]
+      \bigskip
+      %(Not completely sure about this, but this is what I'm thinking so far)
+    \item
+      Since $f$ is a total computable function, $\phi_{f(i)}(n)=\phi(n,f(i))$ is computable for all $n\in \mathbb{N}$.\\
+      Then $g(n)$ is also a total computable function.\\
+      Since $f$ is strictly increasing, $\phi(n,f(i))<\phi(n+1,f(i))$.\\
+      Then
+      \begin{align*}
+        g(n+1)=&\sum_{i=0}^{n+1}\phi(n+1,f(i))\\
+        >& \sum_{i=0}^{n+1}\phi(n,f(i))\\
+        \ge& \sum_{i=0}^{n+1}\phi(n,f(i))=g(n)
+      \end{align*}
+      Then $g$ is a computable monotone total function.\\
+    \item
+      Since MONOTONE is a recursive set, then there exists a recursive function $f$ such that MONOTONE is in the range of $f$. It is clear from part (a.) that this holds true. Thus, for all $n \geq 0, \Phi_{f_{n}}$ is recursive and we have the correspondence $ n \Leftrightarrow \Phi_{f_{n}}$. Now define $g(n) = \sum_{i=0}^{n} (\Phi_{f_{i}}(n))$. From part (b.) we have shown that this is a total recursive function. The contradiction arises from the fact that $g(n) \neq \Phi_{f_{n}}(n)$ for all $n$. This implies that $g \neq \Phi_{f(n)}$ and we have constructed an 'extra' recursive function outside of MONOTONE.
+    \end{enumerate}
+  \end{answer}
+  
+  \pbitem
+  \begin{problem}
+  \end{problem}
+  \begin{answer}
+    \\
+    \begin{enumerate}
+    \item
+      $Y \leftarrow Y + \Phi_{x_2}(Z_1)$\\
+      $Z_2\leftarrow X_1-Z_1$\\
+      $Z_1 \leftarrow Z_1 + 1$\\
+      $IF$ $Z_2\neq 0$ $GOTO$ $A$\\
+    \item
+      %Let P be the $\mathbb{L}$ program to compute the function.\\
+      %Let $p= \#(P)$, then the value computed by P on inputs $x_1,x_2\in \mathbb{N}$ is $\phi^{(2)}(x_1,x_2,p)$.\\
+      %By the paramater theorem, there exists a primitive recursive function $S_1^1:\mathbb{N}^2\rightarrow\mathbb{N}$ such that $\phi^{(2)}(x_1,x_2,p)=\phi^{(1)}(x_1,S_1^1(x_2,p))$.\\
+      %Let $f(x_2)=S_1^1(x_2,p)$. Since $S_1^1$ is primitive recursive and $p$ is constant, $f$ is a computable total function.\\
+      %Then
+      %\begin{align*}
+      %  &f(x_2)\in Monotone\\
+      %  \Leftarrow\Rightarrow& \phi_{f(x_2)}(f(x_2))\\
+      %  \Leftarrow\Rightarrow& \phi_{S_1^1(x_2,p)}(S_1^1(x_2,p))\\
+      %  \Leftarrow\Rightarrow& \phi^{(1)}(S_1^1(x_2,p),S_1^1(x_2,p))\\
+      %  \Leftarrow\Rightarrow& \phi^{(2)}(S_1^1(x_2,p),x_2,p)\\
+      %  \Leftarrow\Rightarrow& \phi^{(1)}(x_2,x_2)\\
+      %  \Leftarrow\Rightarrow& x_2 \in Total
+      %\end{align*}
+      %Then $Total\le_m Monotone$ as wanted.
+      %
+      %\bigskip
+     % 
+     % \bigskip
+     % 
+     % ANOTHER SOLUTION?
+     % 
+      Let P be the $\mathbb{L}$ program to compute the function.\\
+      Let $p= \#(P)$, then the value computed by P on inputs $x_1,x_2\in \mathbb{N}$ is $\phi_{p}(x_{1},x_{2}) \Leftrightarrow \phi^{(2)}(x_{1},x_2,p)$.\\
+      \smallskip
+      From the $\mathbb{L}$ program above, $\Phi_{p}(x_{1},x_{2})$ is only defined $\Leftrightarrow$ $x_{2} \in \text{TOTAL}$ is defined for all $x$. Now by the paramater theorem, there exists a primitive recursive function $S_1^1:\mathbb{N}^2\rightarrow\mathbb{N}$ such that $\phi^{(2)}(x_{1},x_2,p)=\phi^{(1)}(x_{1},S_1^1(x_2,p))$.\\
+      Then
+      \begin{align*}
+        &x_{2} \in Total\\
+        \Longleftrightarrow& \phi_{x_{2}}(x) \text{ for all x}\\
+        \Longleftrightarrow& \phi(x,x_{2}) \text{ as defined in TOTAL}\\
+        \Longleftrightarrow& \phi_{p}(x_{1},x_{2}) \text{ as defined from the above statement}\\
+        \Longleftrightarrow& \phi^{(2)}(x_{1},x_{2}, p) \text{ as defined from P}\\
+        \Longleftrightarrow& \phi^{(1)}(x_{1}, S_{1}^{1}(x_{2},p)) \text{ as defined in the Parameter Theorem}\\
+        \Longleftrightarrow& S_{1}^{1}(x_{2},p) \in Monotone
+      \end{align*}
+      
+      Let $f(x_2)=S_1^1(x_2,p)$. Since $S_1^1$ is primitive recursive and $p$ is constant, $f$ is a computable total function.\\
+      Then $Total\prec_m Monotone$ as wanted.
+    \item
+      As Total is not recursive, we can conclude that Monotone is not recursive.
+    \end{enumerate}
+  \end{answer}
+  
+  \pbitem
+  \begin{problem}
+  \end{problem}
+  \begin{answer}
+    \\
+    Let $\Gamma$ be the set of functions that are total and increasing.\\
+    Then $Monotone=\{n\in \mathbb{N} | n=\#(P) \text{where P is a program computing a function in }\Gamma\}$.\\
+    Then $Monotone=R_{\Gamma}$, so Monotone is not recursive.\\
+  \end{answer}
+
+\end{problemlist}
+\end{document}

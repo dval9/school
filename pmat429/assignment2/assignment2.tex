@@ -1,0 +1,151 @@
+\documentclass{assignment}
+\usepackage{amsmath, amssymb, amsfonts}
+
+\coursetitle{Cryptography}
+\courselabel{PMAT 429}
+\exercisesheet{Home Work \#2}{}
+\student{Tom Crowfoot - 10037477}
+\semester{Winter 2015}
+
+\begin{document}
+
+\begin{problemlist}
+\pbitem
+\begin{problem}
+\end{problem}
+\begin{answer}
+  \\
+  Consider the group $D_n=\{a,b|ord(a)=n,ord(b)=2,aba=b^{-1}\}$. Choosing $\alpha = b, \beta = a$, then $a^x = b$ will never be solvable for any $x$.
+\end{answer}
+
+\pbitem
+\begin{problem}
+\end{problem}
+\begin{answer}
+  \\
+  \begin{align*}
+    2^1 mod 17 &= 2\\
+    2^2 mod 17 &= 4\\
+    2^3 mod 17 &= 8\\
+    2^4 mod 17 &= 16\\
+    2^5 mod 17 &= 32 mod 17 = 15\\
+    2^6 mod 17 &= 30 mod 17 = 13\\
+    2^7 mod 17 &= 26 mod 17 = 9\\
+    2^8 mod 17 &= 18 mod 17 = 1\\
+    2^9 mod 17 &= 2 \\
+    2^{10} mod 17 &= 4\\
+    2^{11} mod 17 &= 8\\
+    2^{12} mod 17 &= 16\\
+    2^{13} mod 17 &= 32 mod 17 = 15\\
+    2^{14} mod 17 &= 30 mod 17 = 13\\
+  \end{align*}
+  Then $x=6,x=14$ solves $2^x=13$ in $\mathbb{F}_{17}^*$.
+\end{answer}
+
+\pbitem
+\begin{problem}
+\end{problem}
+\begin{answer}
+  \\
+  \begin{enumerate}
+  \item
+    $m = \sqrt{251} = 16$, $11^{-1}mod251 = 137$\\
+    \begin{tabular}{c|c|c|c}
+      i & $15 * 11^{-i}mod251$&j & $11^{15*j}mod251$\\
+      \hline
+      1 & 47&1 & 182\\
+      2 & 164&2 & 243\\
+      3 & 129&3 & 50\\
+      4 & 103&4 & 64\\
+      5 & 55&5 & 102\\
+      6 & 5&6 & 241\\
+      7 & 183&7 & 188\\
+      8 & 222&8 & 80\\
+      9 & 43&9 & 2\\
+      10 & 118&10 & 113\\
+      11 & 102&11 & 235\\
+      12 & 169&12 & 100\\
+      13 & 61&13 & 128\\
+      14 & 74&14 & 204\\
+      15 & 98&15 & 231\\
+      16 & 123&16 & 125\\
+    \end{tabular}
+    \\There is a collision on $102$, so $i=11$, $j=5$.\\
+    Solving $x = mj + i = 15*5 + 11 = 86$ gives the solution.\\
+  \item
+    Set $y_0=1$, $z_0=0$, $\gamma_0=13$.\\
+    \begin{tabular}{c||c|c|c||c|c|c}
+      i & $y_i$ & $z_i$ &$\gamma_i$ &$y_{2i}$ & $z_{2i}$ & $\gamma_{2i}$\\
+      \hline
+      0 & 1  & 0 & 13  & 1   & 0  & 13\\
+      1 & 2  & 0 & 169 & 3   & 0  & 93\\
+      2 & 3  & 0 & 93  & 6   & 1  & 108\\
+      3 & 6  & 0 & 233 & 12  & 3  & 37\\
+      4 & 6  & 1 & 108 & 13  & 4  & 162\\
+      5 & 12 & 2 & 92  & 52  & 16 & 243\\
+      6 & 12 & 3 & 37  & 104 & 33 & 138\\
+      7 & 13 & 3 & 218 & 23  & 1  & 92\\
+      8 & 13 & 4 & 162 & 24  & 2  & 218\\
+      9 & 26 & 8 & 207 & 48  & 6  & 207\\
+    \end{tabular}
+    \\Then we can solve $26-48=x(6-8) mod 131$ to get $x=11$.\\
+\clearpage
+  \item
+    %29^x=116 mod 409, n=408
+    The prime factorization of $408=2^3*3*17$.\\
+    For $p=2$:\\
+    $116^{408/2}=116^{204}=408 mod 409$, so $x_0=1$.\\
+    $116*29^{-1*1}=4 mod 409$.\\
+    $4^{408/4}=4^{102}=1 mod 409$, so $x_1 = 0$.\\
+    $4*29^{-2*0} = 4 mod 409$.\\
+    $4^{408/8}=4^{51}=408 mod 409$, so $x_2 = 1$.\\
+    Then $x=1 + 2*0 + 4*1 = 5$.\\
+    For $p=3$:\\
+    $116^{408/3}=116^{136}=355 mod 409$, so $x_0 = 2$.\\
+    Then $x=2$.\\
+    For $p=17$:\\
+    $116^{408/17}=116^{24}=180 mod 409$, so $x_0 = 8$.\\
+    Then $x=8$.\\
+    Using Gauss' algorithm:\\
+    $n_1 = 51$, $n_2 = 136$, $n_3 = 24$, $b_1 = 3 mod 8$, $b_2 = 1 mod 3$, $b_3 = 5 mod 17$.\\
+    $x=5*51*3+2*136*1+8*24*5=1997 mod 408=365$.\\
+  \end{enumerate}
+\end{answer}
+
+\pbitem
+\begin{problem}
+\end{problem}
+\begin{answer}
+  \\
+  Suppose you can solve the DLP for a group with generator $\beta$, meaning you can solve the equations of he form $\beta^x = \alpha$ in the group.\\
+  Then you can also solve the equation $\beta^x = \widetilde{\beta}$.\\
+  Rewritting an equation with $\widetilde{\beta}$ as the base in terms of $\beta$ gives $\widetilde{\beta}^y=\alpha \Rightarrow (\beta^{x})^y=\beta^{x*y}=\alpha$.\\
+  We can then solve this equation to get $x*y$.
+  As we know the value of $x$, we can find $x^{-1}$, and then $x^{-1}*x*y = y$, giving the value of $y$.\\
+  We then have the solution for $\widetilde{\beta}^y=\alpha$.\\
+\end{answer}
+
+\pbitem
+\begin{problem}
+\end{problem}
+\begin{answer}
+  \\
+  \begin{enumerate}
+  \item
+    Being able to solve DHP means given input ($\beta$, $\beta^x$, $\beta^y$), you can compute $\beta^{xy}$.\\
+    For the Square-DHP, we are only given one $\beta^x$.\\
+    We can use this input to solve for the DHP, giving our oracle ($\beta$, $\beta^x$, $\beta^x$) as input. This will give us as output $\beta^{xx}=\beta^{x^2}$.\\
+    This is then the solution to Square-DHP.\\
+  \item
+    Assume we have an oracle for the Inverse-DHP. If we give our oracle input ($\beta$, $\beta^x$), it will output $\beta^{x^{-1}}$.\\
+    If we give the oracle input ($\beta^x$, $\beta=\beta^{xx^{-1}}$), we will get $\beta^{xx}=\beta^{x^2}$ as output.\\
+    This is then the solution to Square-DHP.\\
+  \item
+    Assume we have an oracle for the Square-DHP. If we give our oracle input ($\beta$, $\beta^x$), it will output $\beta^{x^2}$.\\
+    If we give the oracle input ($\beta^x$, $\beta=\beta^{xx^{-1}}$), we will get $\beta^{xx^{-2}}=\beta^{x^{-1}}$ as output.\\
+    This is then the solution to Inverse-DHP.\\
+  \end{enumerate}
+\end{answer}
+
+\end{problemlist}
+\end{document}

@@ -1,0 +1,129 @@
+\documentclass{assignment}
+\usepackage{amsmath,amssymb,amsfonts}
+
+\coursetitle{Quantum Algorithms}
+\courselabel{CPSC 519}
+\exercisesheet{Homework \#1}{}
+\student{Tom Crowfoot - 10037477}
+\semester{Winter 2015}
+
+\newcommand{\inner}[2]{\ensuremath{\langle{#1}|{#2}\rangle}}
+
+\input{Qcircuit}
+
+\begin{document}
+\begin{problemlist}
+
+  \pbitem
+  \begin{problem}
+  \end{problem}
+  \begin{answer}
+    \\
+    \begin{enumerate}
+    \item
+      $\ket{0}_L = \frac{1}{2} (\ket{0000} + \ket{0011} + \ket{1100} + \ket{1111})$\\
+      $\ket{1}_L = \frac{1}{2} (\ket{0000} - \ket{0011} - \ket{1100} + \ket{1111})$\\\\
+      $I \otimes X \otimes I \otimes I \ket{0}_L =\frac{1}{2} (\ket{0100} + \ket{0111} + \ket{1000} + \ket{1011})$\\\\
+      To check if this is in $S^\perp$, take the inner product with both vectors in $S$.\\\\
+      $\bra{0}_L(I \otimes X \otimes I \otimes I \ket{0}_L)=\frac{1}{4} (\bra{0000} + \bra{0011} + \bra{1100} + \bra{1111})(\ket{0100} + \ket{0111} + \ket{1000} + \ket{1011})$\\
+      $=0$\\\\
+      $\bra{1}_L(I \otimes X \otimes I \otimes I \ket{0}_L)=\frac{1}{4} (\bra{0000} - \bra{0011} - \bra{1100} + \bra{1111})(\ket{0100} + \ket{0111} + \ket{1000} + \ket{1011})$\\
+      $=0$\\
+
+      Similarly, \\
+      $I \otimes X \otimes I \otimes I \ket{1}_L =\frac{1}{2} (\ket{0100} - \ket{0111} - \ket{1000} + \ket{1011})$\\\\
+      $\bra{0}_L(I \otimes X \otimes I \otimes I \ket{1}_L)=\frac{1}{4} (\bra{0000} + \bra{0011} + \bra{1100} + \bra{1111})(\ket{0100} - \ket{0111} - \ket{1000} + \ket{1011})$\\
+      $=0$\\\\
+      $\bra{1}_L(I \otimes X \otimes I \otimes I \ket{1}_L)=\frac{1}{4} (\bra{0000} - \bra{0011} - \bra{1100} + \bra{1111})(\ket{0100} - \ket{0111} - \ket{1000} + \ket{1011})$\\
+      $=0$\\\\
+      As the inner product is $0$, the vectors are perpendicular, so $I \otimes X \otimes I \otimes I \ket{0}_L \in S^\perp$ and $I \otimes X \otimes I \otimes I \ket{1}_L \in S^\perp$.
+    \item
+      When a single $X$ error is made on one of the encodings of $\ket{0}_L$ or $\ket{1}_L$, it sends it to a perpendicular subspace. Then when you go to measure the result, you have $0$ chance to measure either $\ket{0}_L$ or $\ket{1}_L$. As you cannot measure any possible result you would expect, you can easily conclude that there was an error.
+    \item
+      Consider making a $Z$ error on the second qubit. Then the states $\ket{0}_L$ and $\ket{1}_L$ become\\\\
+      $I \otimes Z \otimes I \otimes I \ket{0}_L =\frac{1}{2} (\ket{0000} + \ket{0011} - \ket{1100} - \ket{1111})$\\
+      $I \otimes Z \otimes I \otimes I \ket{1}_L =\frac{1}{2} (\ket{0000} - \ket{0011} + \ket{1100} - \ket{1111})$\\\\
+      Then check if these states are in $S^\perp$\\\\
+      $\bra{0}_L(I \otimes Z \otimes I \otimes I \ket{0}_L) =\frac{1}{4} (\bra{0000} + \bra{0011} + \bra{1100} + \bra{1111})(\ket{0000} + \ket{0011} - \ket{1100} - \ket{1111})$\\
+      $=0$\\\\
+      $\bra{1}_L(I \otimes Z \otimes I \otimes I \ket{0}_L) =\frac{1}{4} (\bra{0000} - \bra{0011} - \bra{1100} + \bra{1111})(\ket{0000} + \ket{0011} - \ket{1100} - \ket{1111})$\\
+      $=0$\\\\
+      $\bra{0}_L(I \otimes Z \otimes I \otimes I \ket{1}_L) =\frac{1}{4} (\bra{0000} + \bra{0011} + \bra{1100} + \bra{1111})(\ket{0000} - \ket{0011} + \ket{1100} - \ket{1111})$\\
+      $=0$\\\\
+      $\bra{1}_L(I \otimes Z \otimes I \otimes I \ket{1}_L) =\frac{1}{4} (\bra{0000} - \bra{0011} - \bra{1100} + \bra{1111})(\ket{0000} - \ket{0011} + \ket{1100} - \ket{1111})$\\
+      $=0$\\\\
+      Then making a single $Z$ error will send the state to a subspace in $S^\perp$, and so we can detect the error.\\
+    \item
+      Consider making a $Z$ error on the first qubit. We will then get the states\\
+      $Z \otimes I \otimes I \otimes I \ket{0}_L =\frac{1}{2} (\ket{0000} + \ket{0011} - \ket{1100} - \ket{1111})$\\
+      $Z \otimes I \otimes I \otimes I \ket{1}_L =\frac{1}{2} (\ket{0000} - \ket{0011} + \ket{1100} - \ket{1111})$\\\\
+      These are the same states as when we made a $Z$ error on the second qubit. Then while we can detect that an error occured, we can not differentiate between an error on the first qubit and the second qubit, so we cannot correct this error.
+    \end{enumerate}
+  \end{answer}
+
+  \pbitem
+  \begin{problem}
+  \end{problem}
+  \begin{answer}
+    \\
+    \begin{enumerate}
+    \item
+      We want to find a state that is invariant under two $X$ and $Z$ errors.\\
+      Let $\ket{\Psi} = \alpha\ket{00} + \beta\ket{01} + \gamma\ket{10} + \delta\ket{11}$\\
+      Then if we make $X$ errors on both qubits,\\
+      $X\otimes X\ket{\Psi}=\alpha\ket{11} + \beta\ket{10} + \gamma\ket{01} + \delta\ket{00}$\\
+      To make the state invariant, we will want $\alpha = \delta$ and $\beta = \gamma$.\\
+      If we make $Z$ errors on both qubits,\\
+      $Z\otimes Z\ket{\Psi}=\alpha\ket{00} - \beta\ket{01} - \gamma\ket{10} + \delta\ket{11}$\\
+      To make the state invariant, we will want $\alpha = \alpha$, $\beta = -\beta$, $\gamma = -\gamma$, $\delta = \delta$.\\
+      To satsify all of our requirements, we can set $\alpha = \delta = 1$ and $\beta = \gamma = 0$.\\
+      Then $\ket{\Psi} = \ket{00} + \ket{11}$.\\
+      Checking again that this is invariant,\\
+      $X\otimes X\ket{\Psi} = \ket{11} + \ket{00} = \ket{\Psi}$\\
+      $Z\otimes Z\ket{\Psi} = \ket{00} + \ket{11} = \ket{\Psi}$\\
+      We see that $\ket{\Psi}$ undergoes no change for two $X$ or $Z$ errors.
+    \end{enumerate}
+  \end{answer}
+
+  \pbitem
+  \begin{problem}
+  \end{problem}
+  \begin{answer}
+    \\
+    \begin{enumerate}
+    \item
+      $\ket{0}_L=\frac{1}{2}(\ket{0101}-\ket{0110}-\ket{1001}+\ket{1010})$\\
+      $\ket{1}_L=\frac{1}{\sqrt{12}}(2\ket{1100}+2\ket{0011}-\ket{0101}-\ket{0110}-\ket{1001}-\ket{1010})$\\\\
+      $U\otimes U\otimes U\otimes U\ket{0}_L=\frac{\lambda^2}{2}(\ket{0101}-\ket{0110}-\ket{1001}+\ket{1010})$\\
+      $U\otimes U\otimes U\otimes U\ket{1}_L=\frac{\lambda^2}{\sqrt{12}}(2\ket{1100}+2\ket{0011}-\ket{0101}-\ket{0110}-\ket{1001}-\ket{1010})$\\\\
+    \item
+      Since $\lambda$ is unit norm, then $\lambda^2=1$. From part $1$, applying a collective error to $\ket{0}_L$ or $\ket{1}_L$ resulted in the same state multiplied by $\lambda^2$, and so does not change the state at all.
+    \item
+      \begin{align*}
+        &H\otimes H\otimes H\otimes H \ket{1}_L\\
+        =&(H\otimes H\otimes H\otimes H)\frac{1}{\sqrt{12}}(2\ket{1100}+2\ket{0011}-\ket{0101}-\ket{0110}-\ket{1001}-\ket{1010})\\
+        =&\frac{1}{\sqrt{12}}(2\ket{--++}+2\ket{++--}-\ket{+-+-}-\ket{+--+}-\ket{-++-}-\ket{-+-+})\\
+        =&\frac{1}{\sqrt{12}}
+        (2(\ket{0}-\ket{1})(\ket{0}-\ket{1})(\ket{0}+\ket{1})(\ket{0}+\ket{1})\\
+        &+2(\ket{0}+\ket{1})(\ket{0}+\ket{1})(\ket{0}-\ket{1})(\ket{0}-\ket{1})\\
+        &-(\ket{0}+\ket{1})(\ket{0}-\ket{1})(\ket{0}+\ket{1})(\ket{0}-\ket{1})\\
+        &-(\ket{0}+\ket{1})(\ket{0}-\ket{1})(\ket{0}-\ket{1})(\ket{0}+\ket{1})\\
+        &-(\ket{0}-\ket{1})(\ket{0}+\ket{1})(\ket{0}+\ket{1})(\ket{0}-\ket{1})\\
+        &-(\ket{0}-\ket{1})(\ket{0}+\ket{1})(\ket{0}-\ket{1})(\ket{0}+\ket{1})\\
+        =&\frac{1}{\sqrt{12}}\\
+        &(2(\ket{0000}-\ket{1000}-\ket{0100}+\ket{1100}+\ket{0010}-\ket{1010}-\ket{0110}+\ket{1110}\ket{0001}-\ket{1001}-\ket{0101}+\ket{1101}+\ket{0011}-\ket{1011}-\ket{0111}+\ket{1111})\\
+        &+2(\ket{0000}+\ket{1000}+\ket{0100}+\ket{1100}-\ket{0010}-\ket{1010}-\ket{0110}-\ket{1110}-\ket{0001}-\ket{1001}-\ket{0101}-\ket{1101}+\ket{0011}+\ket{1011}+\ket{0111}+\ket{1111})\\
+        &-(\ket{0000}+\ket{1000}-\ket{0100}-\ket{1100}+\ket{0010}+\ket{1010}-\ket{0110}-\ket{1110}\\&-\ket{0001}-\ket{1001}+\ket{0101}+\ket{1101}-\ket{0011}-\ket{1011}+\ket{0111}+\ket{1111})\\
+        &-(\ket{0000}+\ket{1000}-\ket{0100}-\ket{1100}-\ket{0010}-\ket{1010}+\ket{0110}+\ket{1110}\\&+\ket{0001}+\ket{1001}-\ket{0101}-\ket{1101}-\ket{0011}-\ket{1011}+\ket{0111}+\ket{1111})\\
+        &-(\ket{0000}-\ket{1000}+\ket{0100}-\ket{1100}+\ket{0010}-\ket{1010}+\ket{0110}-\ket{1110}\\&-\ket{0001}+\ket{1001}-\ket{0101}+\ket{1101}-\ket{0011}+\ket{1011}-\ket{0111}+\ket{1111})\\
+        &-(\ket{0000}-\ket{1000}+\ket{0100}-\ket{1100}-\ket{0010}+\ket{1010}-\ket{0110}+\ket{1110}\\&+\ket{0001}-\ket{1001}+\ket{0101}-\ket{1101}-\ket{0011}+\ket{1011}-\ket{0111}+\ket{1111})\\
+        =&\frac{1}{\sqrt{12}}(2\ket{1100}+2\ket{0011}-\ket{0101}-\ket{0110}-\ket{1001}-\ket{1010})\\
+      \end{align*}
+      Then $\ket{1}_L$ is invariant under $H^{\otimes 4}$.\\
+    \item
+      From part $1$, we know we this code protects against arbitrary $Z$ errors. From part $3$, we know that the code is invariant under $H$, so we can first apply $H$ and then it protects for arbitrary $X$ errors as $HZH=X$. Then it also protects for arbitrary $XZ$ errors. Then any arbitrary error can be written as $U=\alpha 1 + \beta X + \gamma Z + \delta XZ$, and so the code protects against arbitrary error.
+    \end{enumerate}
+  \end{answer}
+  
+\end{problemlist}
+\end{document}

@@ -1,0 +1,301 @@
+\documentclass[letterpaper]{article}
+\usepackage{amsmath,amsthm,amsfonts}
+\usepackage[margin=1in]{geometry}
+\usepackage{algorithmic}
+\usepackage{algorithm}
+\usepackage{mathtools}
+\usepackage{booktabs}
+\usepackage{float}
+
+\DeclarePairedDelimiter{\bra}{\langle}{\rvert}
+\DeclarePairedDelimiter{\ket}{\lvert}{\rangle}
+\DeclarePairedDelimiter{\set}{\{}{\}}
+\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
+\DeclarePairedDelimiter{\paren}{(}{)}
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+\DeclareMathOperator{\ord}{ord}
+\newcommand{\op}[1]{\textsf{#1}}
+\newcommand{\oracle}{\op{U}_f}
+\newcommand{\complex}{\mathbb{C}}
+\newcommand{\tensor}{\otimes}
+\newcommand{\ints}{\mathbb{Z}}
+\renewcommand{\o}[2]{\omega_{#1}^{#2}}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1em}
+
+\title{Shor's Algorithm for Factoring and DLP}
+\author{Arvin Sonuhi, Kevin Chum, Tom Crowfoot}
+\date{}
+
+\input{Qcircuit}
+
+\begin{document}
+	\maketitle{}
+	\section{Introduction to Quantum Computing}
+	\subsection{Dirac Notation}
+	In classical computing we use two discrete states called \emph{bits}, namely
+	0 and 1. For quantum computing, we can be in some value between 0 and 1. The
+	base states for a quantum computer are usually denoted $\ket0$ and $\ket1$
+	(``ket''-0 and ``ket''-1). These have the forms:
+	\begin{align*}
+		\ket0 = \begin{bmatrix}1\\0\end{bmatrix} &&\text{and} && \ket1 =
+		\begin{bmatrix}0\\1\end{bmatrix}.
+	\end{align*}
+	We can extend these to higher dimensions, and has a natural notation
+	involving \emph{tensor products}:
+	\begin{align*}\hspace{-0.5em}
+		\ket0 = \ket{00} = \ket0\tensor\ket0 \begin{bmatrix}1\\0\\0\\0\end{bmatrix}, &&
+		\ket1 = \ket{01} = \ket0\tensor\ket1 \begin{bmatrix}0\\1\\0\\0\end{bmatrix}, &&
+		\ket2 = \ket{10} = \ket1\tensor\ket0 \begin{bmatrix}0\\0\\1\\0\end{bmatrix}, &&
+		\ket3 = \ket{11} = \ket1\tensor\ket1 \begin{bmatrix}0\\0\\0\\1\end{bmatrix}
+	\end{align*}
+	and so on. The latter states are in $\complex^{2}\tensor\complex^{2}$, while
+	the former are in $\complex^2$. So we can generalize to dimensions that may
+	not be a power of two if needed.
+
+	States can also be in a superposition of any basis state, for example the
+	state $\alpha\ket0+\beta\ket1$, where $\alpha,\beta\in\complex$ and
+	$\alpha^2+\beta^2=1$. Note that any quantum state must have a unit norm.
+	
+	Dirac notation offers other benefits, but these are the only properties we need.
+	
+	At times we will want to ``measure'' a given state in terms of the basis states. Since a general state may be in a superposition of some combination of these states, we do not always see any given basis state with equal probability. For example, when measuring $\alpha\ket0+\beta\ket1$, we see $\ket0$ with probability $\abs{\alpha}^2$ and we see $\ket1$ with probability $\abs{\beta}^2$.
+	\subsection{Gates and the Quantum Fourier Transform}
+	Operators in quantum computing are represented by unitary
+	matrices---matrices whose inverses are their transpose complex conjugates
+	(this is so that operations are reversible). The most important operation
+	that is used in the algorithms we discuss is the Quantum Fourier Transform
+	(QFT) mod $N$:
+		\begin{align*}
+			\op{F}_N = \frac{1}{\sqrt{N}}
+			\begin{bmatrix}1 & 1 & 1 & \cdots & 1\\
+				1 & \o{N}{} & \o{N}{2} & \cdots & \o{N}{N-1}\\
+				1 & \o{N}{2} & \o{N}{3} & \cdots & \o{N}{2(N-1)}\\
+				1 & \o{N}{3} & \o{N}{6} & \cdots & \o{N}{3(N-1)}\\
+				\vdots & \vdots & \vdots &  \ddots & \vdots\\
+				1 & \o{N}{N-1} & \o{N}{2(N-1)} & \cdots &
+				\o{N}{(N-1)(N-1)}
+		\end{bmatrix},
+		\end{align*}
+	where the $\o{N}{}$ is the $N^{th}$ root of unity
+	$\o{N}{}=\exp(\frac{2\pi i}{N})$.
+
+	\textbf{Remark.} $\sum_{j=0}^{N-1}\o{N}{j} = \o{N}{1} + \o{N}{2} + \cdots +
+	\o{N}{N-1} = \frac{1-\o{N}{N}}{1-\o{N}{}} = 0$, since $\o{N}{N}=1$.
+
+	For a given state $\ket{x}$, we have \[\op{F}_N\ket{x} =
+	\frac{1}{\sqrt{N}}\sum_{i=0}^{N-1} \o{N}{xi}\ket{i} := \ket{\phi^x_N}\] and
+	\[\op{F}_N^{-1}\ket{\phi^x_N} = \op{F}_N^{\dagger}\ket{\phi^x_N} = \ket{x}\]
+	\subsection{Circuits}
+	Just as classical computers can be built with \texttt{NAND} gates alone, we
+	could (in theory) build quantum computers with three gates: \op{H} (Hadamard
+			gate), 
+	\op{CNOT} (controlled-not), and $\op{R}_{\pi/4}$ (phase shift). The details
+	of which are unimportant for this discussion. Using these gates we can build the QFT gate as
+	described in the previous section.
+
+	We draw quantum circuits like normal circuits, with one row for each quantum
+	register, and gates drawn in boxes. Registers go from top-to-bottom, so the bottom row is the least significant qubit. Circuits are read left-to-right. When we write the results as equations, operators are  applied starting from the \emph{right}.
+	\section{Shor's Algorithm for Factoring}
+	\subsection{The Algorithm}
+	\begin{algorithm}[H]
+		\caption{Classical part of Shor's algorithm}
+		\texttt{INPUT:} Integer $n$ a pseudoprime to be factored
+
+		\texttt{OUTPUT:} Nontrivial factor of $n$
+		\begin{algorithmic}[1]
+			\STATE Randomly pick $a \in \set{3,\dots,n-1}$.
+			\STATE Compute $d=\gcd(a,n)$
+			\IF{$d\neq 1$}
+				\RETURN $d$
+			\ENDIF
+			\STATE Compute $r = \ord(a)$ (Quantum part)
+			\IF{$r$ is even \textbf{and} $\gcd(a^{r/2},n)\neq -1$}
+				\STATE Compute $x=\gcd(a^{r/2}\pm1,n)$
+				\IF{$x\neq 1$ and $x\neq n$}
+					\RETURN $x$
+				\ENDIF
+			\ENDIF
+			\RETURN ``failure''
+		\end{algorithmic}
+	\end{algorithm}
+	\subsection{Analysis of the Classical Part}
+		\subsubsection{Correctness}
+		Note that $a^r\equiv 1 \pmod{n}$ by Fermat's Little Theorem. This means
+		that $a^r-1\equiv 0\pmod{n}$. So $n\mid a^r-1$. If $r$ is an even
+		number, then $n\mid (a^{r/2}-1)(a^{r/2}+1)$. So any factor of $n$ is
+		also a factor of either $a^{r/2}-1$ or $a^{r/2}+1$.  Assume we found $r$
+		as an order of $a$. If $r$ were odd, then computing $a^{r/2}$ is
+		impossible as 2 does not divide $r$. If $a^{r/2}\equiv-1\pmod{n}$, then
+		$a^{r/2}+1\equiv 0\pmod{n}$. So when $\gcd(a^{r/2}+1,n)$ is not trivial,
+		it must be a factor of $n$.
+
+
+		\subsubsection{Probability of Success}
+		Say that $n=pq$. This algorithm is probabilistic, since we choose $a$
+		randomly. So the success of the algorithm depends on the order of $a$
+		being even and not having $a^{r/2}\equiv -1\pmod{n}$. Choosing $a$
+		randomly in $\mathbb{Z}_n$ is the same as choosing $a_p\in\mathbb{Z}_p$
+		and $a_q\in\ints_q$ randomly. Of all elements in $\ints_n^\ast$, half
+		have an even order, and half have an odd order. 
+		
+		Let $r_p$ be the order of $a_p$ and $r_q$ the order of $a_q$. When $r_p$
+		and $r_q$
+		are even, we know that $2^{k_p}$ divides $r_p$ and $2^{k_q} | r_q$ for
+		some integers $k_p$ and $k_q$.
+		If $r$ is odd, then both $r_p$ and $r_q$ are odd. This occurs with
+		probability $1/2$. When $r$ is even and
+		$a^{r/2}\equiv -1\pmod{n}$,
+		it follows that $a_p^{r/2}\equiv -1\pmod{p}$ and
+		$a_q^{r/2}\equiv-1\pmod{q}$ by the Chinese Remainder Theorem. So $r_p$
+		and $r_q$ do not divide $r/2$. Then both $r_p$ and $r_q$ have the same
+		largest power of 2 as a divisor, say $2^m | r_p, r_q$. If they do not,
+		then say $2^{m+1}|r_p$, and $r$ as well. So $r_q$ would divide $r/2$,
+		which is a contradiction.
+		So $a$ has an even order with $a^{r/2}\equiv
+		-1\pmod{n}$ probability 1/2, since $a$ is randomly chosen.
+		
+		\subsubsection{Runtime}
+		We assume that the quantum part works and runs in polynomial time in the
+		size of $n$. Computing the $\gcd$ on lines 2 and 8 takes
+		$O((\log{n})^2)$ multiplications. Everything else takes constant time,
+		so the runtime of the algorithm is in $O((\log{n})^2)$ ignoring the
+		quantum part.
+	\subsection{Quantum Part: Period finding}
+		Let $\op{U}_f$ be an oracle for a function $f(x) = a^x\pmod{n}$ for a
+		fixed $a$. In this case, $a$ is the random number chosen as in Algorithm
+		1.
+		The oracle is defined such that  $\op{U}_f \ket{i}\ket0 = \ket{i}\ket{f(i)}$.
+
+		We work in the space $\complex^n\tensor\complex^n$
+		The following circuit gives the quantum part of Shor's algorithm:
+		\[
+		\Qcircuit @C=1em @R=.7em {
+			\lstick{\ket0}& \qw & \gate{F_n^{\phantom{\dagger}}} & \qw & \multigate{1}{U_f} & \qw &
+				\gate{F_n^{\dagger}} &
+				\qw & \meter & \qw\\
+			\lstick{\ket0}& \qw & \qw & \qw & \ghost{U_f} & \qw & \qw &
+		\qw & \meter & \rstick{\ket{z}} \qw
+		}
+		\]
+	\subsubsection{Analysis of the Quantum Part}
+		We start by applying the Fourier transform on the first quantum register.
+		\[ (\op{F}_n\tensor\op1) \ket0\ket0 =
+		\frac{1}{\sqrt{n}}\sum_{i=0}^{n-1} \ket{i}\ket0\]
+
+		Then the first register is in a superposition of all possible states.
+		Next we apply the oracle:
+		
+		\[
+			\oracle \frac{1}{\sqrt{n}}\sum_{i=0}^{n-1}\ket{i}\ket0 = 
+			\frac{1}{\sqrt{n}}\sum_{i=0}^{n-1}\ket{i}\ket{a^i\mod{n}}
+		\]
+
+		When we measure the second register, we get some integer $z$. Let $i_0$
+		be the smallest integer with $0\leq i_0 < n$ such that $a^{i_0}\equiv
+		z\pmod{n}$. The first register can be rewritten to 
+		\[\frac{1}{\sqrt{\floor{n/p}}}\sum_{i=0}^{\lfloor (n/p)-1\rfloor}\ket{i_0+pi},\] 
+		where $p$ is the period (order) of $a$. Applying the inverse Fourier
+		transform on this gives
+		\begin{align*} 
+		&\xrightarrow{\op{F}_n^\dagger}\frac1{\sqrt{n}}
+		\sum_{j=0}^{n-1}
+		\frac{1}{\sqrt{\floor{n/p}}}\sum_{i=0}^{\floor{(n/p)-1}}
+		\o{n}{-(j(i_0+pi))}\ket{j}\\
+			&= \sum_j\sum_i \o{n}{-ji_0}\o{n}{jpi}\ket{j}\\
+			&= \sum_j\o{n}{-ji_0}\sum_i\o{n/p}{ij}\ket{j}
+		\end{align*}
+		But $\sum_i\o{n/p}{ij}$ is 1 whenever $j$ is a multiple of $n/p$, and 0
+		otherwise. The summation becomes
+		\[ \sum_{j\mid j \text{ is a multiple of } n/p} \ket{j}\]
+		When we measure, we get $j$ such that $j = (n\lambda)/p$ for some
+		$\lambda$. We also know $n$, so dividing by it gives $j/n = \lambda/p$.
+		Then we can write this fraction in lowest terms and take the denominator
+		as $p$. 
+
+		\textbf{Note:} This is a simplified analysis of the algorithm with the
+		assumption that the first run gives an irreducible fraction. In reality
+		this may not work all of the time, and you would use continued fraction
+		expansions to approximate a good value for $p$.
+
+		The quantum part runs in $\widetilde{O}((\log{n})^2)$ gate operations.
+		So the total cost of the entire algorithm is around $O((\log{n})^2)$, which is polynomial in the input size.
+		\subsection{Factoring Records using Quantum Methods}
+		In their paper, Dattani and Bryans\footnote{N. Dattani, N. Bryans, ``Quantum factorization of 56123 with only 4 qubits''} include a table of records for
+		quantum factoring. We reproduce it below.
+		\begin{table}[H]\centering
+			\caption{Quantum Factorization Records}
+			\begin{tabular}{c c c c c}\toprule
+				Number & \# of factors & \# of qubits needed & Algorithm & Year
+				implemented\\\midrule
+				15 & 2 & 8 & Shor & 2001\\
+				   & 2 & 8 & Shor & 2007\\
+				   & 2 & 8 & Shor & 2007\\
+				   & 2 & 8 & Shor & 2009\\
+				   & 2 & 8 & Shor & 2012\\
+				21 & 2 & 10 & Shor & 2012\\
+				143 & 2 & 4 & minimization & 2012\\
+				56153 & 2 & 4 & minimization & 2012\\\bottomrule
+			\end{tabular}
+		\end{table}
+		Two of the algorithms used are not Shor's, but are included for
+		interests' sake.
+	\section{Shor's Algorithm for DLP}
+		The algorithm is similar to the quantum part for factoring. Instead, 3
+		quantum registers are used. We replace the function computed by the
+		oracle $\op{U}_f$ to a function $f(x,y) = g^xa^{-y}\pmod{n}$ so that
+		$\oracle\ket{x}\ket{y}\ket0 = \ket{x}\ket{y}\ket{f(x,y)}$.
+		\[
+		\Qcircuit @C=1em @R=.7em {
+			\lstick{\ket0}& \qw & \gate{F_n} & \qw & \multigate{2}{U_f} & \qw &
+				\gate{F_n^{\dagger}} &
+				\qw & \meter & \qw\\
+			\lstick{\ket0}& \qw & \gate{F_n} & \qw & \ghost{U_f} & \qw &
+				\gate{F_n^{\dagger}} &
+				\qw & \meter & \qw\\
+			\lstick{\ket0}& \qw & \qw & \qw & \ghost{U_f} & \qw & \qw &
+		\qw & \meter & \rstick{\ket{z}} \qw
+		}
+		\]
+
+	\subsection{Quantum DLP Analysis}
+
+Given a generator $g$, and $g^r\equiv x\pmod{p}$, we want to solve for $r$.
+Suppose we know the order of $g$, that is $g^k\equiv 1\pmod{p}$.
+Then $g^ax^{-b}\equiv 1 \pmod{p}$ for all $b\ge 0$ where $a=k+br$.
+
+Then $g^{k+br}x^{-b}=g^kg^{br}x^{-b}=g^{r^b}x^{-b}=x^bx^{-b}=x^{b-b}=1$.
+
+%For the analysis, we assume that $q$ can be represented by a polynomial number
+%of bits, and $q$ is smooth. Then QFT can be preformed in polynomial time.\\
+
+Beginning with $\ket{0}\ket{0}$ in $\mathbb{C}^p\otimes\mathbb{C}^p$, perform QFT mod $(p-1)$ on the first two qubits.
+This gives us the uniform superposition over $a, b$:
+\[\frac{1}{p-1}\sum_{a=0,b=0}^{p-2}\ket{a}\ket{b}\]
+
+We then query our oracle to get to the state
+\[\frac{1}{p-1}\sum_{a=0,b=0}^{p-2}\ket{a}\ket{b}\ket{g^ax^-b\pmod{p}}.\]
+
+Then we can measure the third qubit. From above, we have $a=k+br$, so we can rewrite the first qubit.
+
+This reduces us to the state
+\[\frac{1}{\sqrt{p-1}}\sum_{b=0}^{p-2}\ket{k+br\pmod{p-1}}\ket{b}.\]
+
+We note that $\ket{br+k\pmod{p-1}}\ket{b}$ is a coset of the subgroup generated by $\ket{br \pmod{p-1}}\ket{b}$, so we consider operations on the subgroup instead.
+
+We then have the state
+\[\frac{1}{\sqrt{p-1}}\sum_{b=0}^{p-2}\ket{br\pmod{p-1}}\ket{b}.\]
+
+We now perform an inverse QFT mod $(p-1)$ on the first two qubits.
+
+We now take our assumption that $p-1$ is smooth. Then let $\omega$ be the $p-1$ root of unity, that is $\omega=e^{2\pi i/(p-1)}$. Then we get the state:
+\[\frac{1}{(p-1)^{3/2}}\sum_{c=0,d=0}^{p-2}\sum_{b=0}^{p-2}(\omega^{rc+d})^b\ket{c}\ket{d}\]
+
+Then if $rc+d \not\equiv 0 \pmod{p-1}$, we are just summing $\omega_{p-1}^1$ to
+$\omega_{p-1}^p-1$, which is just $0$. Then we will only get an answer if $rc+d
+\equiv 0 \pmod{p-1}$, i.e., $r \equiv -\frac{d}{c} \pmod{p-1}$.
+
+So if $gcd(c,p-1)=1$ we can find $r$. Since otherwise we would be dividing by
+zero above.
+	
+\end{document}

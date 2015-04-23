@@ -1,0 +1,227 @@
+\documentclass{assignment}
+\usepackage{amsmath,amssymb,amsfonts}
+
+\coursetitle{Quantum Algorithms}
+\courselabel{CPSC 519}
+\exercisesheet{Homework \#1}{}
+\student{Tom Crowfoot - 10037477}
+\semester{Winter 2015}
+
+\newcommand{\inner}[2]{\ensuremath{\langle{#1}|{#2}\rangle}}
+
+\input{Qcircuit}
+
+\begin{document}
+\begin{problemlist}
+
+  \pbitem
+  \begin{problem}
+  \end{problem}
+  \begin{answer}
+    \\
+    \begin{enumerate}
+    \item
+      To calculate the parity of a function $f$ classically, you need to calculate the value of $f$ on its entire domain, and sum the values. Then the algorithm is $\sum_{i=0}^{N-1}f(i)$ $mod$ $2$.\\
+      This algorithm will require $N$ calls to the oracle.
+    \item
+      Again to compute the parity of a function, you need to calculate the value of the function on each value and sum the results. From Deutch's algorithm, we know that we can compute a function at two values simultaneously with a quantum computer. We can then compute the value of the function quantumly, with $N/2$ queries to the oracle.\\
+      This algorithm has to be optimal. The parity of $f(x)$ is essentially random, so no information can be gained about the parity of $f(x+1)$ from $f(x)$. Thus the function must be evaluated over the entire domain. Then the best that can be done is two evaluations per query of the oracle, and so there must be $N/2$ queries.\\
+    \end{enumerate}
+  \end{answer}
+
+  \pbitem
+  \begin{problem}
+  \end{problem}
+  \begin{answer}
+    \\
+    \begin{enumerate}
+    \item
+      \begin{align*}
+      \ket{1}\ket{-}=&\ket{10}-\ket{11}\\
+      U_f\ket{1}\ket{-}=&U_f\ket{10}-U_f\ket{11}\\
+      =&\ket{1}\ket{0\oplus f(1)}-\ket{1}\ket{1\oplus f(1)}\\
+      =&\ket{1}(\ket{0\oplus f(1)}-\ket{1\oplus f(1)})\\
+      =&(-1)^{f(1)}\ket{1}\ket{-}\\
+      \end{align*}
+    \item
+      \begin{align*}
+        \ket{\phi}=&(S\otimes 1)U_f\frac{1}{\sqrt{3}}(\ket{0}+\ket{1}+\ket{2})\ket{-}\\
+        =&(S\otimes 1)\frac{1}{\sqrt{3}}(U_f\ket{0}\ket{-}+U_f\ket{1}\ket{-}+U_f\ket{2}\ket{-})\\
+        =&(S\otimes 1)\frac{1}{\sqrt{3}}((-1)^{f(0)}\ket{0}\ket{-}+(-1)^{f(1)}\ket{1}\ket{-}+(-1)^{f(2)}\ket{2}\ket{-})\\
+        =&(S\otimes 1)\frac{1}{\sqrt{3}}((-1)^{f(0)}\ket{0}\ket{-}+(-1)^{f(1)}\ket{1}\ket{-}+(-1)^{f(2)}\ket{2}\ket{-})\\
+        =&\frac{1}{\sqrt{3}}((-1)^{f(0)}\ket{0}\ket{-}+(-1)^{f(1)}\ket{1}\ket{-}-(-1)^{f(2)}\ket{2}\ket{-})\\
+        =&\frac{1}{\sqrt{3}}((-1)^{f(0)}\ket{0}\ket{-}+(-1)^{f(1)}\ket{1}\ket{-}-\ket{2}\ket{-})\\
+        =&\frac{1}{\sqrt{3}}((-1)^{f(0)}\ket{0}+(-1)^{f(1)}\ket{1}-\ket{2})\ket{-}\\
+      \end{align*}
+    \item
+      \begin{align*}
+        |\inner{b_1}{\phi}|=&|\frac{1}{\sqrt{3}}(\bra{0}+\bra{1}+\bra{2})\frac{1}{\sqrt{3}}((-1)^{f(0)}\ket{0}+(-1)^{f(1)}\ket{1}-\ket{2})|\\
+        =&|\frac{1}{\sqrt{3}}(\bra{0}+\bra{1}+\bra{2})\frac{1}{\sqrt{3}}(-1\ket{0}+\ket{1}-\ket{2})|\\
+        =&|\frac{1}{3}(-\inner{0}{0}+\inner{1}{1}-\inner{2}{2})|\\
+        =&|\frac{1}{3}(-1)|\\
+        =&|\frac{-1}{3}|\\
+        =&\frac{1}{3}\\
+      \end{align*}
+    \item
+      From the answer in part 3, the probability to measure state $\ket{b_1}$ is
+      $|\inner{b_1}{\phi}|^2=|\frac{1}{3}|^2=\frac{1}{9}$.\\
+    \item
+      $f(0)=0,f(1)=0$\\
+      \begin{align*}
+        |\inner{b_1}{\phi}|^2=&|\frac{1}{\sqrt{3}}(\bra{0}+\bra{1}+\bra{2})\frac{1}{\sqrt{3}}((-1)^{f(0)}\ket{0}+(-1)^{f(1)}\ket{1}-\ket{2})|^2\\
+        =&|\frac{1}{\sqrt{3}}(\bra{0}+\bra{1}+\bra{2})\frac{1}{\sqrt{3}}(\ket{0}+\ket{1}-\ket{2})|^2\\
+        =&|\frac{1}{3}(1)|^2\\
+        =&\frac{1}{9}\\
+      \end{align*}
+      $f(0)=0,f(1)=1$\\
+      \begin{align*}
+        |\inner{b_1}{\phi}|^2=&|\frac{1}{\sqrt{3}}(\bra{0}+\bra{1}+\bra{2})\frac{1}{\sqrt{3}}((-1)^{f(0)}\ket{0}+(-1)^{f(1)}\ket{1}-\ket{2})|\\
+        =&|\frac{1}{\sqrt{3}}(\bra{0}+\bra{1}+\bra{2})\frac{1}{\sqrt{3}}(\ket{0}-\ket{1}-\ket{2})|^2\\
+        =&|\frac{1}{3}(-1)|^2\\
+        =&\frac{1}{9}\\
+      \end{align*}
+      $f(0)=1,f(1)=1$\\
+      \begin{align*}
+        |\inner{b_1}{\phi}|^2=&|\frac{1}{\sqrt{3}}(\bra{0}+\bra{1}+\bra{2})\frac{1}{\sqrt{3}}((-1)^{f(0)}\ket{0}+(-1)^{f(1)}\ket{1}-\ket{2})|^2\\
+        =&|\frac{1}{\sqrt{3}}(\bra{0}+\bra{1}+\bra{2})\frac{1}{\sqrt{3}}(-\ket{0}-\ket{1}-\ket{2})|^2\\
+        =&|\frac{1}{3}(-3)|^2\\
+        =&1\\
+      \end{align*}
+    \item
+      If at the end of the algorithm if you do not measure $\ket{b_1}$, then return $f(0)\land f(1)=0$.\\
+      Otherwise, if you measure $\ket{b_1}$, output $1$.\\
+      The chance to measure $\ket{b_1}$ while $f(0)\land f(1) \neq 1$ is $\frac{1}{9}+ \frac{1}{9}+ \frac{1}{9} = \frac{1}{3}$.\\
+      Then the probability of success for the algorithm is $1-\frac{1}{3}=\frac{2}{3}$.\\
+    \end{enumerate}
+  \end{answer}
+
+  \clearpage
+  \pbitem
+  \begin{problem}
+  \end{problem}
+  \begin{answer}
+    \\
+    \begin{enumerate}
+    \item
+      \begin{align*}
+        P(F_2\otimes F_3)Q
+        =&P(
+        \begin{bmatrix}
+          1 & 1\\
+          1 & \omega_2
+        \end{bmatrix}
+        \otimes
+        \begin{bmatrix}
+          1 & 1 & 1\\
+          1 & \omega_3 & \omega_3^2\\
+          1 & \omega_3^2 & \omega_3
+        \end{bmatrix}
+        )Q\\
+        =&P(
+        \begin{bmatrix}
+          1 & 1 & 1 & 1 & 1 & 1\\
+          1 & \omega_6^2 & \omega_6^4 & 1 & \omega_6^2 & \omega_6^4\\
+          1 & \omega_6^4 & \omega_6^2 & 1 & \omega_6^4 & \omega_6^2\\
+          1 & 1 & 1 & \omega_6^3 & \omega_6^3 & \omega_6^3\\
+          1 & \omega_6^2 & \omega_6^4 & \omega_6^3 & \omega_6^5 & \omega_6\\
+          1 & \omega_6^4 & \omega_6^2 & \omega_6^3 & \omega_6 & \omega_6^5\\
+        \end{bmatrix}
+        )Q\\
+        =&
+        \begin{bmatrix}
+          1 & 1 & 1 & 1 & 1 & 1\\
+          1 & \omega_6^1 & \omega_6^2 & \omega_6^3 & \omega_6^4 & \omega_6^5\\
+          1 & \omega_6^2 & \omega_6^4 & 1 & \omega_6^2 & \omega_6^4\\
+          1 & \omega_6^3 & 1 & \omega_6^3 & 1 & \omega_6^3\\
+          1 & \omega_6^4 & \omega_6^2 & 1 & \omega_6^4 & \omega_6^2\\
+          1 & \omega_6^5 & \omega_6^4 & \omega_6^3 & \omega_6^2 & \omega_6\\
+        \end{bmatrix}\\
+        =&F_6
+      \end{align*}
+      Then $P$ will be the matrix to permute the rows, and $Q$ will permute the columns.\\
+      We want P to permute such that row $1\rightarrow 1, 2\rightarrow 5, 3\rightarrow 3, 4\rightarrow 4, 5\rightarrow 2, 6\rightarrow 6$.\\
+      Then \begin{equation*}P=
+      \begin{bmatrix}
+        1 & 0 & 0 & 0 & 0 & 0\\
+        0 & 0 & 0 & 0 & 1 & 0\\
+        0 & 0 & 1 & 0 & 0 & 0\\
+        0 & 0 & 0 & 1 & 0 & 0\\
+        0 & 1 & 0 & 0 & 0 & 0\\
+        0 & 0 & 0 & 0 & 0 & 1
+      \end{bmatrix}
+      \end{equation*}
+      We want Q to permute such that column $1\rightarrow 1, 2\rightarrow 3, 3\rightarrow 5, 4\rightarrow 4, 5\rightarrow 6, 6\rightarrow 2$.\\
+      Then \begin{equation*}Q=
+      \begin{bmatrix}
+        1 & 0 & 0 & 0 & 0 & 0\\
+        0 & 0 & 1 & 0 & 0 & 0\\
+        0 & 0 & 0 & 0 & 1 & 0\\
+        0 & 0 & 0 & 1 & 0 & 0\\
+        0 & 0 & 0 & 0 & 0 & 1\\
+        0 & 1 & 0 & 0 & 0 & 0
+      \end{bmatrix}
+      \end{equation*}
+    \item
+      \begin{align*}
+        P(F_2\otimes F_3)Q
+        =&P(
+        \begin{bmatrix}
+          1 & 1\\
+          1 & \omega_2
+        \end{bmatrix}
+        \otimes
+        \begin{bmatrix}
+          1 & 1\\
+          1 & \omega_2
+        \end{bmatrix}
+        )Q\\
+        =&P(
+        \begin{bmatrix}
+          1 & 1 & 1 & 1\\
+          1 & \omega_4^2 & 1 & \omega_4^2\\
+          1 & 1 & \omega_4^2 & \omega_4^2\\
+          1 & \omega_4^2 & \omega_4^2 & 1\\
+        \end{bmatrix}
+        )Q\\
+        =&\begin{bmatrix}
+          1 & 1 & 1 & 1\\
+          1 & \omega_4 & \omega_4^2 & \omega_4^3\\
+          1 & \omega_4^2 & 1 & \omega_4^2\\
+          1 & \omega_4^3 & \omega_4^2 & \omega_4\\
+        \end{bmatrix}\\
+        =&F_4        
+      \end{align*}
+      On inspection of the matrix $F_2\otimes F_2$, it lacks a term with $\omega_4^3$ in it. As $F_4$ does have this term, it will be impossible to permute $(F_2\otimes F_2)$ into $F_4$.\\
+    \end{enumerate}
+  \end{answer}
+
+  \pbitem
+  \begin{problem}
+  \end{problem}
+  \begin{answer}
+    \\
+    \begin{enumerate}
+    \item
+      $controlled-S_N\ket{s}\ket{t}=\omega_N^{st}\ket{s}\ket{t}$\\
+      If $\ket{s}$ is 0, then the $S_N$ should not be applied to $\ket{t}$. The expression then gives $controlled-S_N\ket{0}\ket{t}=\omega_N^{0*t}\ket{0}\ket{t}=\ket{0}\ket{t}$ as required.\\
+      If $\ket{s}$ is 1, then the $S_N$ should be applied to $\ket{t}$. The expression then gives $controlled-S_N\ket{1}\ket{t}=\omega_N^{1*t}\ket{1}\ket{t}=\omega_N^t\ket{1}\ket{t}$.\\
+      If $\ket{s}$ is larger than 1, the expression will give $\omega_N^{s*t}\ket{s}\ket{t}$.\\ 
+    \item
+      First note that
+      \begin{align*}
+        &controlled-T_N(\frac{1}{N}\sum_{x=0,y=0}^{N-1}\omega_N^{xs+(y-x)t}\ket{x}\ket{y-x\text{ modulo }N})\\
+        =&\sum_{x=0,y=0}^{N-1}\omega_N^{x(s-t)+yt}\ket{x}\ket{y}\\
+        =&\ket{\phi_N^{s-t}}\ket{\phi_N^t}
+      \end{align*}
+      We can then compute
+      \begin{align*}
+        controlled-T_N\ket{\phi_N^s}\ket{\phi_N^t}=&controlled-T_N\sum_{x=0,y=0}^{N-1}\omega_N^{x(s-t)+y't}\ket{x}\ket{y'}\\
+        =&\sum_{x=0,y=0}^{N-1}\omega_N^{x(s-t)+y't}\ket{x}\ket{y'+x\text{ modulo }N}\\
+        =&\sum_{x=0,y=0}^{N-1}\omega_N^{x(s-t)+y''t}\ket{x}\ket{y''}\\
+        =&\ket{\phi_N^{s-t}}\ket{\phi_N^{t}}
+      \end{align*}
+    \end{enumerate}
+  \end{answer}
+  
+\end{problemlist}
+\end{document}

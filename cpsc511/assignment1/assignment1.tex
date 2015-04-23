@@ -1,0 +1,58 @@
+\documentclass{assignment}
+
+\coursetitle{Introduction to Complexity Theory}
+\courselabel{CPSC 511}
+\exercisesheet{Assignment \#1}{}
+\student{Tom Crowfoot - 10037477}
+\semester{Fall 2014}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+
+\begin{document}
+
+\begin{problemlist}
+\pbitem
+\begin{problem}
+Show that if $f:\mathbb{N}\rightarrow \mathbb{N}$ is a time-constructible function, and $L\subset \Sigma^*$ is a language decided using a two-dimensional Turing machine, taking at most $f(|\omega|)$ steps on input $\omega \in \Sigma^*$, then there exists a (standard multi-tape) Turing Machine that decides $L$ using $O(f^2(|\omega|)logf(|\omega|))$ steps on input $\omega \in \Sigma^*$ in the worst case.\\
+\end{problem}
+\begin{answer}
+\\
+Let $M$ be a turing machine with a two-dimensional input tape. Let $|\omega|=n$. We can map the squares of this tape to a one-dimensional tape as shown:\\
+
+$\begin{smallmatrix}
+1 & 2 & 3 & 4 & \cdots\\
+5 & 6 & 7 & \cdots & \cdots\\
+8 & 9 & \cdots & \cdots & \cdots\\
+10 & \cdots & \cdots & \cdots & \cdots\\
+\cdots & \cdots & \cdots & \cdots & \cdots
+\end{smallmatrix}
+\Rightarrow
+\begin{smallmatrix}
+1 & 2 & 3 & 4 & \# & 5 & 6 & 7 & \# & 8 & 9 & \# & 10 & \# & \# &\cdots
+\end{smallmatrix}$
+\\
+Here the $\#$ character is assumed to not be in the tape alphabet, where $\#$ represents the end or a row in the two-dimensional tape(the rest of the symbols are blanks). This mapping is possible because at any point of time, $M$ has looked at a finite number of spaces. Let the language of $M'$ also include $k$-tuples of symbols in from $M\cup \{ \# \}$ such that $n/k=log(n)$.\\
+If $M'$ is a standard multi-tape turing machine, it will then take $O(n)$ steps to map the input of $M$ to the first tape of $M'$ because the input exists solely in the first row. It will then take $O(n)$ additional steps to write $k$-tuples of the input onto a second tape. We will work with this second tape.\\
+To simulate a left move of $M$, move left or just update the current symbol as required. This requires $O(1)$ steps to simulate.\\
+To simulate a right move of $M$, move right or update the current symbol as required. If the move being simulated requires a new space to be created, you will have to shift all the symbols to the right over by one to make room. The worst case will require you to move $f(n)$ symbols of $M$, so it will take $O(log(f(n)))$ steps to shift and update the $k$-tuples.\\
+To simulate a stay move, do not move. This requires $O(1)$ steps.\\
+To simulate an up move of $M$, you need to count from the simulated head position to the first $\#$ to the left to find which column you are in, you can use a second tape to count. You then need to move left until you find a second $\#$. If you encounter the end of the tape first, then you cannot move up, so move the simulated head back to where it started. This will take worst case $O(f(n))$ steps to scan left then right. If you find a second $\#$ instead, move the simulated head right by the number that you counted, this will place you in the correct column. It will take $O(f(n))$ steps in the worst case to scan left then right to the correct spot. If when moving right there is not enough room, you will have to shift everything right by the remaining number of spaces. This will take $log(f(n))$ steps to update a single symbol, and this must be done $f(n)$ times. In the worst case it will take $O(f(n)log(f(n)))$ steps to shift everything over and write the necessary number of blanks. It will then take $O(f(n)log(f(n)))$ steps to simulate moving up.\\
+To simulate a down move of $M$, you need to count from the simulated head position to the first $\#$ to the left to find which column you are in, you can use a second tape to count. You then need to move right until you find a second $\#$, placing you in the row below. Move the simulated head right by the number you counted, this will place you in the correct column. It will take $O(f(n)$ steps to scan left, then right to the correct spot. If when moving right there is not enough room, you will have to shift everything right by the remaining number of spaces, similar to the move up simulation. In the worst case it will take $O(f(n)log(f(n)))$ steps to shift everything over and write the necessary number of blanks. It will then take $O(f(n)log(f(n)))$ steps to simulate moving down.\\
+We can now simulate each move of $M$ with $M'$, such that each move of $M$ will correspond to some set of moves in $M'$. Moving up or down results in the largest number of moves made by $M'$, $O(f(n)log(f(n)))$. So for an input in $M$ that takes $O(f(n))$ steps to compute, $M'$ would have to compute $O(f(n))$ up or down moves in the worst case, resulting in a run time of $O(f^2(n)log(f(n)))$.\\
+
+\end{answer}
+
+\pbitem
+\begin{problem}
+  Prove the following ``Speedup Theorem'' for one-tape Turing machines: If $f:\mathbb{N}\rightarrow \mathbb{N}$ is a function such that $n^2\in o(f)$, there exists a one-tape Turing machine deciding $L$ that uses at most $f(|\omega|)$ steps for every input $\omega$, and $\epsilon$ is a constant such that $\epsilon >0$, then there exists another one-tape Turing machine that decides $L$ using at most $\epsilon \cdot f(|\omega|)$ steps on every input string $\omega$ such that $n= |\omega|$ is sufficiently large.\\
+\end{problem}
+\begin{answer}
+\\
+Let $M$ be the first one-tape Turing machine deciding $L$ that uses at most $f(|\omega)$ steps for every input $\omega$. Let $M$ have $|\Gamma|$ tape symbols.\\
+Let $M'$ be a new turning machine, that has $|\Gamma|^k$ tape symbols, where each symbol is a $k$-tuple of symbols in $M$. We can then write the input to $M'$ to the end of the tape. Start by moving over the input to the end, and writing the first $k$ symbols, this takes $n+2$ steps, $n$ steps to read and traverse to the end, $1$ step to mark where the first $k$ symbols ended, $1$ step to write the new symbol. Then move back, read, then return to the end to transcribe the next $k$ symbols. This whole process will then take less than $n^2$ steps, leaving the head of the tape at the left most $k$-tuple.\\
+We can then simulate $k$ steps of $M$ in at most $6$ steps with $M'$. Because each cell of $M'$ represents a $k$-tuple, at most three cells of $M'$ will be affected by $k$ steps of $M$. Then by a move of $L,R,R,L$, $M'$ can read all the cells of $M$ that could possibly be effected by $k$ moves. Based on what $M'$ reads, it can make two more moves, either $L,R$ or $R,L$ as appropriate to update cells based on what $M$ would have done in $k$ moves. The simulation will require at most $6\frac{f(n)}{k}$ steps to compute. If we choose $k=\frac{6}{\epsilon}$, we get that the simulation takes $\epsilon \cdot f(n)$ steps.\\
+The total time taken to run $M'$ is then $\epsilon \cdot f(n) + n^2$, where $n^2\in o(f)$, so $M'$ decides $L$ using at most $\epsilon \cdot f(|\omega|)$ steps on every input string $\omega$.\\
+\end{answer}
+
+\end{problemlist}
+\end{document}

@@ -1,0 +1,225 @@
+\documentclass{assignment}
+\usepackage{amsmath, amssymb, amsfonts}
+\usepackage{algorithmic,algorithm}
+
+\coursetitle{Cryptography}
+\courselabel{PMAT 429}
+\exercisesheet{Take Home Final}{}
+\student{Tom Crowfoot - 10037477}
+\semester{Winter 2015}
+
+\begin{document}
+
+\begin{problemlist}
+\pbitem
+\begin{problem}
+  Recalling the DHP: given $p,\beta, \beta^x, \beta^y$, find $\beta^{xy}$.\\
+  Additionally, EGP: given $p, \beta, \beta^x, \beta^y, \beta^{xy}\cdot m$, find $m$.\\
+  To see that $DHP \equiv_P EGP$, we must show $DHP \le_P EGP$ and $EGP \le_P DHP$.\\
+  \begin{enumerate}
+  \item $EGP \le_P DHP$.\\
+    Assume that we have an oracle solving the $DHP$.\\
+    We are given inputs $p, \beta, \alpha=\beta^x, \gamma_1=\beta^y, \gamma_2=\beta^{xy}\cdot m$, and we wish to find $m$.\\
+    We can use something like the EEA to find inverses in polynomial time, so it is easy to compute $\alpha^{-1}=\beta^{-x}$.\\
+    We can then pass inputs $p, \beta, \alpha^{-1}, \gamma_1$ to our $DHP$ solving oracle. The oracle will then return the value $\beta^{-xy}$.\\
+    We can then compute the value $\beta^{-xy}\gamma_2=\beta^{-xy}\beta^{xy}\cdot m=m$, solving the $EGP$.
+  \item $DHP \le_P EGP$.\\
+    Assume that we have an oracle solving the $EGP$.\\
+    We are given inputs $p, \beta, \beta^x, \beta^y$, and we wish to find $\beta^{xy}$.\\
+    We can then pass inputs $p, \beta, \beta^x, \beta^y, 1$ to our $EGP$ solving oracle. The oracle will then return the value $m=\gamma_1^{-x}\gamma_2$, where $\gamma_1=\beta^y$ and $\gamma_2=1$, so $m=\beta^{-xy}$.\\
+    We can then find the inverse of $\beta^{-xy}$ in polynomial time using EEA, to get $\beta^{xy}$, solving the $DHP$.
+  \end{enumerate}
+  Then since $DHP \le_p EGP$ and $EGP \le_p DHP$, $EGP \equiv_p DHP$ as required. $\blacksquare$
+\end{problem}
+
+\pbitem
+\begin{problem}
+  \begin{enumerate}
+  \item
+    If we can solve the DLP with base $b$, then we can solve the DLP with base $\beta_i$.\\
+    As $b$ is a generator of $G$, there must be some $z_i$ such that $b^{z_i}=\beta_i$.\\
+    Then to solve $\alpha_i=\beta_i^{x_i}$, we first solve $\beta_i=b^{z_i}$ to get $z_i$.\\
+    Then $\alpha_i=(b^{z_i})^{x_i}=b^{z_i*x_i}$, so we can solve to get $z_i*x_i$.\\
+    Finally we can compute $\frac{z_i*x_i}{z_i}=x_i$ to solve this DLP.\\
+    
+    So to solve for $x_i$, we needed to solve two DLP's with base $b$.\\
+    Then to solve for $t$ DLP's to find all the $x_i$, we need to solve $2t$ DLP's with base $b$.\\
+  \item
+    Using the idea from the previous part, we could solve $b^{z_i}=\beta_i$ and $\alpha_i=b^{z_i*x_i}$ to compute $x_i$.\\
+    The normal BSGS algorithm runs in $\sqrt{n}$ time, where most of the time is spent computing the table of values to compare against. If we can increase the table size to $\sqrt{tn}$, we can decrease the amount of computations to find collisions with the table to $\sqrt{n}/t$ for each $x_i$.\\
+
+    \begin{algorithm}[H]
+      \begin{algorithmic}[1]
+        \STATE Set $m=\lceil \sqrt{tn} \rceil$.
+        \FOR{$0\le j < m$}
+        \STATE{Store $(j,(b^j)$ in hash table $A$.}
+        \ENDFOR
+        \STATE Compute $b^{-m}$.
+        \FOR{$1\le k \le t$}
+        \FOR{$0\le i < m/t$}
+        \IF{$\alpha_i*b^{-im}$ in table $A$.}
+        \STATE{$z_i*x_i=im+j$, so store $(i,im+j)$ in hash table $B$.}
+        \ENDIF
+        \IF{$\beta_i*b^{-im}$ in table $A$.}
+        \STATE{$z_i=im+j$, so store $(i,im+j)$ in hash table $C$.}
+        \ENDIF
+        \ENDFOR
+        \ENDFOR
+        \FOR{$1\le i < t$}
+        \STATE{$x_i=(z_i*x_i)/z_i$}
+        \ENDFOR
+        \end{algorithmic}
+    \end{algorithm}
+
+    Line $1$ is calculating the square root of an integer, which can be done fast.\\
+    The loop on line $3$ iterates $m$ times, and each iteration preforms a single multiplication, so it preforms $m$ multiplications.\\
+    Line $5$ is a single inversion, which can be done with EEA, so this is fast.\\
+    The loop on line $6$ iterates $t$ times.\\
+    The inner loop on line $7$ iterates $m/t$ times.\\
+    Lines $8$ and $11$ both preform a single multiplication.\\
+    So the inner loop preforms a total of $2*m/t$ multiplications.\\
+    Then the outer loop preforms a total of $t*2*m/t=2*m$ multiplications.\\
+    The loop on line 16 preforms $t$ divisions, which we can count the same as multiplications.\\
+
+    Then the total run time of the algorithm will be $O(m+2m+t)=O(m)=O(\sqrt{tn})$ multiplications.\\
+    
+    
+  \end{enumerate}
+\end{problem}
+
+\pbitem
+\begin{problem}
+  \begin{enumerate}
+  \item
+    To show this, we can just compute:\\
+    $780^3\pmod{1333} \equiv 1\pmod{1333}$\\
+    $1296^3\pmod{1333} \equiv 1\pmod{1333}$
+  \item
+    From part $(a)$, we know that $780$ and $1296$ both have order $3$.\\
+    Then note that if $a^3 \equiv 1\pmod{p}$ and $b^3 \equiv 1\pmod{p}$, then $(a*b)^3 \equiv 1\pmod{p}$
+    So we can compute:
+    \begin{align*}
+      780*780 \equiv 552\pmod{1333}\\
+      780*1296 \equiv 466\pmod{1333}\\
+      780*466 \equiv 904\pmod{1333}\\
+      1296*1296 \equiv 36\pmod{1333}\\
+      1296*466 \equiv 87\pmod{1333}\\
+      1296*904 \equiv 1210\pmod{1333}\\
+    \end{align*}
+    Then $780,1296,552,466,904,36,87,1210$ all have order $3$.
+  \item
+    To factor $n=1333$, we can compute the gcd of $n$ and the difference between two of these numbers.\\
+    Then $gcd(1333, 780-1296) = 43$, so $1333=43*31$.\\
+    Additional pairs that work are: $(780,904), (780,36), (780,1210), (1296,552), (1296,87),$ $(1296,1210), (552,466), (552,36), (552,87), (466,36), (466,1210), (904,36), (904,87)$.\\
+  \end{enumerate}
+\end{problem}
+
+\pbitem
+\begin{problem}
+  \begin{enumerate}
+  \item
+    First, $341-1 = 340 = 2^2*85$. If $341$ is a strong pseudoprime to base $a$, then either $a^{85} \equiv 1 \pmod{341}$ or $a^{85*2^s}\equiv -1\pmod{341}$ for $s=0,1$.\\
+    Then for base $2$, $2^{85} \equiv 32 \pmod{341}$, $2^{85*2} \equiv 1 \pmod{341}$.\\
+    So $341$ is not a strong pseudoprime to the base $2$.
+  \item
+    From the previous, we know $2^{85*2}=32^2 \equiv 1 \pmod{341}$.\\
+    Rewriting, we get $32^2-1\equiv 0 \pmod{341}$, where $32^2-1=(32-1)(32+1)=31*33\equiv 0 \pmod{341}$.\\
+    So either $31$ or $33$ divides $341$, and by checking both choices we find $341=31*11$.
+  \item
+    If $n$ is a pseudoprime to the base $a$, then $a^{n-1}\equiv 1 \pmod{n}$.\\
+    However $n$ is not a strong pseudoprime to the base $a$, so first write $n-1=2^x*y$. Then $a^y \not\equiv 1 \pmod{n}$ and $a^{y*2^s}\not\equiv -1 \pmod{n}$ for $s=0,1,2,...,x-1$.\\
+    So $a^{y*2^x} \equiv 1\pmod{n}$, and then $a^{y*2^{x-1}}*a^{y*2^{x-1}} \equiv 1 \pmod{n}$.\\
+    For simplicity write $y*2^{x-1} = z$, and then $a^{2z}-1 \equiv 0 \pmod{n}$.\\
+    Then $(a^z+1)(a^z-1)\equiv 0 \pmod{n}$, so either one of $a^z-1$ or $a^z+1$ divides $n$.\\
+    However we know that $a^z \not\equiv -1 \pmod{n}$ so $a^z+1 \not\equiv 0 \pmod{n}$, so $a^z-1$ must be a non-trivial divisor of $n$. $\blacksquare$    
+  \end{enumerate}
+\end{problem}
+
+\pbitem
+\begin{problem}
+  The largest diverse number is $9876543210$, so the largest prime diverse number must be smaller than this.\\
+  Ideally we could take a permutation of this number and get a prime, as the more digits the number has the larger it is.\\
+  We can't use all digits as the sum of digits would then be $45$ which is divisible by $3$ and so the number is divisible by $3$.\\
+  So if we remove one of $1,2,4,5,7,8$ it won't be divisible by $3$.\\
+  However we need this number to end in $1,3,7,9$ if we want it to possibly be prime.\\
+  This leaves us with $4*(8!-7!)=141120$ remaining numbers that could be the largest diverse prime.\\
+  This is quite a small number for a computer to check, so we can write a small program to quickly check and find the largest diverse prime.\\
+  I attached the java program I wrote to do this, it runs in roughly $5$ seconds on my laptop, so pretty fast.\\
+  Then $987654103$ is the largest prime diverse number.
+\end{problem}
+
+\pbitem
+\begin{problem}
+  From the four points, we get four linear equations
+  \begin{align*}
+    120^2=&96^3+96a+b\pmod{p}\\
+    17^2=&118^3+118a+b\pmod{p}\\
+    89^2=&73^3+73a+b\pmod{p}\\
+    121^2=&97^3+97a+b\pmod{p}\\
+  \end{align*}
+  We also know that $4a^3+27b^2\neq 0$.\\
+  Also, $p > 121$.\\
+
+  We can use matrix row reductions to find values for $a$ and $b$ satisfying two equations.\\
+  From the first two equations, we get $a=-772407/22$ and $b=27501840/11$.\\
+  From the first and third, we get $a=-489240/23$ and $b=26949312/23$.\\
+  From the first and fourth, we get $a=-27696$ and $b=1788480$.\\
+  From the second and third, we get $a=-140183/5$ and $b=8327879/5$.\\
+  From the second and fourth, we get $a=-248237/7$ and $b=17792765/7$.\\
+  From the third and fourth, we get $a=-21539$ and $b=1191251$.\\
+  
+  Equating all these things for $a$, we get\\
+  $-772407/22+489240/23-(-27696+140183/5)-(-248237/7+21539)=0 \pmod{p}$, so
+  \[
+  -4520941/17710=-4520941=0 \pmod{p}
+  \].
+  Doing the same for $b$, we get\\
+  $27501840/11-26949312/23-1788480+8327879/5-17792765/7+1191251=0 \pmod{p}$, so
+  \[
+  -1284140731/8855=-1284140731=0 \pmod{p}
+  \].
+  Then both $-4520941$ and $-1284140731$ have the prime factor $-131$, so maybe we should try $p=131$.\\
+
+  Then the equations become
+  \begin{align*}
+    28=&96a+b\pmod{131}\\
+    128=&118a+b\pmod{131}\\
+    114=&73a+b\pmod{131}\\
+    104=&97a+b\pmod{131}\\
+  \end{align*}
+  Equating these, we can try to find a value for $a$.\\
+  Then we get $28-96a-128+118a-114+73a+104-97a=0 \pmod{131}$, so
+  \[
+  -2a -110 =0 \pmod{131}
+  \]
+  So maybe $a=76$.
+
+  Then finding the value of $b$ is easy, we can solve
+  \[
+  b=28-96*76 \pmod{131}
+  \]
+  So we get $b=68$.\\
+
+  Now checking the original equations with our found values
+  \begin{align*}
+    120^2=&96^3+96(76)+68\pmod{131}\\
+    \Rightarrow121=&121\pmod{131}\\
+    17^2=&118^3+118(76)+68\pmod{131}\\
+    \Rightarrow27=&27\pmod{131}\\
+    89^2=&73^3+73(76)+68\pmod{131}\\
+    \Rightarrow61=&61\pmod{131}\\
+    121^2=&97^3+97(76)+68\pmod{131}\\
+    \Rightarrow100=&100\pmod{131}\\
+  \end{align*}
+  and everything seems to work.\\
+  So then the field must be $\mathbb{F}_{131}$, and $a=76$, $b=68$.
+
+  If we are only given $3$ points, we can try the same method.\\
+  If we were given only the first three points in this question(but any three should still work), when we equate the equations to get values for $a$ and $b$ using only the relations between the first and second, and first and third equations, we can again find that both numbers have prime divisor $131$, and so again guess $p=131$.\\
+  Going on, we can try to find $a$ using only the first two now reduced equations, and find $a=76$ again.\\
+  Finding $b$ can be done with just the first equation.\\
+  Then we have still found the field, $a$, and $b$ with just three points given.
+\end{problem} 
+
+\end{problemlist}
+\end{document}

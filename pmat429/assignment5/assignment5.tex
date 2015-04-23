@@ -1,0 +1,119 @@
+\documentclass{assignment}
+\usepackage{amsmath, amssymb, amsfonts}
+
+\coursetitle{Cryptography}
+\courselabel{PMAT 429}
+\exercisesheet{Home Work \#5}{}
+\student{Tom Crowfoot - 10037477}
+\semester{Winter 2015}
+
+\begin{document}
+
+\begin{problemlist}
+\pbitem
+\begin{problem}
+\end{problem}
+\begin{answer}
+  \\  
+  \begin{enumerate}
+  \item
+    If $P$ has order $2$, then $P+P=\mathcal{O}$. So $2P=\mathcal{O}$ happens when the tangent line of the curve is vertical, so $P$ must be on the x-axis.
+  \item
+    If $P$ has order $3$, then $P+P+P=\mathcal{O}$. So $2P + P = \mathcal{O}$, so $2P$ is the inverse of $P$. This happens when $2P$ and $P$ lie on a vertical line, with the third point on this line being $\mathcal{O}$.
+  \item
+    If $P$ has order $4$, then $P+P+P+P=\mathcal{O}$. So $4P = 2(2P)=\mathcal{O}$, so we want the tangent line of the curve to be vertical at point $2P$. This happens when $2P$ lies on the x-axis, so P must be a point on the curve such that it's tangent line intersects the curve on the x-axis.
+  \end{enumerate}
+\end{answer}
+
+\pbitem
+\begin{problem}
+\end{problem}
+\begin{answer}
+  \\
+  \begin{enumerate}
+  \item
+    The discriminate of the curve is given by $4a^3 + 27b^2 = 4(4)^3 + 27(5)^2 \equiv 1$ $mod$ $5$. As the discriminate is not $0$, this is an elliptic curve.
+  \item
+    The discriminate of the curve is given by $4a^3 + 27b^2 = 4(4)^3 + 27(5)^2 \equiv 0$ $mod$ $7$. As the discriminate is equivalent to $0$, this is not an elliptic curve.
+  \item
+    The discriminate over $\mathbb{Z}$ is $4a^3 + 27b^2 = 4(4)^3 + 27(5)^2 =931$. Factoring this gives $931=7^2\times 19$, so $E$ will define an elliptic curve over all primes, except for $7$ and $19$.
+  \end{enumerate}
+\end{answer}
+
+\pbitem
+\begin{problem}
+\end{problem}
+\begin{answer}
+  \\
+  \begin{enumerate}
+  \item
+    If the point $(0,1)$ has order $3$, then $(0,1)+(0,1)+(0,1)=\mathcal{O}$, so we can compute.\\
+    \begin{align*}
+      &(0,1)+(0,1)+(0,1)\\
+      =&2(0,1)+(0,1)\\
+      &2(0,1);m=(3x^2+a)(2y)^{-1}=(3*0^2+1)(2*1)^{-1}=(1)(3)=3\\
+      =&(m^2-2x,m(x-m^2+2x)-y)=(4,2)\\
+      &(4,2)+(0,1);m=(y_2-y_1)(x_2-x_1)^{-1}=(1-2)(0-4)^{-1}=(4)(1)=4\\
+      =&(m^2-x_1-x_2,m(x_1-x_3)-y_1)=(2,4)\\
+    \end{align*}
+    Then the point $(0,1)$ does not haver order $3$.\\
+  \item
+    If the point $3(0,1)$ has order $3$, then $3(0,1)+3(0,1)+3(0,1)=\mathcal{O}$, so we can compute. From the previous part, $3(0,1)=(0,1)+(0,1)+(0,1)=(2,4)$.\\
+    \begin{align*}
+      &(2,4)+(2,4)+(2,4)\\
+      =&2(2,4)+(2,4)\\
+      &2(2,4);m=(3x^2+a)(2y)^{-1}=(3*2^2+1)(2*4)^{-1}=(3)(2)=1\\
+      =&(m^2-2x,m(x-x_3)-y)=(2,1)\\
+      &(2,1)+(2,4);x_1=x_2, y_1\neq y_2\\
+      =&\mathcal{O}\\
+    \end{align*}
+    Then the point $3(0,1)$ has order $3$.\\
+  \item
+    By Hasse's theorem, the order of $E(\mathbb{F}_5)$ must lie on the interval $[2,10]$. We know the point $3(0,1)=(2,4)$ has order $3$, so $3(0,1)+3(0,1)+3(0,1)=9(0,1)=\mathcal{O}$, so the point $(0,1)$ has order $9$. Then the only multiple of $9$ in this range is $9$, so $|E(\mathbb{F}_5)|=9$.
+  \end{enumerate}
+\end{answer}
+
+\pbitem
+\begin{problem}
+\end{problem}
+\begin{answer}
+  \\
+  \begin{enumerate}
+  \item
+    Assume that $\psi(\alpha)=\alpha^3=\beta^3=\psi(\beta)$.\\
+    \begin{align*}
+      &p \equiv 2 \text{ }mod\text{ } 3\\
+      \Rightarrow& p=2+3m,m\in \mathbb{Z}\\
+      \Rightarrow& p-1-3m=1\\
+      &\alpha^1=\alpha^{p-1-3m}=\alpha^{p-1}\alpha^{3^{-m}}=\alpha^{3^{-m}}=\beta^{3^{-m}}=\beta^{p-1}\beta^{3^{-m}}=\beta^{p-1-3m}=\beta^1\\
+    \end{align*}
+    Then $\alpha=\beta$, so $\psi$ is injective.\\
+    As $\psi$ is injective, and the cardinality of the domain and codomain of $\psi$ are the same, then $\psi$ is bijective.
+  \item
+    From a theorem given in class, $p$ is prime, so let $q=p^1$, and then $|E(\mathbb{F}_q)|=p+1-t$.\\
+    Since $n=1$ is odd, one of the following holds:\\
+    $t=0$, $t^2=2q$ and $p=2$, $t^2=3q$ and $p=3$.\\
+    Since $p\equiv 2$ $mod$ $3$, we can rule out the last case.\\
+    If $p=2$, then $|E(\mathbb{F}_p)|=p+1-\sqrt{2p}=2+1-\sqrt{2*2}=1$. But we have $y^2=(0)^3+1=1$ and $y^2=(1)^3+1=0$, so the points on the curve are $(0,1),(1,0)$. So this can't be the case.\\
+    Then $t=0$, and $|E(\mathbb{F}_p)|=p+1-t=p+1$.\\
+  \end{enumerate}
+\end{answer}
+
+\pbitem
+\begin{problem}
+\end{problem}
+\begin{answer}
+  \\
+  Let the curve equation be of the form $y^2=x^3+ax+b$ over $\mathbb{F}_p$, with $4a^3+27b^2$ $mod$ $p\neq 0$.\\
+  Say the agreed on point is $P=(x,y)$. Then Alice and Bob can generate their public keys, $A=xP=(x_A,y_A)$ and $B=yP=(x_B,y_B)$.\\
+  If Alice sends Bob her compressed point $x_A$, Bob can calculate $y_A=x_A^3+ax_A+b$ and $y_A'=p-(x_A^3+ax_A+b)$.\\
+  Bob can choose the smaller y coordinate to use, so if $y_A < p-y_A$ he will generate the secret key $y(x_A,y_A)=yxP=yx(x,y)$.\\
+  If $y_A > p-y_A$ he will generate the key $y(x_A,p-y_A)=-yxP=yx(-P)=yx(x,-y)$.\\
+  If Bob sends Alice his compressed point $x_B$, Alice can calculate $y_B=x_B^3+ax_B+b$ and $y_B'=p-(x_B^3+ax_B+b)$.\\
+  Alice can choose the smaller y coordinate to use, so if $y_B < p-y_B$ she will generate the secret key $x(x_B,y_B)=xyP$.\\
+  If $y_B > p-y_B$ she will generate the key $x(x_B,p-y_B)=-xyP=xy(-P)=xy(x,-y)$.\\
+  So either Alice and Bob both generate the same key, or one generates $xy(-P)$ and the other generates $xyP$. In both cases, Alice and Bob both share the same $x$ coordinate in the secret key, which is all they need to generate a secret key.
+\end{answer}
+
+\end{problemlist}
+\end{document}

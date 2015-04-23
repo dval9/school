@@ -1,0 +1,172 @@
+\documentclass{assignment}
+\usepackage{amsmath,amssymb,amsfonts}
+
+\coursetitle{Quantum Algorithms}
+\courselabel{CPSC 519}
+\exercisesheet{Homework \#1}{}
+\student{Tom Crowfoot - 10037477}
+\semester{Winter 2015}
+
+\newcommand{\inner}[2]{\ensuremath{\langle{#1}|{#2}\rangle}}
+
+\input{Qcircuit}
+
+\begin{document}
+\begin{problemlist}
+
+  \pbitem
+  \begin{problem}
+  \end{problem}
+  \begin{answer}
+    \\
+    \begin{enumerate}
+    \item
+      \begin{align*}
+        \ket{\Phi_1} =& \alpha \ket{0} + \beta \ket{1}\\
+        \ket{\Phi_2} =& \gamma \ket{0} + \delta \ket{1}\\
+        \ket{\Phi_1} \otimes \ket{\Phi_2} =& \alpha \gamma \ket{00} + \alpha \delta \ket{01} + \beta \gamma \ket{10} + \beta \delta \ket{11}\\
+      \end{align*}
+      To get $\ket{\Phi^+}$, we would need to be able to set $\alpha\gamma = 1, \beta\delta=1$ while setting $\alpha\delta = 0, \beta\gamma = 0$, which is not possible so $\ket{\Phi^+}$ must be entangled.\\
+      To get $\ket{\Phi^-}$, we would need to be able to set $\alpha\gamma = 1, \beta\delta=-1$ while setting $\alpha\delta = 0, \beta\gamma = 0$, which is not possible so $\ket{\Phi^-}$ must be entangled.\\
+      To get $\ket{\Psi^+}$, we would need to be able to set $\alpha\gamma = 0, \beta\delta=0$ while setting $\alpha\delta = 1, \beta\gamma = 1$, which is not possible so $\ket{\Psi^+}$ must be entangled.\\
+      To get $\ket{\Psi^-}$, we would need to be able to set $\alpha\gamma = 0, \beta\delta=0$ while setting $\alpha\delta = 1, \beta\gamma = -1$, which is not possible so $\ket{\Psi^-}$ must be entangled.\\
+    \item
+      $\ket{\Psi}$ is unentangled, so we can write it as
+      \begin{equation}
+        \ket{\Psi} = \ket{\psi_1} \otimes \ket{\psi_2}
+      \end{equation}
+      where $\ket{\psi_1},\ket{\psi_2}\in \mathbb{C}^2$\\
+      Also say that $\ket{\psi_1} \otimes \ket{\psi_2} = \alpha \gamma \ket{00} + \alpha \delta \ket{01} + \beta \gamma \ket{10} + \beta \delta \ket{11}$ for $\alpha,\beta,\gamma,\delta \in \mathbb{C}$\\
+      $\ket{\Phi}$ is fully entangled, so we can write it as
+      \begin{equation}
+        \ket{\Phi} = (U\otimes V)^{\dagger}\ket{\Phi^+}
+      \end{equation}
+      where $U,V\in \mathbb{C}^{2\times 2}$\\
+      Also
+      \begin{align*}
+        |\inner{\Psi}{\Phi}|^2 =& |(\bra{\psi_1} \otimes \bra{\psi_2})((U\otimes V)^{\dagger}\ket{\Phi^+})|^2\\
+        =& |(\alpha \gamma \bra{00} + \alpha \delta \bra{01} + \beta \gamma \bra{10} + \beta \delta \bra{11})((U\otimes V)^{\dagger}(\frac{1}{\sqrt{2}}\ket{00}+\ket{11}))|^2\\
+        =& |\frac{1}{\sqrt{2}}\alpha\gamma\bra{00}\ket{00} + \alpha\delta\bra{01}\ket{00} + \beta\gamma\bra{10}\ket{00} + \beta\delta\bra{11}\ket{00}\\
+        &+\alpha\gamma\bra{00}\ket{11} + \alpha\delta\bra{01}\ket{11} + \beta\gamma\bra{10}\ket{11} + \beta\delta\bra{11}\ket{11}|^2\\
+        =& |\frac{1}{\sqrt{2}} (\alpha\gamma + \beta\delta)|^2\\
+        =& \frac{1}{2} |(\alpha\gamma + \beta\delta)|^2\\
+        \le& \frac{1}{2} (|\alpha\gamma| + |\beta\delta|)^2\\
+        \le& \frac{1}{2} (|\alpha||\gamma| + |\beta||\delta|)^2\\
+        &\text{using Cauchy-Schwarz inequality}\\
+        \le& \frac{1}{2} (\alpha^2 + \beta^2)(\gamma^2 + \delta^2)\\
+        =& \frac{1}{2} |(1)(1)|\\
+        =&\frac{1}{2}
+      \end{align*}
+    \item
+      Let $\ket{D_1}=\ket{0}\otimes \ket{0}=\ket{00}$, so it is unentangled. Then CNOT$\ket{00}=\ket{00}$\\
+      Let $\ket{E_2}=H\otimes Y\ket{\Phi^+}=i\ket{00}-i\ket{01}-i\ket{10}-i\ket{11}$, so it is fully entangled. Then CNOT$i\ket{00}-i\ket{01}-i\ket{10}-\ket{11}=i\ket{00}-i\ket{01}-i\ket{11}-i\ket{10}=\ket{E_2}$.\\
+      Let $\ket{D_3}=\ket{+}\otimes\ket{0}=\frac{1}{\sqrt{2}}\ket{+0}$, $\ket{E_3}=\ket{\Phi^+}$. Then CNOT$\frac{1}{\sqrt{2}}\ket{+0}=\frac{1}{\sqrt{2}}(\ket{00}+\ket{11})=\ket{\Phi^+}$.\\
+      Let $\ket{D_4}=\ket{+}\otimes\ket{0}=\frac{1}{\sqrt{2}}\ket{+0}$, $\ket{E_4}=\ket{\Phi^+}$. Then CNOT$\frac{1}{\sqrt{2}}(\ket{00}+\ket{11})=\frac{1}{\sqrt{2}}\ket{+0}$.\\
+    \end{enumerate}
+  \end{answer}
+
+  \pbitem
+  \begin{problem}
+  \end{problem}
+  \begin{answer}
+    \\
+    \begin{enumerate}
+    \item Circuit to implement $W_4$:\\
+      \Qcircuit @C=1em @R=.7em {
+        & \qw & \qswap & \ctrlo{1} & \qw \\
+        & \gate{H} & \qswap \qwx & \gate{H} & \qw
+        }
+    \item Circuit to implement $W_8$:\\
+      \Qcircuit @C=1em @R=.7em {
+        & \qw & \qw & \qswap & \ctrlo{1} & \qswap & \qswap & \qw\\
+        & \qw & \gate{H} & \qswap \qwx & \gate{H} & \qswap \qwx & \qw & \qw\\
+        & \gate{H} & \ctrlo{-1} & \ctrlo{-1} & \ctrlo{-1} & \qw & \qswap \qwx[-2] & \qw
+      }
+    \item
+      The circuit for $W_8$ is the same circuit for $W_4$, with the controlled $H$ gate replaced with the circuit for $W_4$ instead. It finishes with swaps between lines $(1,2)$,$(1,3)$. The circuit for $W_n$ then would be the same circuit, with the controlled gate being the circuit for $W_{n/2}$, and having swaps between gates $(1,2)$, $(1,3)$, $(1,4)$,...,$(1,n)$.
+    \end{enumerate}
+  \end{answer}
+  
+  \pbitem
+  \begin{problem}
+  \end{problem}
+  \begin{answer}
+    \\
+    \begin{enumerate}
+    \item
+      If $\ket{a}$ is orthogonal to $\ket{\phi}$ then:
+      \begin{align*}
+        U =& (1 - 2 \ket{\phi}\bra{\phi})\ket{a}\\
+        =& \ket{a}
+      \end{align*}
+      If $\ket{b}$ is parallel to $\ket{\phi}$ then $\ket{b}=\ket{\phi}$ so:
+      \begin{align*}
+        U =& (1 - 2 \ket{\phi}\bra{\phi})\ket{\phi}\\
+        =& \ket{\phi} - 2 \ket{\phi}\bra{\phi}\ket{\phi}\\
+        =& \ket{\phi} - 2 \ket{\phi}\\
+        =& -\ket{\phi}
+      \end{align*}
+      Other vectors can be split up into components that are either orthogonal or parallel to $\ket{\phi}$.\\
+      Then $U$ has eigenvalues $1$ when the reflected vector is orthogonal to $\ket{\phi}$, and eigenvalue $-1$ only when the reflected vector is $\ket{\phi}$, so $U$ is a reflection.
+    \item
+      \begin{align*}
+        V =& (1-2\ket{\psi}\bra{\psi})(1-2\ket{\phi}\bra{\phi})\ket{\phi}\\
+        =& (1-2\ket{\psi}\bra{\psi})(\ket{\phi}-2\ket{\phi}\bra{\phi}\ket{\phi})\\
+        =& (1-2\ket{\psi}\bra{\psi})(-\ket{\phi})\\
+        =& -(1-2\ket{\psi}\bra{\psi})(\ket{\phi_1}+\ket{\phi_2}) \text{ where }\ket{\phi_1}\text{ is orthogonal to }\ket{\psi}\text{, }\ket{\phi_2}\text{ is parallel to }\ket{\psi}\\
+        =& -(\ket{\phi_1} + \ket{\phi_2} - 2\ket{\psi}\bra{\psi}\ket{\phi_1}- 2\ket{\psi}\bra{\psi}\ket{\phi_2})\\
+        =& -(\ket{\phi} - 2\ket{\psi})\\
+        =& -\ket{\phi} + 2\ket{\psi}\\
+      \end{align*}
+    \item
+      \begin{align*}
+        V =& (1-2\ket{\psi}\bra{\psi})(1-2\ket{\phi}\bra{\phi})\ket{\psi}\\
+        =& (1-2\ket{\psi}\bra{\psi})(\ket{\psi} - 2\ket{\phi})\\
+        =& \ket{\psi} - 2\ket{\phi} - 2\ket{\psi}\bra{\psi}\ket{\psi} + 4\ket{\psi}\bra{\psi}\ket{\phi}\\
+        =& \ket{\psi} - 2\ket{\phi} - 2\ket{\psi} + 4\ket{\psi}\bra{\psi}\ket{\phi_1}+ 4\ket{\psi}\bra{\psi}\ket{\phi_2} \text{ where }\ket{\phi_1},\ket{\phi_2}\text{ as above}\\
+      =& -2\ket{\phi} + 3\ket{\psi}\\
+      \end{align*}
+    \item
+      \begin{align*}
+        V =& (1-2\ket{\psi}\bra{\psi})(1-2\ket{\phi}\bra{\phi})\ket{\Psi}\\
+        =& (1-2\ket{\psi}\bra{\psi})(\ket{\Psi}-2\ket{\phi}\bra{\phi}\ket{\Psi})\\
+        =& (1-2\ket{\psi}\bra{\psi})\ket{\Psi}\\
+        =& \ket{\Psi}-2\ket{\psi}\bra{\psi}\ket{\Psi}\\
+        =& \ket{\Psi}\\
+      \end{align*}
+      \item V is a reflection by $\ket{\phi}$ followed by a reflection by $\ket{\psi}$. If the two vectors are not parallel, then this is isomorphic to a rotation by twice the angle between the two vectors.
+    \end{enumerate}
+  \end{answer}
+
+  \clearpage
+  \pbitem
+  \begin{problem}
+  \end{problem}
+  \begin{answer}
+    \\
+    Let $\ket{\psi_5} = (\ket{0}+\ket{1}+\ket{2}) \otimes (\ket{0}+\ket{1}+\ket{2}) = \ket{00}+\ket{01}+\ket{02}+\ket{10}+\ket{11}+\ket{12}+\ket{20}+\ket{21}+\ket{22}$, being the superposition of all base states.\\
+    \begin{align*}
+      \bra{\psi_5}\ket{\psi_1} =& \bra{\psi_5}(\ket{0}\otimes\frac{1}{\sqrt{2}}(\ket{0}-\ket{1}))\\
+      =& \frac{1}{\sqrt{2}}\bra{\pi_5}(\ket{00}-\ket{01})\\
+      =& \frac{1}{\sqrt{2}}(\bra{00}\ket{00}-\bra{01}\ket{01})= 0\\
+      \bra{\psi_5}\ket{\psi_2} =& \bra{\pi_5}(\frac{1}{\sqrt{2}}(\ket{0}-\ket{1})\otimes\ket{2})\\
+      =& \frac{1}{\sqrt{2}}\bra{\psi_5}(\ket{02}-\ket{12})\\
+      =& \frac{1}{\sqrt{2}}(\bra{02}\ket{02}-\bra{12}\ket{12})= 0\\
+      \bra{\psi_5}\ket{\psi_3} =& \bra{\psi_5}(\ket{2}\otimes\frac{1}{\sqrt{2}}(\ket{1}-\ket{2}))\\
+      =& \frac{1}{\sqrt{2}}\bra{\psi_5}(\ket{21}-\ket{22})\\
+      =& \frac{1}{\sqrt{2}}(\bra{21}\ket{21}-\bra{22}\ket{22})=0\\
+      \bra{\psi_5}\ket{\psi_4} =& \bra{\psi_5}(\frac{1}{\sqrt{2}}(\ket{1}-\ket{2})\otimes\ket{0})\\
+      =& \frac{1}{\sqrt{2}}\bra{\psi_5}(\ket{10}-\ket{20})\\
+      =& \frac{1}{\sqrt{2}}(\bra{10}\ket{10}-\bra{20}\ket{20})= 0\\
+    \end{align*}
+    Then $\ket{\psi_5}$ is orthogonal to all of the four states.\\
+    Let $\ket{\psi_6}$ be a tensor-product state that is orthogonal to all five product states $\ket{\psi_i}$.\\
+    It must contain a term of $\ket{ij},i,j\in\{0,1,2\}$.\\
+    The tensor of any two ground states will not be orthogonal to $\ket{\psi_5}$.\\
+    The tensor of any state and a super-position will have either all positive terms, or half negative terms. If it has all positive terms, it will not be orthogonal to $\ket{\psi_5}$.\\
+    If it has half negative terms, it won't be orthogonal to one of $\ket{\phi_i},0\le i\le 4$.\\
+    Then clearly there is no possible state $\ket{\psi_6}$.
+  \end{answer}
+  
+\end{problemlist}
+\end{document}

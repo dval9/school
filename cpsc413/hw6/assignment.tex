@@ -1,0 +1,335 @@
+\documentclass{assignment}
+
+\coursetitle{Design and Analysis of Algorithms 1}
+\courselabel{CPSC 413}
+\exercisesheet{Home Work \#6}{}
+\student{Julie Katayama - 10092143\\
+Etienne Pitout - 10075802\\
+Tom Crowfoot - 10037477\\
+Thomas King - 10074105\\
+Sean Heintz - 10053525}
+\semester{Winter 2014}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage[linesnumbered,noline]{algorithm2e}
+\usepackage{mathtools}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+
+\begin{document}
+\begin{center}
+\renewcommand{\arraystretch}{2}
+\begin{tabular}{|c|c|c|} \hline
+Problem & Marks \\ \hline \hline
+1 & \\ \hline
+2 & \\ \hline
+Total & \\ \hline
+\end{tabular}
+\end{center}
+
+\bigskip
+
+\begin{problemlist}
+
+\clearpage
+\pbitem
+\begin{problem}
+The problem. Given sets of values $l_1, l_2, \ldots, l_n$ and $h_1, h_2, \ldots, h_n$, find a plan of maximal value.
+\begin{enumerate}
+\item Show that the following algorithm does not correctly solve this problem, by giving an instance on which it does not return the correct answer.
+\IncMargin{3em}
+\begin{algorithm}
+\For{$i=1~to~n$}{
+  \uIf{$h_{i+1}>l_i+l_{i+1}$}{
+    Output ``Choose no job in week $i$''\\
+    Output ``Choose a high-stress job in week $i+1$''\\
+    Continue with iteration $i+2$\\
+  }
+  \Else{
+    Output ``Choose a low-stress job in week $i$''\\
+    Continue with iteration $i+1$\\
+  }
+}
+\end{algorithm}
+\DecMargin{3em}
+\\To avoid problems with overflowing array bounds, we define $h_i=l_i=0$ with $i>n$.\\
+In your example, say what the correct answer is and also what the above algorithm finds.
+\item Give an efficient algorithm that takes values for $l_1, l_2, \ldots, l_n$ and $h_1, h_2, \ldots, h_n$ and returns the value of an optimal plan.
+\begin{enumerate}
+\item Give a formal definition (pre- and post-conditions) of the problem described.
+\item Define the optimal substructure relationship by:
+\begin{itemize}
+\item defining a suitable sub-problem
+\item giving an expression for the optimal value for a problem instance in terms of optimal values of sub-problems
+\end{itemize}
+\item Give pseudocode for a recursive algorithm that computes the maximum value that can be earned.
+\item Give a recurrence relation representing an upper bound on the worst-case running time of your recursive algorithm.
+\item State and prove an explicit asymptotic upper bound on the worst-case running time of your recursive algorithm (using the guess-and-prove method).
+\item Give pseudocode for a dynamic programming algorithm that computes the maximal value that can be earned and outputs a job plan that obtains it. Your algorithm may be a single algorithm or a combination of two algorithms (one to compute the optimal value and a second to recover the corresponding sequence of moves).
+\item State and prove a tight asymptotic bound on the running time of your dynamic programming algorithm.
+\end{enumerate}
+\end{enumerate}
+\end{problem}
+\begin{answer}
+\\
+\clearpage
+\begin{enumerate}
+\item
+Consider $H=\{5, 50, 100\}$, and $L=\{10, 30, 2\}$. The algorithm will select nothing in the first week, the high-stress job in week two, and the low-stress job in week three. This will give a result of $52$. The optimal solution, however, would take the low-stress job in week one, and the high-stress job in week three. This would give a result of $110$, which is better.\\
+\item
+Pre-conditions: two arrays of length $n$, $H$ containing the profits for completing a high-stress job, $L$ containing the profits for completing a low-stress job.\\
+Post-conditions: the value of the optimal plan which is the maximum amount of dollars that can be earned in $n$ weeks.\\
+\item
+Sub-problem: find the maximum profit for up to week $i$, $i<n$.
+An expression to represent this: $dollars(k) = max(h_k + dollars(k-2), l_k + dollars(k-1))$ for $k < 2$, $dollars(k) = max(h_k, l_k + dollars(k))$ for $k=2$, $dollars(k) = max(h_k, l_k)$ for $k=1$.\\
+\item
+Recursive algorithm to compute the maximum value:\\
+\IncMargin{3em}
+\begin{algorithm}
+  int maxRec(H, L, n)\\\{\\
+  \Indp
+  \uIf{$n==1$}{\Return{$max(h_1, l_1)$}\;}
+  \uIf{$n==2$}{\Return{$max(h_2, l_2 + maxRec(H, L, n-1)$}\;}
+  \Return{$max(h_n + maxRec(H, L, n-2), l_n + maxRec(H, L, n-1))$}\;
+  \Indm
+  \}
+\end{algorithm}
+\DecMargin{3em}
+\item
+$T(n) = c + T(n-2) + T(n-1)$.\\
+\clearpage
+\item
+\begin{align*}
+T(4) = &c + T(2) + T(3)\\
+T(4) = &3c + T(1) + T(2)\\
+T(4) = &5c\\
+T(5) = &c + T(3) + T(4)\\
+T(5) = &3c + T(1) + T(2) + T(2) + T(3)\\
+T(5) = &7c + T(1) + T(2)\\
+T(5) = &9c\\
+T(6) = &c + T(4) + T(5)\\
+T(6) = &15c\\
+\end{align*}
+A guess for the run time of the algorithm is $T(n) \in O(2^n)$.\\
+Base case: $T(n) = c \le a*2^n$ for $n \le 2$.\\
+If we choose the constant $a=c$, then this is true for $0<n\le 2$.\\
+IH: $T(k) = c + T(k-2) + T(k-1) \le b*2^n$ for $k<n$.\\
+\begin{align*}
+T(n) = &c + T(n-2) + T(n-1)\\
+\le &c + b*2^{n-2} + b*2^{n-1}\\
+\le &c + b*2^n*2^{-2} + b*2^n*2^{-1}\\
+\le &c + b*2^n(2^{-2} + 2^{-1})\\
+\le &c + \frac{3b*2^n}{4}\\
+\le &a*2^n\\
+\end{align*}
+So if we choose the constant $a=b$, then this will be true for $n>2$.\\
+Thus $T(n) \in O(2^n)$.\\
+\clearpage
+\item
+Dynamic algorithm to compute the maximum value:
+\IncMargin{3em}
+\begin{algorithm}
+  maxDyn(H, L, n)\\\{\\
+  \Indp
+  T[n]\; J[n]\;
+  $d_1 = h_1$\;
+  $d_2 = l_1$\;
+  T[1] = max($d_1, d_2$)\;
+  \uIf{$T[1] == d_1$}{$J[1] = 1$\;}
+  \uElse{$J[1] = 0$\;}
+  $d_1 = h_2$\;
+  $d_2 = l_2 + T[1]$\;
+  T[2] = max($d_1, d_2$)\;
+  \uIf{$T[2] == d_1$}{$J[2] = 1$\;}
+  \uElse{$J[2] = 0$\;}
+  \For{$i=3~to~n$}{
+    $d_1 = h_i + T[i-2]$\;
+    $d_2 = l_i + T[i-1]$\;
+    T[i] = max($d_1, d_2$)\;
+    \uIf{$T[i] == d_1$}{$J[i] = 1$\;}
+    \uElse{$J[i] = 0$\;}
+  }
+  maxDynAux(T, J)\;
+  \Indm
+  \}
+\end{algorithm}
+\DecMargin{3em}
+\clearpage
+Auxiliary Dynamic algorithm to compute the maximum value and output the jobs chosen:\\
+\IncMargin{3em}
+\begin{algorithm}
+  maxDynAux(T, J)\\\{\\
+  \Indp
+  print(Maximum value is T[n])\;
+  \For{$j=n~to~1$}{
+    \uIf{$J[j] == 1$}{print(Take high-stress job in week j, take no job in week j-1)\;$j-=2$\;}
+    \uElse{print(Take low-stress job in week j)\;$j-=1$\;}
+  }
+  \Indm
+  \}
+\end{algorithm}
+\DecMargin{3em}
+\item
+The maxDyn algorithm consists of a for loop doing a constant number of operations. The maxDynAux algorithm consists of a for loop doing a constant number of operations. Then the run time of the total algorithm is $c + \sum_{i=3}^n(c) + \sum_{j=1}^n(c)$.\\
+We can use the limit test to check the tight asymptotic bound.
+\begin{align*}
+&c + \sum_{i=3}^n(c) + \sum_{j=1}^n(c)\\
+=&c + (n-2)*c + n*c\\
+&\lim_{n\rightarrow \infty} \frac{c + (n-2)*c + n*c}{n}\\
+=&\lim_{n\rightarrow \infty} \frac{c/n + c-c*2/n + c}{1}\\
+=&2c\\
+\end{align*} 
+As the limit resolves to a constant, $T(n) \in \Theta(n)$.
+\end{enumerate}
+\end{answer}
+\clearpage
+\pbitem
+\begin{problem}
+Suppose that you are given an $n\times n$ checkerboard and a checker. You must move the checker from the bottom edge of the board to the top edge of the board according to the following rule. At each step you may move the checker to one of the three following squares:
+\begin{itemize}
+\item the square immediately above,
+\item the square that is one up and one to the left (but only if the checker is not already in the leftmost column),
+\item the square that is one up and one to the right (but only if the checker is not already in the rightmost column).
+\end{itemize}
+Each time you move from the square $x$ to square $y$, you receive $p(x,y)$ dollars. You are given $p(x,y)$ for all pairs $(x,y)$ for which a move from $x$ to $y$ is legal. Do not assume that $p(x,y)$ is positive.\\
+Give an algorithm that figures out the set of moves that will move the checker from somewhere along the bottom edge to somewhere along the top edge while gathering as many dollars as possible. Your algorithm is free to pick any square along the bottom edge as a starting point and any square along the top edge as a destination in order to maximize the number of dollars gathered along the way. What is the running time of your algorithm?\\
+Your solution to this problem must answer the following questions:
+\begin{enumerate}
+\item Give a formal definition (pre- and post-conditions) to the problem described.
+\item A sub-problem in this context is to find the most profitable way to get from some square in row $1$ to a particular square $(i,j)$. Describe the optimal substructure relationship for this problem by giving an expression for $d[i,j]$, the maximum profit earned to square $(i,j)$.
+\item Give pseudocode for a recursive algorithm that computes the maximum value that can be earned for a particular square with coordinates $(i,j)$, as well as a non-recursive driver program that computes the maximal possible value that can be earned.
+\item Give a recurrence relation representing an upper bound on the worst-case running time of your recursive algorithm.
+\item Give a recurrence relation representing an upper bound on the worst-case running time of your recursive algorithm (using the guess-and-prove method).
+\item Give pseudocode for a dynamic programming algorithm that computes the maximal possible value that can be earned and outputs a sequence of moves that obtains it. Your algorithm may be a single algorithm or a combination of two algorithms (one to compute the optimal value and a second to recover the corresponding sequence of moves).
+\item State and prove a tight asymptotic bound on the running time of your dynamic programming algorithm.
+\end{enumerate}
+\end{problem}
+\clearpage
+\begin{answer}
+\\
+\begin{enumerate}
+\item
+Pre-conditions: An array $p$, which is a $n\times n$ array that represents a checkerboard. $p$ holds the value for moving to that location.\\
+Post-conditions: A path of length $n$, that starts at the bottom of the checkerboard and finishes at the top, that maximizes the dollars gathered, and the value that was gained from traversing that path.\\
+\item
+$d[i,j] = max(d[i-1, j-1] + p[i][j], d[i-1, j] + p[i][j], d[i-1, j+1] + p[i][j])$ for $i>1$, and $d[i,j]=p[i][j]$ for $i=1$.\\
+\item
+Recursive algorithm to compute the value at i,j:\\
+\IncMargin{3em}
+\begin{algorithm}
+  int maxRec(p, i, j)\\\{\\
+  \Indp
+  \uIf{$i==1$}{\Return{$p[i][j]$\;}}
+  \Return{$max(maxRec(p, i-1, j-1) + p[i][j], maxRec(p, i-1, j) + p[i][j], maxRec(p, i-1, j+1) + p[i][j])$\;}
+  \Indm
+  \}
+\end{algorithm}
+\DecMargin{3em}
+\\Driver algorithm to compute the maximum value:
+\IncMargin{3em}
+\begin{algorithm}
+  int driverRec(p)\\\{\\
+  \Indp
+  $d=-\infty$\;
+  \For{$j=1~to~n$}{
+    $d = max(d, maxRec(p, n, j))$\;
+  }
+  \Return{$d$\;}
+  \Indm
+  \}
+\end{algorithm}
+\DecMargin{3em}
+\item
+$T(n) = c + 3T(n-1)$.\\
+\clearpage
+\item
+\begin{align*}
+T(4) = &c + 3T(3)\\
+T(4) = &4c + 9T(2)\\
+T(4) = &13c + 27T(1)\\
+T(4) = &40c\\
+T(5) = &c + 3T(4)\\
+T(5) = &121c\\
+T(6) = &c + 3T(5)\\
+T(6) = &364c\\
+\end{align*}
+A guess for the run time of the algorithm is $T(n) \in O(3^n)$.\\
+Base case: $T(n) = c \le a*3^n$ for $n = 1$.\\
+If we choose the constant $a=c$, then this is true for $n = 1$.\\
+IH: $T(k) = c + 3T(k-1) \le b*3^n$ for $k<n$.\\
+\begin{align*}
+T(n) = &c + 3T(n-1)\\
+\le &c + 3*b*3^{n-1}\\
+\le &c + b*3^n\\
+\le &a*3^n\\ 
+\end{align*}
+So if we choose the constant $a=2b$, then this will be true for $n>1$.\\
+Thus $T(n) \in O(3^n)$.\\
+\clearpage
+\item
+Dynamic algorithm to compute the maximum value:
+\IncMargin{3em}
+\begin{algorithm}
+  maxDyn(p)\\\{\\
+  \Indp
+  d[n][n]\; c[n][n]\;
+  \For{$j=1~to~n$}{
+    $d[1][j] = p[1][j]$\;
+  }
+  \For{$i=2~to~n$}{
+    \For{$j=1~to~n$}{
+      $a_1 = d[i-1][j-1] + p[i][j]$\;
+      $a_2 = d[i-1][j] + p[i][j]$\;
+      $a_3 = d[i-1][j+1] + p[i][j]$\;
+      $d[i][j] = max(a_1, a_2, a_3)$\;
+      \uIf{$a_1 \ge a_2 \&\& a_1 \ge a_3$}{$c[i][j] = 0$\;}
+      \uIf{$a_2 \ge a_1 \&\& a_2 \ge a_3$}{$c[i][j] = 1$\;}
+      \uIf{$a_3 \ge a_1 \&\& a_3 \ge a_2$}{$c[i][j] = 2$\;}
+    }
+  }
+  maxDynAux(d, c)\;
+  \Indm
+  \}
+\end{algorithm}
+\DecMargin{3em}
+\clearpage
+Auxiliary Dynamic algorithm to compute the maximum value and the path chosen:
+\IncMargin{3em}
+\begin{algorithm}
+  maxDynAux(d, c)\\\{\\
+  \Indp
+  $dollar=-\infty$\;
+  $choice=-1$\;
+  \For{$j=1~to~n$}{
+    \uIf{$d[n][j]>dollar$}{$dollar=d[n][j]$\;$choice=j$\;}
+  }
+  print(Maximum profit that can be made is $dollar$)\;
+  \For{$i=n~to~1$}{
+    print(Choose square $i,choice$)\;
+    \uIf{$c[i][choice] == 0$}{$choice -= 1$\;}
+    \uIf{$c[i][choice] == 2$}{$choice += 1$\;}
+  }
+  \Indm
+  \}
+\end{algorithm}
+\DecMargin{3em}
+\clearpage
+\item
+The maxDyn algorithm consists of a for loop with a constant number of operations, and a double for loop with a constant number of operations. The maxDynAux algorithm consists of two for loops with a constant number of operations. The run time is then $c + 3\sum_{i=1}^n(c) + \sum_{j=2}^n\sum{k=1}^n(c)$.\\
+We can use the limit test to check the tight asymptotic bound.
+\begin{align*}
+&c + 3\sum_{i=1}^n(c) + \sum_{j=2}^n\sum_{k=1}^n(c)\\
+=&c + 3*n*c + \sum_{j=2}^n(n*c)\\
+=&c + 3*n*c + (n-1)*n*c\\
+=&c + 2*n*c + n^2*c\\
+&\lim_{n\rightarrow \infty} \frac{c + 2*n*c + n^2*c}{n^2}\\
+=&\lim_{n\rightarrow \infty} \frac{c/n^2 + 2*c/n + c}{1}\\
+=&c\\
+\end{align*} 
+As the limit resolves to a constant, $T(n) \in \Theta(n^2)$.
+\end{enumerate}
+\end{answer}
+
+\end{problemlist}
+\end{document}

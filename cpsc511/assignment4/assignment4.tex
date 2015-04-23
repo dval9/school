@@ -1,0 +1,61 @@
+\documentclass{assignment}
+
+\coursetitle{Introduction to Complexity Theory}
+\courselabel{CPSC 511}
+\exercisesheet{Assignment \#4}{}
+\student{Tom Crowfoot - 10037477
+\\Jameson Weber 10080614}
+\semester{Fall 2014}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+
+\begin{document}
+
+\begin{problemlist}
+\pbitem
+\begin{problem}
+  \begin{enumerate}
+  \item Let $k$ be an integer such that $k \ge 1$ and let $\Sigma$ be any alphabet. If $A \subset \Sigma^*$ then $A \in SPACE(n^k)$ if and only if $\{pad(\omega,|\omega|^k)|\omega \in A\}\in SPACE(n)$.
+    \item Prove that $\mathcal{P} \neq SPACE(n).$
+  \end{enumerate}
+\end{problem}
+\begin{answer}
+\\
+\begin{enumerate}
+\item Let $A \subset \Sigma^*$.\\
+Assume that $A \in SPACE(n^k)$.\\
+So there exists a Turing Machine $M$ decides $A$ in space $n^k$. Let $A' = \{pad(\omega, |\omega|^k)|\omega\} \in A$, so $\omega \#^{|\omega|^{k-1}} \in A'$. The Turing Machine $M$ can be modified to $M'$ to decide the language $A'$; preforming the same steps but ignoring the $\#s$. $M'$ will then use space $|\omega|^k$, however the input length is also $|\omega|^k$, and so runs in $SPACE(n)$.\\
+Assume that $A' = \{pad(\omega, |\omega|^k)|\omega \in A\}\in SPACE(n)$.\\
+Then there exists a Turing Machine $M'$ deciding $A'$ in $SPACE(n)$. So the space used by $M'$ is $c * |\omega|^k$, for some constant $c$.. The Turing Machine $M'$ can be modified to a Turing Machine $M$ decide the language $A$, which will take input of length $|\omega|$. $M$ decides $A$ in the same amount of space as $M'$, so it uses space $c * |\omega|^k$. Then $M$ will run in $SPACE(n^k)$.
+\item For proof by way of contradiction, assume that $\mathcal{P} = SPACE(n)$.\\
+Let $A \in SPACE(n^2)$. Then there exists a Turing Machine $M$ deciding $A$ in $SPACE(n^2)$. Let $A' = \{pad(\omega, |\omega|^2)|\omega\} \in A$, so that $\omega \#^{|\omega|} \in A'$ with a length of $|\omega|^2$. Then by part (a) there exists a Turing Machine $M'$ that decides $A'$ in $SPACE(n)$, so $A'\in SPACE(n)$. As $\mathcal{P} = SPACE(n)$, then $A'\in \mathcal{P}$, and so $M'$ runs in time $n^c$, for some constant $c$. Then $M$ will run in time $n^{2c}$, so $A\in \mathcal{P}$. Then $\mathcal{P} =  SPACE(n) = SPACE(n^2)$. But $SPACE(n) \subset SPACE(n^2)$ by the Space Hierarchy Theorem, so this is a contradiction. Therefore $\mathcal{P} \neq SPACE(n)$.
+\end{enumerate}
+\end{answer}
+\clearpage
+\pbitem
+\begin{problem}
+  \begin{enumerate}
+  \item Let $\hat{\Sigma}=\Sigma \cup \{(,),\textbf{,},T,F\}$ and let $\hat{L}=\{(\omega, T) | \omega \in L\}\cup\{(\omega,F)|\omega \in \Sigma^* \text{ and } \omega \notin L\}$. Prove if $\mathcal{NP} \neq co-\mathcal{NP}$ then $\hat{L} \notin \mathcal{NP}\cup co-\mathcal{NP}$.
+    \item Prove if $\mathcal{NP} \neq co-\mathcal{NP}$ then $\mathcal{NP}\cup co-\mathcal{NP} \subset \mathcal{P}^{SAT}$.
+  \end{enumerate}
+\end{problem}
+\begin{answer}
+\\
+\begin{enumerate}
+\item Assume that $\mathcal{NP} \neq \text{co}\mathcal{NP}$.\\
+For contradiction, assume that $\hat{L} \in \mathcal{NP}\cup \text{co}\mathcal{NP}$.\\
+Note that co$L \in \text{co}\mathcal{NP}$-complete as $L \in \mathcal{NP}$-complete.\\
+Choice 1: $\hat{L} \in \mathcal{NP}$\\
+Then there exists a polynomial time mapping reduction $\hat{L} \le_{\mathcal{P}} L$ solving $\hat{L}$ as $L\in \mathcal{NP}$-complete. If $\omega \notin L$, $(\omega,F)\in \hat{L}$, so there is another polynomial time mapping reduction $\hat{L} \le_{\mathcal{P}} \text{co}L$ solving $\hat{L}$ as co$L \in \text{co}\mathcal{NP}$-complete. Then $\hat{L} \in \text{co}\mathcal{NP}$, so $\mathcal{NP} \subseteq \text{co}\mathcal{NP}$. $\overline{\hat{L}} \in \overline{\text{co}\mathcal{NP}}$, so $\overline{\hat{L}} \in \mathcal{NP}$ and therefore $\mathcal{NP} = \text{co}\mathcal{NP}$ which is a contradiction.\\
+Choice 2: $\hat{L} \in co\mathcal{NP}$\\
+Then there exists a polynomial time mapping reduction $\hat{L} \le_{\mathcal{P}} \text{co}L$ solving $\hat{L}$ as co$L\in \text{co}\mathcal{NP}$-complete. If $\omega \in L$, $(\omega,T)\in \hat{L}$, so there is another polynomial time mapping reduction $\hat{L} \le_{\mathcal{P}} L$ solving $\hat{L}$ as $L \in \mathcal{NP}$-complete. Then $\hat{L} \in \mathcal{NP}$, so co$\mathcal{NP} \subseteq \mathcal{NP}$. $\overline{\hat{L}} \in \overline{\mathcal{NP}}$, so $\overline{\hat{L}} \in \text{co}\mathcal{NP}$ and therefore $\mathcal{NP} = \text{co}\mathcal{NP}$ which is a contradiction.\\
+So $\hat{L} \notin \mathcal{NP}\cup \text{co}\mathcal{NP}$.
+\item Assume that $\mathcal{NP} \neq \text{co}\mathcal{NP}$.\\
+$\mathcal{NP} \subseteq \mathcal{P}^{SAT}$, because all problems in $\mathcal{NP}$ can be reduced to $SAT$. Additionally, co$\mathcal{NP} \subseteq \mathcal{P}^{SAT}$ because $\mathcal{P}^{SAT}$ is deterministic, and is so closed under complementation. Therefore $\mathcal{NP} \cup \text{co}\mathcal{NP} \subseteq \mathcal{P}^{SAT}$.\\
+Proof that $\hat{L} \in \mathcal{P}^{SAT}$:\\
+Since $L \in \mathcal{NP}$-complete, $\mathcal{P}^{L} = \mathcal{P}^{SAT}$. We give a deterministic Turing Machine $M$ solving $\hat{L}$, using an oracle for L. $M$ can read the input and query the oracle to see if $\omega \in L$. If the oracle returns yes, then $M$ will accept if the input is of the form $(\omega,T)$, if the input is of the form $(\omega,F)$ $M$ will reject. If the oracle returns no, then $M$ will accept if the input is of the form $(\omega,F)$, if the input is of the form $(\omega,T)$ $M$ will reject.\\
+Then $\hat{L} \in \mathcal{P}^L = \mathcal{P}^{SAT}$ and by (a) $\hat{L} \notin \mathcal{NP} \cup \text{co}\mathcal{NP}$, so $\mathcal{NP} \cup \text{co}\mathcal{NP} \subset \mathcal{P}^{SAT}$.\\
+\end{enumerate}
+\end{answer}
+\end{problemlist}
+\end{document}

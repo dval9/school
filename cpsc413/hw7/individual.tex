@@ -1,0 +1,171 @@
+\documentclass{assignment}
+
+\coursetitle{Design and Analysis of Algorithms 1}
+\courselabel{CPSC 413}
+\exercisesheet{Home Work \#7}{individual version}
+\student{Tom Crowfoot - 10037477}
+\semester{Winter 2014}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage[linesnumbered,noline]{algorithm2e}
+\usepackage{mathtools}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+
+\begin{document}
+\begin{center}
+\renewcommand{\arraystretch}{2}
+\begin{tabular}{|c|c|c|} \hline
+Problem & Marks \\ \hline \hline
+1 & \\ \hline
+2 & \\ \hline
+3 & \\ \hline
+4 & \\ \hline
+Total & \\ \hline
+\end{tabular}
+\end{center}
+
+\bigskip
+
+\begin{problemlist}
+
+\clearpage
+\pbitem
+\begin{problem}
+\end{problem}
+\begin{answer}
+\\
+As $P'\le_p P$, the problem $P'$ can be reduced to the problem $P$ in polynomial time. $P'$ does not have a solution in polynomial time, so then $P$ cannot have a polynomial time solution either.
+\end{answer}
+\clearpage
+\pbitem
+\begin{problem}
+\end{problem}
+\begin{answer}
+\\
+\begin{enumerate}
+\item We know that Interval Scheduling $\in P$, and Vertex Cover $\in NP-Complete$. So the question is if $P \le_p NP-Complete$, and this is true, so the answer is ``Yes''.
+\item We know that Independent Set $\in NP-Complete$ and Interval Scheduling $\in P$. So the question is if $NP-Complete \le_p P$. To solve this, we would have to know if $P=NP$ or $P\neq NP$, so the answer is ``Unknown, because it would resolve the question to whether P=NP''.
+\end{enumerate}
+\end{answer}
+\clearpage
+\pbitem
+\begin{problem}
+\end{problem}
+\begin{answer}
+\\
+Proof that Bin Packing $\in NP$:\\
+Input is a set of real numbers $S=\{s_1,s_2,\ldots,s_n\in[0,1]\}$, an integer $K$, a solution $T=t_1,t_2,\ldots,t_m$ where $t_i \subseteq S$.\\
+The certificate size is the size of $T$, which is the number of elements in all $t_i$. $T\subseteq S$, so it is polynomial in size to the input.\\
+\IncMargin{3em}
+\begin{algorithm}
+  verify(S, K, T)\\\{\\
+  \Indp
+  \uIf{$size(T) > K$}{
+    \Return{$no$}\;
+  }
+  A = NULL\;
+  \For{$t_i\in T$}{
+    \uIf{$t_i\cap A \neq NULL$}{
+      \Return{$no$}\;
+    }
+    A = A + $t_i$\;
+  }
+  \uIf{$A \neq S$}{
+    \Return{$no$}\;
+  }
+  \For{$t_i\in T$}{
+    \uIf{$sum(t_i) > 1$}{
+    \Return{$no$}\;
+    }
+  }
+  \Return{$yes$}\;
+  \Indm
+  \}
+\end{algorithm}
+\DecMargin{3em}\\
+If (S, K) is a ``yes'' instance of Bin Packing, then it is possible to put the elements of S into at most K bins, with a size less tha one. If we choose T to be this arrangement of S, then the algorithm will return ``yes''.\\
+If (S, K) is a ``no'' instance of Bin Packing, then it is not possible to put the elements of S into atmost K bins, with a size less than one. Then we will never be able to choose T such that the algorithm will return ``yes''.\\
+The verification algorithm has two for loops, which each does constant work. The rest of the algorithm is constant work. Thus the algorithm has a runtime of $O(T)$, where $T$ is polynomial in the size of the rest of the input, so it has polynomial run time.\\
+\clearpage
+Proof that Partition $\le_p$ Bin Packing:\\
+\IncMargin{3em}
+\begin{algorithm}
+  transform(M)\\\{\\
+  \Indp
+  $total = \sum_{j=1}^n m_j$\;
+  \For{$m_i\in M$}{
+    $s_i = \frac{2*m_i}{total}$\;
+  }
+  $K=2$\;
+  \Return{$S, K$}\;
+  \Indm
+  \}
+\end{algorithm}
+\DecMargin{3em}\\
+The transformation algorithm consists of two for loop, both doing constant work. Then the runtime of the algorithm is polynomial.\\
+If $M$ is a ``yes'' instance of Partition, then it is possible to devide $M$ in half such that their sums are the same. Then the input to Bin Packing will be $S, K=2$, where the sum of all elements in $S$ will be 2. Then is is possible to devide $S$ in half such that both partitions have a sum of $1$, and Bin Packing will then be a ``yes'' instance.\\
+If $M$ is a ``no'' instance of Partition, then it is not possible to devide $M$ in half such that their sums are the same. Then the input to Bin Packing will be $S, K=2$, where the sum of all elements in $S$ will be 2. It will not be possible to devide $S$ in half such that both partitions have the same sum, namely $1$, so one partition will have to have a sum greater than 1, and the other less than 1. Then Bin Packing will be a ``no'' instance.\\
+\end{answer}
+\clearpage
+\pbitem
+\begin{problem}
+\end{problem}
+\begin{answer}
+\\
+Proof that Magnets $\in NP$:\\
+Input is a set of magnets $M=\{m_1,m_2,\ldots,m_l\}$, a set of words $W=w_1,w_2,\ldots,w_m$ such that $w_i \in S*$ where $S=\{s_1,s_2,\ldots,s_l\}$ and $m_i\in S$, a solution $V\subseteq W$.\\
+The certificate size is the size of $V$, where $V\subseteq W$, so it is polynomial in size to the input.\\
+\IncMargin{3em}
+\begin{algorithm}
+  verify(M, W, V)\\\{\\
+  \Indp
+  A = NULL\;
+  \For{$v_i\in V$}{
+    \uIf{$v_i \notin W$}{
+      \Return($no$)\;
+    }
+    A = A + $v_i[j]$\;
+  }
+  \uIf{$A == M$}{
+    \Return{$yes$}\;
+  }
+  \uElse{
+    \Return{$no$}\;
+  }
+  \Indm
+  \}
+\end{algorithm}
+\DecMargin{3em}\\
+If (M, W) is a ``yes'' instance of Magnets, then it is possible to use up all the magnets in M by spelling only words in W. If we choose V to be the words from W that use up all the magnets in M, then the algorithm will return ``yes''.\\
+If (M, W) is a ``no'' instance of Magnets, then it is not possible to use up all the magnets in M by spelling only words in W. Then we will never be able to choose V such that the algorithm will return ``yes''.\\
+The verification algorithm has a for loop, which each does constant work. The rest of the algorithm is constant work. Thus the algorithm has a runtime of $O(V)$, where $V$ is polynomial in the size of the rest of the input, so it has polynomial run time.\\
+\clearpage
+Proof that 3-Dimensional Matching $\le_p$ Magnets:\\
+\IncMargin{3em}
+\begin{algorithm}
+  transform(X, Y, Z, T)\\\{\\
+  \Indp
+  \For{$x_i\in X$}{
+    M = M + $x_i$\;
+  }
+  \For{$y_i\in Y$}{
+    M = M + $y_i$\;
+  }
+  \For{$z_i\in Z$}{
+    M = M + $z_i$\;
+  }
+  $W = T$
+  \Return{$M, W$}\;
+  \Indm
+  \}
+\end{algorithm}
+\DecMargin{3em}\\
+The transformation algorithm consists of three for loops, all doing constant work. Then the runtime of the algorithm is polynomial.\
+If $X, Y, Z, T$ is a ``yes'' instance to 3-Dimensional Matching, then there is a subset $T'\subseteq T$ such that each element of $X\cup Y\cup Z$ is contained exactly once in $T'$. So the input to Magnets will be $M, W$, where $M$ is $X\cup Y\cup Z$ and $W = T$. As it was possible to choose a subset $T'$ such that each element of $X\cup Y\cup Z$ is in $T'$, we will be able to choose $W'\subseteq W$ such that $W'=M$, and so Magnets will be a ``yes'' instance.\\
+If $X, Y, Z, T$ is a ``no'' instance of 3-Dimensional Matching, then it is not possible to choose a subset $T'\subseteq T$ such that each element of $X\cup Y\cup Z$ is contained exactly once in $T'$. Then the input to Magnets will be $M, W$, where $M$ is $X\cup Y\cup Z$ and $W = T$. As it was not possible to choose a subset $T'$ such that each element of $X\cup Y\cup Z$ is in $T'$, we will not be able to choose $W'\subseteq W$ such that $W'=M$, and so Magnets will be a ``no'' instance.\\
+\end{answer}
+
+\end{problemlist}
+\end{document}

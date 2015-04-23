@@ -1,0 +1,59 @@
+\documentclass{assignment}
+
+\coursetitle{Introduction to Complexity Theory}
+\courselabel{CPSC 511}
+\exercisesheet{Assignment \#3}{}
+\student{Tom Crowfoot - 10037477
+\\Jameson Weber 10080614}
+\semester{Fall 2014}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+
+\begin{document}
+
+\begin{problemlist}
+\pbitem
+\begin{problem}
+\begin{enumerate}
+\item Prove that if $M_1=(Q_1,\Sigma,\delta_1,q_{0,1},F_1)$ and $M_2=(Q_2,\Sigma,\delta_2,q_{0,2},F_2)$ are two deterministic finite automata with the same alphabet $\Sigma$, $|Q_1|=n_1$, and $|Q_2|=n_2$, then either $M_1$ and $M_2$ are equivalent (that is, they have the same language) or there exists some string $\omega \in \Sigma^*$ whose length is at most $n_1 \times n_2$ such that exactly one of $M_1$ and $M_2$ accept this string.
+\item Let $EQ_{DFA} \subset \Sigma^*_{DFA}$ be the language of encodings of ordered pairs of deterministic finite automata, $M_1$ and $M_2$, with the same alphabet, such that the languages of $M_1$ and $M_2$ are the same. Prove that $EQ_{DFA}\in \mathcal{NL}$.
+\item Finally, prove that $EQ_{DFA}$ is complete for co-$\mathcal{NL}$ with respect to log-space mapping reductions.
+\end{enumerate}
+\end{problem}
+\begin{answer}
+\\
+\begin{enumerate}
+\item Let $\omega \in \Sigma^*$ such that either both $M_1$ and $M_2$ accept $\omega$, or neither $M_1$ or $M_2$ accept $\omega$. Then $M_1 = M_2$.\\
+  Assume that $L(M_1) \neq L(M_2)$.  Let $\omega \in \Sigma^*$ be a string, with length $n_1$ such that $\omega \in L(M_1)$ and $\omega \in L(M_2)$. Let $p \le n_1$, where $n_1 \ge n_2$.\\
+  Let $r_1, \ldots, r_{n_1+1}$ be the sequence of states that $M_1$ enters while processing $\omega$. This sequence has length $n_1+1\ge p+1$. Among the first $p+1$ elements, two of the states must be the same by the pigeonhole principle. Call the fist of the repeating states $r_j$ and the second $r_l$. Because $r_l$ occures among the first $p+1$ states, we have $l \le p+1$. Say $x_1=\omega_1\ldots \omega_{j-1},y_1=\omega_j\ldots \omega_{l-1},z_1=\omega_l\ldots \omega_{n_1}$. Clearly $M_1$ must accept $xy^iz$ for $i\ge 0$. We know that $j\neq l$, so $|y| > 0$, and $l \le p+1$ so $|xy|\le p$. Thus $\omega \in L(M_1)$ after pumping.\\
+  Now let $s_1, \ldots, s_{n_1+1}$ be the sequence of states that $M_2$ enters while processing $\omega$. This sequence has length $n_1+1 \ge p+1$. As $n_2 \ge n_1$, there are either no repeating states, or they are after the first $p+1$ states. If there are no repeating states, pumping $\omega$ will clearly result in a new string not in $L(M_2)$. Otherwise, call the first of the repeating states $r_t$ and the second $r_u$. Because $r_u$ does not occur among the first $p+1$ states, we have $u \ge p+1$. Say $x_2=\omega_1\ldots \omega_{t-1},y_2=\omega_t\ldots \omega_{u-1},z_2=\omega_u\ldots \omega_{n_1}$. Then $|xy| > p$. Thus $\omega \notin L(M_2)$ after pumping.\\
+  Therefore there exists a string $\omega$ that after pumping is accepted by $M_1$ and not $M_2$.\\
+\item Let $\overline{EQ_{DFA}}$ be the language of encodings of ordered pairs of deterministic finite automata, $M_1$ and $M_2$, with the same alphabet, such that the languages of $M_1$ and $M_2$ are not the same.\\
+  There is a nondeterministic log space Turing machine deciding $\overline{EQ_{DFA}}$:
+  \begin{enumerate}
+  \item Verify that the input is a valid encoding of ordered pairs of deterministic finite automata as defined in the assignment.
+  \item Nondeterministically simulate a step of $M_1$, choosing a valid transition. Write the coorisponding symbol guessed onto a work tape. Store the position of the simulation of $M_1$ on another work tape.
+  \item Simulate $M_2$ on the symbol written from the previous step. Store the position of the simulation of $M_2$ on another work tape.
+  \item Repeat the previous two steps until either $M_1$ or $M_2$ halts, overwriting the guessed symbol each time.
+  \item If the simulation of $M_1$ has accepted and the simulation of $M_2$ has not accepted, then accept. Else reject.
+  \end{enumerate}
+  Therefore the nondeterministic log space Turing machine deciding $\overline{EQ_{DFA}}$ will accept if and only if the simulation of $M_1$ accepts for some string, while $M_2$ does not accept the same string.\\
+  The TM needs to store the position of the simulation of $M_1$, the position of the simulation of $M_2$, and a symbol in the input alphabet.\\
+  The space required to store the position of $M_1$ will be $O(log(|Q_1|))$.\\
+  The space required to store the position of $M_2$ will be $O(log(|Q_2|))$.\\
+  The space required to store an input symbol will be $O(log(|\Sigma|))$.\\
+  Therefore the total space required will be logarithmic in the size of the input.\\
+  Therefore $\overline{EQ_{DFA}} \in co-\mathcal{NL}$, so $EQ_{DFA} \in \mathcal{NL}$ as $co-\mathcal{NL} = \mathcal{NL}$.
+\item We proved in part (b) that $EQ_{DFA} \in \mathcal{NL}$, so $EQ_{DFA} \in co-\mathcal{NL}$.\\
+  Proof that $EQ_{DFA} \in co-\mathcal{NL}-hard$:\\
+  We give a log space reduction from any language $A$ in $\mathcal{NL}$ to $\overline{EQ_{DFA}}$ as given in part (b).\\
+  Let $M$ be a NFA deciding $A$ in $O(log n)$ space. Given an input $\omega$, we construct two DFA with the same input alphabet as $M$, $M_1$ and $M_2$, in log space, where $\omega \in L(M_1)$ and $\omega \notin L(M_2)$.\\
+  $M_1$ will be an accepting branch of $M$. Simulating $M$, write each transition taken to the output to add it to $M_1$. The rest of $M_1$ will be the same as $M$. This reduction will take no work space, so it is logarithmic. $M_2$ will be any DFA that rejects on all inputs.\\
+  If $M$ accepts on input $\omega$, clearly $M_1$ will also accept on input $\omega$, while $M_2$ will reject. As $M_1$ accepts and $M_2$ rejects, $L(M_1) \neq L(M_2)$, so $\overline{EQ_{DFA}}$ will accept.\\
+  If $M$ rejects on input $\omega$, clearly $M_1$ will also reject on input $\omega$. As $M_1$ rejects, $\overline{EQ_{DFA}}$ will also reject.\\
+  Therefore $M$ accepts if and only if $\overline{EQ_{DFA}}$ accepts, so $\overline{EQ_{DFA}} \in \mathcal{NL}-hard$.\\
+  As $\overline{EQ_{DFA}} \in \mathcal{NL}$ and $\overline{EQ_{DFA}} \in \mathcal{NL}-hard$, $\overline{EQ_{DFA}} \in \mathcal{NL}-complete$. As $\mathcal{NL}=co-\mathcal{NL}$, $EQ_{DFA}$ is complete for $co-\mathcal{NL}$.
+\end{enumerate}
+\end{answer}
+\end{problemlist}
+\end{document}

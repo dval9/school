@@ -1,0 +1,127 @@
+\documentclass{assignment}
+\usepackage{amsmath,amssymb,amsfonts}
+
+\coursetitle{Computability}
+\courselabel{CPSC 513}
+\exercisesheet{Homework \#4}{}
+\student{Micah Sia (10033871) and Tom Crowfoot (10037477) }
+\semester{Winter 2015}
+
+\begin{document}
+\begin{problemlist}
+
+  \pbitem
+  \begin{problem}
+  \end{problem}
+  \begin{answer}
+    
+    We can show that there exists another non-contracting grammar $\hat{G}$ by providing a construction of $\hat{G}$.\\\\    
+    First set $\hat{G} = G$.\\\\    
+    For each production rule $A \rightarrow \sigma$ where $A \in V$ and $\sigma \in \Sigma$ we do the following:\\\\
+    Add a new variable $X$ to $\hat{V}$, such that $X$ does not previously appear in any production in $\hat{\Pi}$.\\
+    Add two new productions $A\rightarrow X$, $X\rightarrow \sigma$ to $\hat{\Pi}$, and remove the production $A\rightarrow \sigma$ from $\hat{\Pi}$.\\\\
+    The productions we add to our new grammar have the same number of terminals and variables on the left hand side of the production as on the righthand side, so clearly for each production $g\rightarrow h$ in $\hat{\Pi}$, $|g|\le |h|$.\\\\
+    Thus the grammar $\hat{G}$ is a non-contracting grammar.\\\\
+    Additionally it is obvious that $V\neq \hat{V}$ and $\Pi \neq \hat{\Pi}$, so $G \neq \hat{G}$.\\\\
+    Finally, as the only new productions were $A\rightarrow X \rightarrow \sigma$, it is clear that $L(G) = L(\hat{G})$.
+  \end{answer}
+
+  %\clearpage
+  \pbitem
+  \begin{problem}
+  \end{problem}
+  \begin{answer}
+    
+    We can show that a non-contracting grammar $G$ is equivalent to a context-sensitive grammar $\hat{G}$ by constructing $G$ from $\hat{G}$ such that $L(G) = L(\hat{G})$.
+    
+    \bigskip   
+    
+    First, let $G = \hat{G}$
+    
+    Now, if there exists a production in the grammar $\hat{G}$ such that $S \rightarrow \lambda$  then we remove this production and add a new start state $\hat{S}$ and the production $\hat{S} \rightarrow S|\lambda$ to $\hat{\Pi}$.
+    
+    Now each production $\sqcap \in \hat{\Pi}$ is of the form $X_{1}....X_{n} \rightarrow Y_{1}....Y_{m}$ where $ n \leq m$.
+    
+    Let $\hat{\sqcap}$ be the following set of productions:
+    
+    $\hspace{10mm} X_{1}....X_{n} \rightarrow Z_{1}....X_{n}$
+    
+    $\hspace{10mm} Z_{1}X_{2}....X_{n} \rightarrow Z_{1}Z_{2}X_{3}....X_{n}$
+    
+    $\hspace{20mm} . . . . .$
+    
+    $\hspace{10mm} Z_{1}....Z_{n-1}X_{n} \rightarrow Z_{1}....Z_{n}$
+    
+    $\hspace{10mm} Z_{1}....Z_{n} \rightarrow Y_{1}Z_{2}....Z_{n}$
+    
+    $\hspace{10mm} Y_{1}Z_{2}....Z_{n} \rightarrow Y_{1}Y_{2}Z_{3}....Z_{n}$
+    
+    $\hspace{20mm} . . . . .$
+    
+    $\hspace{10mm} Y_{1}....Y_{n-1}Z_{n} \rightarrow Y_{1}....Y_{n}$
+    
+    Where each new $Z_{i}$ is a new variable that has not appeared in $\hat{G}$. Since each $Z_{i}$ is distinct, the position information of the left-hand side of these productions are set by these variables. Furthermore, no newly introduced variables can be reused for different productions.
+    
+    \medskip
+    
+    So now let $\hat{\Pi}$ be the result of replacing all non context-sensitive productions $\sqcap$ to $\hat{\sqcap}$. The grammar $\hat{G}$ is context-sensitive. 
+    
+  \end{answer}
+  
+  \pbitem
+  \begin{problem}
+  \end{problem}
+  \begin{answer}
+    
+    Suppose the total function $halted_{G}^{(1)}: \mathbb{N}^{3} \rightarrow \{ 0, 1\}$ is $G$-computable for a partial function $G:\mathbb{N}\rightarrow\mathbb{N}$.\\
+
+    From tutorial exercise 11, it was proved that for a partial function $G:\mathbb{N}\rightarrow\mathbb{N}$, if a total function $f:\mathbb{N}\rightarrow\mathbb{N}$ is G-computable, then $f$ is computable.\\
+
+    So using this result, as $halted_{G}^{(1)}$ is total function and $G$-computable, then $halted_{G}^{(1)}$ is also computable.\\
+    
+    Define the partial function $G:\mathbb{N}^3\rightarrow\mathbb{N}$ such that:
+    
+    \[
+    G(x,y,t) =
+    \begin{cases}
+      \uparrow &\mbox{if } y \text{ on input } x \text{ halts in } t \text{ steps} \\
+      0 & \mbox{otherwise }
+    \end{cases}
+    \]
+
+    Now let $P$ be a H-computable program, for some function $H$:
+    \begin{align*}
+    [A]~&X_1\leftarrow O(X_1)
+    \end{align*}
+
+    Then say that $\#(P)=z$. So we consider what happens when we run $halted_G^{(1)}$ on $P$.\\
+    Since the program $P$ has an oracle call, $halted_G^{(1)}$ will use an oracle call to $G$ in it's simulation of $P$.\\
+    We can slightly modify the program given in lecture 18 to allow our oracle to receive 3 inputs.\\
+    Modifying the oracle call section, we get
+    \begin{align*}
+      [O]~&W\leftarrow(S)_{r(U)+1}\\
+      &B\leftarrow W\\
+      &B \leftarrow <B,<X_{n+1},X_{n+2}>>\\
+      &B\leftarrow O(B)\\
+      &S\leftarrow (S/P^W)\times P^B\\
+      &GOTO~N
+    \end{align*}
+    
+    Then $halted_G^{(1)}(x,z,t)$ has two possible outcomes:\\
+
+    $Case~1$: $z$ halts in $t$ steps.\\
+    $\Rightarrow$ Then when $halted_G^{(1)}$ queries it's oracle, $G(x,y,t)=\uparrow$.\\
+    $\Rightarrow$ So $halted_G^{(1)}$ does not halt, and so is not computable.\\
+
+    $Case~2$: $z$ does not halt in $t$ steps.\\
+    $\Rightarrow$ Then when $halted_G^{(1)}$ queries it's oracle, $G(x,y,t)=0$.\\
+    $\Rightarrow$ So $halted_G^{(1)}(x,z,t)=1$, which contradicts that $z$ does not halt in $t$ steps, so $halted_G^{(1)}$ is not computable.\\
+    
+    
+    Therefore, $halted_{G}^{(1)}$ is not computable on program $z$. A contradiction has now been obtained, so the initial assumption must be incorrect. \\
+    Then $halted_{G}^{(1)}$ is not G-computable.    
+    
+  \end{answer}
+
+\end{problemlist}
+\end{document}

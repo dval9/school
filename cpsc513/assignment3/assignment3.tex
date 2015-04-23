@@ -1,0 +1,110 @@
+\documentclass{assignment}
+\usepackage{amsmath,amssymb,amsfonts}
+
+\coursetitle{Computability}
+\courselabel{CPSC 513}
+\exercisesheet{Homework \#3}{}
+\student{Tom Crowfoot - 10037477}
+\semester{Winter 2015}
+
+\begin{document}
+\begin{problemlist}
+
+  \pbitem
+  \begin{problem}
+  \end{problem}
+  \begin{answer}
+    \\
+    \begin{enumerate}
+    \item
+      In lecture notes 5, there is a function $Lt(x)$ that gives the length of an $L$ program, which we can use the structure of to get the function $length(n)$.\\
+      The encoding of the Post-Turing program $P$ is given by $n=\Big(\prod_{i=1}^{k-1}p_i^{(\#(S_i))}\Big)\times p_k^{(\#(S_k)+1)}$.\\
+      Let the function $f(n)=1$. This is primitive recursive.\\
+      Let the function $g(t,y,z)=y\times p_{t+1}^{(n)_{t+1}}$, which is primitive recursive.\\
+      Then the function $h(n,0)=f(n)=1$.\\
+      For all integers $t\ge 0$, $h(n,t+1)=g(t,h(n,t),n)=h(n,t)\times p_{t+1}^{(n)_{t+1}}$. This is primitive recursive.\\
+      The encoding of our program $P$ has the final term $p_k^{(\#(S_k)+1)}$, which is different from $p_k^{(\#(S_k))}$. However it doesn't make any difference, as $\#(S_k)$ and $\#(S_k)+1$ both are encodings of some instruction, and we simply care about the length of the program.\\
+      $(n)_{t+1}$ is the encoding of the $t+1$ instruction in $P$, as defined in lecture slides 5, slide 20, and is primitive recursive.\\
+      Let $p(n,t)=1$ if $h(n,t)=n$, $p(n,t)=0$ otherwise. This is primitive recursive as $h$ is.\\
+      Let $f(n,b)=min_{t\le b}p(n,t)$. This is primitive recursive.\\
+      Then $length(n)=f(n,n)$ is primitive recursive, where $length(1)=0$, and $length(n)$ is the smallest integer $x$ such that $h(n,x)=n$.\\      
+    \item
+      Since we can calculate the length of $n$, we know how many powers of primes make up $n$.\\
+      Then we know that if $length(n)=k$, $n=\Big(\prod_{i=1}^{k-1}p_i^{(\#(S_i))}\Big)\times p_k^{(\#(S_k)+1)}$.\\
+      Let $f(n,x)=min_{t\le n} n$ $mod$ $p(x)^t \neq 0$ if $x < length(n)$, otherwise $f(n,x)=(min_{t\le n} n$ $mod$ $p(x)^t \neq 0)-1$ if $x=length(n)$, where $p(x)$ is the $x$th prime, which is primitive recursive.\\
+      Then $t=\#(S_x)$, and we have $l(\#(S_x))=l(f(n,x))$ being a primitive recursive function, giving the encoding of the label on the $x$th instruction.\\
+      Then $g(n)=min_{t\le length(n)} (\forall)_{x\le length(n)} l(f(n,t))\ge l(f(n,x))$ is primitive recursive.\\
+      Then $maxLabel(n)=l(f(n,g(n)))$, and it is primitive recursive, as $f$, $g$, $l$ are all primitive recursive.\\
+      \clearpage
+    \item
+      From the previous part, we have $r(f(n,x))$ being a primitive recursive function giving the encoding of the $x$th instruction.\\
+      Let $g(n,x)=quo(monus(r(f(n,x)),4),2)$, so $g(n,x)=\#(L)$ if that instruction had a label from a branching instruction. If it was not a branching instruction, $monus(r(f(n,x)),4)=0$, so $g(n,x)=0$. If it was a branch on blank statement, it is exactly right. If it is a branch on $1$ statement, $quo(2k,2)=quo(2k+1,2)$ for any integer $k$, so it is still correct. $g$ is clearly primitive recursive.\\
+      Then $h(n)=min_{t\le length(n)} (\forall)_{x\le length(n)} g(n,t)\ge g(n,x)$, is primitive recursive.\\
+      Then $maxJump(n)=g(n,h(n))$, and it is primitive recursive as $g$ and $h$ are primitive recursive.\\
+    \end{enumerate}
+  \end{answer}
+
+  \pbitem
+  \begin{problem}
+  \end{problem}
+  \begin{answer}
+    \\
+    From question $1$, we can get an unused label with the function $maxLabel(n)$. Let our new label be $\#(L)=maxLabel(n)+1$, then $L$ is not found anywhere in $P$. We encode the first instruction by $S_{-1}=<\#(L),0>$ and the second instruction by $S_0=<0,5+2\times \#(L)>$.\\
+    We can get the encodings of instructions in $\#(P)$ with the function $f(n,x)$ defined in the previous question.\\
+    Then $moveLeft(n)=p_1^{(\#(S_{-1}))}\times p_2^{(\#(S_{0}))}\times \prod_{i=1}^{length(n)-1}p_{i+2}^{(f(n,i))} \times p_{length(n)+2}^{(f(n,length(n))+1)}$.\\
+    Then $moveLeft$ is primitive recursive, and $\#(Q)=moveLeft(n)$ is the encoding of a program starting with the pseudoinstruction LEFT TO NEXT BLANK, followed by the statements in $P$.\\
+  \end{answer}
+
+  \clearpage
+  \pbitem
+  \begin{problem}
+  \end{problem}
+  \begin{answer}
+    \\
+    Let the pseudoinstruction RIGHT TO NEXT BLANK be the statements [L] RIGHT, IF 1 GOTO L, where L is an unused label. From question two, the function $moveRight(n)$ gives the encoding of the program starting with this pseudoinstruction, followed by the instructions of the program encoded by $n$, and $moveRight(n)$ is primitive recursive.\\
+
+    By induction on $n$.\\
+    Let $n=1$. Then $S_m^n=S_m^1$, and $S_m^1(u,y)$ is the encoding of a program with the instruction RIGHT TO NEXT BLANK repeated $m$ times, followed by $u$ copies of the statements RIGHT, PRINT 1, followed by LEFT TO NEXT BLANK repeated $m+1$ times, and continuing with the program encoded by $y$.\\
+    The statement PRINT 1 will be encoded by $\#(S_{0})$, RIGHT will be encoded by $\#(S_{-1})$.\\
+    Let $moveRight(y)=y_1$. Then $m$ applications of $moveRight$ to $y$ will result in the program encoded by $y_m$.\\
+    We can then add the $u$ copies of the statements RIGHT, PRINT 1, by $f(u,y_m)=(\prod_{i=0}^{u-1}p_{2i+1}^{(\#(S_{-1}))}\times p_{2i+2}^{(\#(S_0))})\times \prod_{j=1}^{length(y_m)-1}p_{j+u+1}^{(f(y_m,j))} \times p_{length(y_m)+u+1}^{(f(y_m,length(y_m))+1)}$.\\
+    Finally $m_1$ applications of $moveLeft$ to $f(u,y_m)$ will result in the program encoded by $S_m^1(u,y)$.\\
+    Then $\Phi_P^{(m+1)}(x_1,\ldots,x_n,u,y)=\Phi_P^{(m)}(x_1,\ldots,x_n,S_m^1(u,y))$.\\
+
+    Let $k$ be an integer such that $k \ge 1$.\\
+    Assume there exists a primitive recursive function $S_m^k$ such that\\
+    $\Phi_P^{(m+k)}(x_1,\ldots,x_m,u_1,\ldots,u_k,y)=\Phi_P^{(m)}(x_1,\ldots,x_m,S_m^k(u_1,\ldots,u_k,y))$.\\
+    Then there exists a primitive recursive function $S_m^{k+1}$ such that\\
+    $\Phi_P^{(m+k+1)}(x_1,\ldots,x_m,u_1,\ldots,u_k,u_{k+1},y)=\Phi_P^{(m)}(x_1,\ldots,x_m,S_m^{k+1}(u_1,\ldots,u_k,u_{k+1},y))$.\\
+    Then $S_m^{k+1}(u_1,\ldots,u_k,u_{k+1},y)=S_m^{k}(u_1,\ldots,u_k,S_{m+k}^1(u_{k+1},y))$.\\
+    Then\\
+    $\Phi_P^{(m+k+1)}(x_1,\ldots,x_m,u_1,\ldots,u_k,u_{k+1},y)$\\
+    $=\Phi_P^{(m+k)}(x_1,\ldots,x_m,u_1,\ldots,u_k,S_{m+k}^1(u_{k+1},y))$\\
+    $=\Phi_P^{(m)}(x_1,\ldots,x_m,S_m^k(u_1,\ldots,u_k,S_{m+k}^1(u_{k+1},y)))$\\
+    $=\Phi_P^{(m)}(x_1,\ldots,x_m,S_m^{k+1}(u_1,\ldots,u_k,u_{k+1},y))$\\
+    proving the inductive hypothesis, and thus the Parameter Theorem for Post-Turing Programs.
+  \end{answer}
+
+  \clearpage
+  \pbitem
+  \begin{problem}
+  \end{problem}
+  \begin{answer}
+    \\
+    The proof follows from the proof of the Recursion Theorem given in lecture notes 10.\\
+    Consider the partial or total function $h$ such that for all $v,x_1,\ldots,x_m\in \mathbb{N}$,\\
+    $h(x_1,\ldots,x_m,v)=g(S_m^1(v,v),x_1,\ldots,x_m)$.\\
+    Then this is computed by some program $P$. Let $\#(P)=x$. Then\\
+    $g(S_m^1(v,v),x_1,\ldots,x_m)$\\
+    $=h(x_1,\ldots,x_m,v)$\\
+    $=\Phi_P^{(m+1)}(x_1,\ldots,x_m,v,x)$\\
+    $=\Phi_P^{(m)}(x_1,\ldots,x_m,S_m^1(v,x))$\\
+    Then say $v=x$ and let $e=S_m^1(x,x)$. It follows then that\\
+    $g(e,x_1,\ldots,x_m)$\\
+    $=g(S_m^1(x,x),x_1,\ldots,x_m)$\\
+    $=\Phi_P^{(m)}(x_1,\ldots,x_m,S_m^1(v,x))$\\
+    $=\Phi_P^{(m)}(x_1,\ldots,x_m,e)$ as required to prove the theorem.
+  \end{answer}
+  
+\end{problemlist}
+\end{document}

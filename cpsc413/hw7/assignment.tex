@@ -1,0 +1,230 @@
+\documentclass{assignment}
+
+\coursetitle{Design and Analysis of Algorithms 1}
+\courselabel{CPSC 413}
+\exercisesheet{Home Work \#7}{}
+\student{Julie Katayama - 10092143\\
+Etienne Pitout - 10075802\\
+Tom Crowfoot - 10037477\\
+Thomas King - 10074105\\
+Sean Heintz - 10053525}
+\semester{Winter 2014}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage[linesnumbered,noline]{algorithm2e}
+\usepackage{mathtools}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+
+\begin{document}
+\begin{center}
+\renewcommand{\arraystretch}{2}
+\begin{tabular}{|c|c|c|} \hline
+Problem & Marks \\ \hline \hline
+1 & \\ \hline
+2 & \\ \hline
+3 & \\ \hline
+4 & \\ \hline
+Total & \\ \hline
+\end{tabular}
+\end{center}
+
+\bigskip
+
+\begin{problemlist}
+
+\clearpage
+\pbitem
+\begin{problem}
+For some arbitrary problem $P$, let $x$ be the input and $y$ the output. Assume that function $f$ solves this problem. In other words, when calling $f(x)$ it will return a correct value for $y$.\\
+For another problem $P'$ let $x'$ be the input and $y'$ the output. The following is a function that solves $P'$:\\
+$f'(x')$\\
+$x=$\textbf{transform1}$(x')$\\
+$y=f(x)$\\
+$y'=$\textbf{transform2}$(y)$\\
+\textbf{return} $y'$\\
+The functions \textbf{transform1} and \textbf{transform2} both run in polynomial time. (In other words, $P' \le_p P$.)\\
+It is known that there is no polynomial time solution for $P'$. Is it possible that there exists a polynomial time solution for $P$? (In other words, is it possible that $f(x)$ runs in polynomial time?) Explain your answer.
+\end{problem}
+\begin{answer}
+\\
+No it is not possible that there exists a polynomial time solution for $P$. We know that $P' \le_p P$, and that $P'\in NP$, so then $P$ cannot have a polynomial run time by definition.
+\end{answer}
+\clearpage
+\pbitem
+\begin{problem}
+For each of the two questions below, decide whether the answer is ``Yes'', ``No'', or ``Unknown, because it would resolve the question to whether $P=NP$''. Give a brief explanation of your answer.
+\begin{enumerate}
+\item Let's define the decision version of the Interval Scheduling Problem from chapter 4 as follows: Given a collection of intervals on a time-line, and a bound $k$, does the collection contain a subset of non overlapping intervals of size at least $k$?\\
+Question: Is it the case that interval scheduling $\le_p$ Vertex Cover?
+\item Question: Is it the case that Independent Set $\le_p$ Interval Scheduling?
+\end{enumerate}
+You may assume the following facts:
+\begin{itemize}
+\item INTERVAL SCHEDULING $\in P$
+\item INTERVAL SCHEDULING $\le_p$ INDEPENDENT SET
+\item INDEPENDENT SET $\in NP$-COMPLETE
+\item VERTEX COVER $\in NP$-COMPLETE
+\end{itemize}
+\end{problem}
+\begin{answer}
+\\
+\begin{enumerate}
+\item Yes, Interval Scheduling $\le_p$ Vertex Cover. Interval Scheduling $\in P$, and Vertex Cover $\in NP-Complete$, so this is trivial.
+\item Unknown, because it would resolve the question to whether $P=NP$. Independent Set $\in NP-Complete$, and Interval Scheduling $\in P$, so if we could solve $NP \le_p P$, we would have to solve $P=NP$.
+\end{enumerate}
+\end{answer}
+\clearpage
+\pbitem
+\begin{problem}
+Consider the following decision problems:
+PARTITION
+\begin{itemize}
+\item Pre-condition: a sequence of positive integers $m_1,m_2,\ldots,m_n$.
+\item Post-condition: output ``yes'' if there exists a subset $A\subseteq \{1,2,\ldots,n\}$ such that $\sum_{i\in A}m_i = \sum_{i\notin A}$; ``no'' otherwise.
+\end{itemize}
+BIN PACKING
+\begin{itemize}
+\item Pre-condition: a sequence of real numbers $s_1,s_2,\ldots,s_n \in [0,1]$ and an integer $K$.
+\item Post-condition: output ``yes'' if it is possible to place items with sizes $s_1,s_2,\ldots,s_n$ into at most $K$ unit-sized bins; ``no'' otherwise.
+\end{itemize}
+Assuming that PARTITION is NP-COMPLETE, prove that BIN PACKING is NP-COMPLETE.
+\end{problem}
+\begin{answer}
+\\
+Proof that Bin Packing $\in NP$:
+\begin{itemize}
+\item The input to Bin Packing Verification algorithm is a set of real numbers $S=\{s_1,\ldots,s_n\}$, an integer $K$, a solution $T=\{t_1,\ldots,t_m\}$ where $t_i\subseteq S$.
+\item The certificate is $T$, which has the same size as $S$, so the size of the certificate is polynomial in the size of the input.
+\item Verification algorithm for Bin Packing
+\IncMargin{3em}
+\begin{algorithm}
+  verifyBinPacking(S, K, T)\\\{\\
+  \Indp
+  \uIf{$size(T) > K$}{
+    \Return{$no$}\;
+  }
+  A = NULL\;
+  \For{$t_i\in T$}{
+    \uIf{$t_i\cap A \neq NULL$}{
+      \Return{$no$}\;
+    }
+    A = A + $t_i$\;  
+  }
+  \uIf{$A \neq S$}{
+    \Return{$no$}\;
+  }
+  \For{$t_i\in T$}{
+    \uIf{$sum(t_i) > 1$}{
+      \Return{$no$}\;
+    }
+  }
+  \Return{$yes$}\;
+  \Indm
+  \}
+\end{algorithm}
+\DecMargin{3em}\\
+\item If $(S, K)$ is a ``yes'' instance of Bin Packing, then it is possible to put the elements of $S$ into at most $K$ bins, where the sum of the elements in each bin is less than one. We can then choose $T$ to be this arrangement, so the algorithm will return an answer of ``yes''.\\
+If $(S, K)$ is a ``no'' instance of Bin Packing, then it is not possible to put the elements of $S$ into at most $K$ bins, where the sum of the elements in each bin is less than one. As we will not be able to divide $S$ into bins with a sum less than one, the algorithm will return ``no''.
+\item The verification algorithm consists of two for loops which do constant time work, and the rest of the algorithm does constant time work. The two for loops both iterate for the number of elements in $T$, and we know that the size of $T$ is polynomial in the size of the input. Thus the algorithm runs in polynomial time.
+\end{itemize}
+Proof that Partition $\le_p$ Bin Packing:
+\begin{itemize}
+\item Algorithm to transform input of Partition to input of Bin Packing
+\IncMargin{3em}
+\begin{algorithm}
+  transformToBinPacking(M)\\\{\\
+  \Indp
+  $K = 2$\;
+  $sum = \sum_{j=1}^n m_j$\;
+  \For{$m_i \in M$}{
+    $s_i = \frac{2*m_i}{sum}$\;
+  }
+  \Return{$S, K$}\;
+  \Indm
+  \}
+\end{algorithm}
+\DecMargin{3em}\\
+\item The transformation algorithm consists of two for loops, both doing constant work. The for loops iterate for each element in $M$, so the runtime of the algorithm is polynomial.
+\item If $M$ is a ``yes'' instance of Partition, then it is possible to divide $M$ into two parts such that the sum of each part is equal. The total sum of $S$ as the input to Bin Packing will be $2$, and we will be able to divide $S$ into two parts such that both partss have an equal sum, so each part will have a sum of $1$. Then the algorithm will return ``yes'', as each bin will not have a sum greater than one.\\
+If $M$ is ``no'' instance of Partition, it is not possible to divide $M$ into two parts such that the sum of each part is equal. The total sum of $S$ as the input to Bin Packing will be $2$, and we will not be able to divide $S$ into two parts such that both parts have an equal sum, so one part will have a sum greater than $1$, and the other part will have a sum less than $1$. Then the algorithm will return ``no'', as one of the bins will have a sum greater than one.\\
+\end{itemize}
+\end{answer}
+\clearpage
+\pbitem
+\begin{problem}
+Prove that the  MAGNETS problem is NP-complete. You may assume that the 3-DIMENSIONAL MATCHING problem is NP-COMPLETE.\\
+MAGNETS
+\begin{itemize}
+\item Pre-condition:
+\begin{itemize}
+\item set $M=\{m_1,\ldots,m_l\}$ of $l$ magnets, where each magnet $m_i\in S=\{s_1,\ldots,s_n\}$(one of the available symbols)
+\item set $W$, where each element is in $S*$ (i.e., a string with characters taken from $S$ representing a word that Madison knows)
+\end{itemize}
+\item Post-condition: ``Yes'' if there exists words $w_1,\ldots,w_k\in W$ such that the multi-set of symbols in these words is equal to $M$ (i.e., the magnets can make up all the words with none left over), ``no'' otherwise.
+\end{itemize}
+3-DIMENSIONAL MATCHING
+\begin{itemize}
+\item Pre-condition:
+\begin{itemize}
+\item disjoint sets $X,Y,Z$ each of size $n$,
+\item set $T\subseteq X\times Y\times Z$
+\end{itemize}
+\item Post-condition: ``Yes'' if there exists a set of $n$ triples in $T$ so that each element of $X\cup Y\cup Z$ is contained in exactly one of these triplets.
+\end{itemize}
+\end{problem}
+\begin{answer}
+\\
+Proof that Magnets is $\in NP$\\
+\begin{itemize}
+\item The input to the Magnets Verification algorithm is a set of magnets $M=\{m_1,\ldots,m_l\}$, a set of words $W\{w_1,\ldots,w_m\}$, a solution $F\subseteq W$.
+\item The certificate is $F$, which is a subset of $W$, so the size of the certificate is polynomial in the size of the input.
+\item Verification algorithm for Magnets
+\IncMargin{3em}
+\begin{algorithm}
+  verify(M, W, F)\\\{\\
+  \Indp
+  A = NULL\;
+  \For{$f_i\in F$}{
+    \uIf{$f_i \notin W$}{
+      \Return($no$)\;
+    }
+    A = A + $f_i[j]$\;
+  }
+  \uIf{$A == M$}{
+    \Return{$yes$}\;
+  }
+  \uElse{
+    \Return{$no$}\;
+  }
+  \Indm
+  \}
+\end{algorithm}
+\DecMargin{3em}\\
+\item If $(M, W)$ is a ``yes'' instance of Magnets, then it is possible to use up all the magnets in $M$ using only words in $W$. We can then choose $F$ to be the set of words used, so the algorithm will return an answer of ``yes''.\\
+If $(M, W)$ is a ``no'' instance of Magnets, then it is not possible to use up all the magnets in $M$ using only words in $W$. As we will never be able to use up all the magnets, the algorithm will return an answer of ``no''.
+\item The verification algorithm consists of a for loop which does constant time work, and the rest of the algorithm does constant time work. The for loop iterates once for each word in $F$, and we know that $F$ is polynomial in the size of the input. Thus the algorithm runs in polynomial time.
+\end{itemize}
+Proof that 3-Dimensional Matching $\le_p$ Magnets:
+\begin{itemize}
+\item Algorithm to transform input of 3-Dimensional Matching to input of Magnets
+\IncMargin{3em}
+\begin{algorithm}
+  transformToMagnets(X, Y, Z, T)\\\{\\
+  \Indp
+  $M = X\cup Y\cup Z$\;
+  $W = T$\;
+  \Return{$M, W$}\;
+  \Indm
+  \}
+\end{algorithm}
+\DecMargin{3em}\\
+\item The transformation algorithm consists of three for loops, each doing constant work. The for loops iterate for each element in $X$, $Y$, $Z$ respectively, so the runtime of the algorithm is polynomial.
+\item If $X, Y, Z, T$ is a ``yes'' instance of 3-Dimensional Matching, then there is a subset $T'\subseteq T$ such that each element of $X\cup Y\cup Z$ is contained exactly once in $T'$. Then we can choose a subset $F\subseteq W$ such that all the magnets in $M$ are contained within $F$. Then the Magnets algorithm will return ``yes''.\\
+If $X, Y, Z, T$ is a ``no'' instance of 3-Dimensional matching, then there is no subset of $T$ such that each element of $X\cup Y\cup Z$ is contained exactly once. Then we will never be able to choose a subset of $W$ that uses up each magnet in $M$. Then the Magnets algorithm will return ``no''.\\
+\end{itemize}
+\end{answer}
+
+\end{problemlist}
+\end{document}

@@ -1,0 +1,177 @@
+\documentclass{assignment}
+
+\coursetitle{Design and Analysis of Algorithms 1}
+\courselabel{CPSC 413}
+\exercisesheet{Home Work \#4}{}
+\student{Julie Katayama - 10092143\\
+Etienne Pitout - 10075802\\
+Tom Crowfoot - 10037477\\
+Thomas King - 10074105}
+\semester{Winter 2014}
+\usepackage{amsmath}
+\usepackage[linesnumbered]{algorithm2e}
+
+\begin{document}
+
+\begin{center}
+\renewcommand{\arraystretch}{2}
+\begin{tabular}{|c|c|c|} \hline
+Problem & Marks \\ \hline \hline
+1 & \\ \hline
+2 & \\ \hline
+3 & \\ \hline
+4 & \\ \hline \hline
+Total & \\ \hline
+\end{tabular}
+\end{center}
+
+\bigskip
+
+\begin{problemlist}
+
+\clearpage
+\pbitem
+\begin{problem}
+Consider the problem of making change for $n$ cents using the fewest number of coins. Assume that each coin's value is an integer, and that the available coins are in the denominations that are powers of some integer $c>1$, i.e., the denominations are $c^0,c^1...c^k$ for some integer $k\ge 1$. Prove that the greedy algorithm described in class always yields an optimal solution.\\
+\end{problem}
+\begin{answer}
+\\
+Let $N = \{n_0, n_1,..., n_m\}$ be the solution given by the greedy algorithm, where $n_i$ is the number of coins of demonination $c^i$. Let $N' = \{n'_1, n'_2,...,n'_m\}$ be some arbitrary optimal solution. Assume that $N \neq N'$. Let p be the largest index such that $n_p \neq n'_p$. Let $n_p$ be at least one greater than $n'_p$ since the greedy algorithm must have selected the greatest number possible. $\sum_{j = 1} ^ {p - 1} n'_j c^j = c^p$. So, in order to make up for the single $c^p$ demonination, the optimal way would be to use $c^{p-1}*c = c^{p}$. However, we know that $c > 1$, so it will take more than one coin to make up the difference. So, the greedy algorithm has a more optimal solution on the range from $[m..p]$ because $c> 1$. We can then replace the value of $n'_p$ in the optimal solution with $n_p$ and still have an optimal solution. This process can then be continued for all elements that differ between the two solutions. Then the greedy solution is the same as the optimal solution, so the greedy solution is also optimal.\\
+\end{answer}
+\clearpage
+\pbitem
+\begin{problem}
+Let's consider a long, quiet country road with houses scattered very sparsely along it. (We can picture the road as a long line segment, with an eastern endpoint and a western endpoint.) Further, let's suppose that desipte the bucolic setting, the residents of all these houses are avid cell phone users. You want to place cell phone base stations at certain points along the road, so that every house is within four miles of one of the base stations.\\
+(a) Give a formal definition (pre- and post-conditions) of the problem described.\\
+(b) Give an efficent greedy algorithm that finds an optimal solution.\\
+(c) Explain why your algorithm returns an optimal solution.\\
+(d) Is the solution returned by the algorithm the only possible solution for all possible inputs? Explain your answer.\\
+(e) Prove that your algorithm returns an/the optimal solution.\\
+(f) Prove a tight asymptotic bound on the running time of your algorithm.\\
+\end{problem}
+\begin{answer}
+\\
+(a) \\
+Pre-conditions: array A of n numbers, representing the positions of the houses.\\
+Post-conditions: array of minimal size B containing the positions of the base stations, such that all houses are within 4 miles of at least one station.\\
+
+(b)
+\begin {algorithm}
+sort(A)\;
+initialize array L\;
+int b = 0\;
+L[b++] = A[0]+4\;
+\For {$j = 1; j < A.length; j++$}{
+\If {$A[j] - L[b] > 4$}{
+L[b++] = A[j] + 4\;}
+}
+return L\;
+\end {algorithm}\\
+(c)\\
+ The algorithm returns an optimal solution because each base station covers at least one house. In addition, every base station has been placed at the maximal distance possible while still being in range of the houses which it must cover, so there is no overlap between stations. This then provides the minimal number of towers required to cover every house.\\
+(d)\\
+No, the solution is not unique. Another optimal solution to the problem would be to start at the rightmost side of the houses and apply the same algorithm, but in reverse order. This would also provide an optimal solution that is different than the solution from above.\\
+(e) \\
+Prove by contradiction. Assume that the greedy algorithm does not provide an optimal solution, S, where $S = \{S_1, S_2,...S_n\}$. Let O, where $O = \{O_1, O_2,..., O_m\}$, be an optimal solution to the problem. As $O$ is optimal and $S$ is not, we know that $m < n$. Let $j$ be the smallest subscript such that $S_j \neq O_j$. The greedy algorithm solution will pick the base station with the farthest distance for a valid solution so that $S_j \ge O_j$. The $j$th element in $O$ can be swapped with the $j$th element in $S$ and the resulting solution will still be optimal. This can be repeated for all $m$ elements in $O$. Then the solutions $S$ and $O$ are the same for the first $n$ values. As $O$ is optimal, all the houses must be covered by the first $n$ stations, so all the houses are covered by the first $n$ stations in $S$. Thus, there must only be $n$ elements in $S$, and so $m=n$ and $S$ is optimal.\\
+(f) \\
+The first line of the algorithm is in $nlogn$. The next three lines are all constant. The for loop iterates n times and the body of the for loop is constant. 
+\begin {align*}
+&c + nlogn + \sum_{j = 1} ^{n} c\\
+&= c + nlogn + c * n\\
+\end{align*}
+We then prove that the asymptotic runtime of the algorithm is in $\Theta (nlogn)$:\\
+\begin{align*}
+&\lim_{n\rightarrow \infty} \frac{c + nlogn + c * n}{nlogn}\\
+&\lim_{n\rightarrow \infty} \frac{logn + 1 + c}{logn + 1}\\
+&\lim_{n\rightarrow \infty} \frac{1 + 1/logn + c/logn}{1 + 1/logn}\\
+&= 1\\
+\end {align*}
+Through use of L'Hopital's rule we can conclude that the limit resolves to 1. Thus, the runtime is $\Theta (nlogn)$.
+\end{answer}
+\clearpage
+\pbitem
+\begin{problem}
+Consider the following optimization problem. You are writing your final term paper for PHIL 999. You have taken $n$ books out of the library that you need for your paper, and you have read none of them. The books are all overdue by now, and the library is charging you a late fee of $\$1$ per day per book. For each book $j$, you have already determined that it will take you $t_j$ days to read the book. You can only read one book at a time, and you want to return each book as soon as you finish it so you won't have to pay late fees on a book that you have finished reading. The library books problem is to find the order in which to read all $n$ books that minimizes the late fees.\\
+(a) Give a formal definition (pre- and post-conditions) of the problem described.\\
+(b) Consider the case where there are three books that take $t_1=10,t_2=5,t_3=8$ days to read, respectively. What is the optimal solution to the problem?\\
+(c) Give an efficent greedy algorithm that finds an optimal solution for the general case.\\
+(d) Explain why your algorithm returns an optimal solution.\\
+(e) Prove that your algorithm returns an/the optimal solution.\\
+(f) Prove a tight asymptotic bound on the running time of your algorithm.\\
+\end{problem}
+\begin{answer}
+\\
+(a) \\
+Pre-conditions: array A of length n books, where the nth element is the time it takes to read that book.\\
+Post-conditions: array representing the order of books from A, such that the late fees are minimized.\\
+(b) Order: $t_2, t_3, t_1$. This will give a cost of $5 + (5+8) + (5+8+10) = 41$, which is minimal.\\
+(c)
+ \begin {algorithm}
+B = sort(A)\;
+return B\;
+\end {algorithm}
+\\
+(d) The algorithm is optimal because each book costs one dollar per day in late fees, so the fewers books you have, the less late fees you will pay each day.  It is optimal for books with the shortest reading time to be returned first, as this will minimize the late fees for the remaining days.\\
+(e)\\
+Let $A=\{a_1,\ldots,a_n\}$ be the solution returned from the algorithm and let $O=\{o_1,\ldots,o_n\}$ be an optimal solution. As our greedy solution is in ascending order, we know that $t_{oj} > t_{o(j+1)}$ in the optimal solution, as it is not in ascending order. We can then transpose the two elements in $O$ to get a more optimal solution $O'$. This is more optimal because $C_O - C_{O'} = (t_{o(j+1)} + (t_{oj} + t_{o(j+1)})) - (t_{o(j)} + (t_{o(j+1)} + t_{oj})) = t_{o(j+1)} - t_{oj} > 0$. This can be repeated for all elements in $O$. Then all the elements in $O'$ are in ascending order, and $O'$ is still optimal. The greedy solution is optimal as well, since $A=O'$.\\
+(f) \\Line one costs nlogn and the cost of line two is constant.\\
+\begin {align*}
+&nlogn + c\\
+\end{align*}
+We then prove that the asymptotic runtime of the algorithm is in $\Theta (nlogn)$:\\
+\begin{align*}
+&\lim_{n\rightarrow \infty} \frac{nlogn + c}{nlogn}\\
+&\lim_{n\rightarrow \infty} \frac{1 + c/nlogn}{1}\\
+&= 1\\
+\end {align*}
+Since the limit resolves to a constant, it is in $\Theta (nlogn)$.
+\end{answer}
+\clearpage
+\pbitem
+\begin{problem}
+The Banff Magnificent Ski Rental Company has $n$ pairs of skis, where the height of the $i$th pair of skis is $s_i$. THere are $n$ skiers who wish to rent skis, where the height of the $i$th skier is $h_i$. Ideally, each skier should obtain a pair of skis whose height matches his or her own height as closely as possible.\\
+(a) Give a formal definition (pre- and post-conditions) of the problem described.\\
+(b) Consider the case where $n=2$, i.e., there are only two skiers. Describe how to solve the problem in this case, and justify that your solution is optimal.\\
+(c) Give an efficent greedy algorithm that finds an optimal solution for the general case.\\
+(d) Explain why your algorithm returns an optimal solution.\\
+(e) Prove that your algorithm returns an/the optimal solution.\\
+(f) Prove a tight asymptotic bound on the running time of your algorithm.\\
+\end{problem}
+\begin{answer}
+\\
+(a) \\
+Pre-conditions: array A of heights of people, with the length of A=n. Array B of lengths of skis with length of B=n. \\
+Post conditions: an array of pairs of people and skis, such that the total difference of heights between people and skis is minimized.\\
+(b) \\
+Let the two people be $h_1$ and $h_2$, where $h_1 < h_2$. Let the length of skis be $s_1$ and $s_2$, where $s_1 < s_2$. The possible pairings are $(h_1, s_1)$, $(h_2, s_2)$ and $(h_1, s_2), (h_2, s_1)$. Then $|h_1 - s_1| + |h_2 - s_2| \le |h_1 - s_2| + |h_2 - s_1|$. Thus, the most optimal pairing is $(h_1, s_1), (h_2, s_2)$.\\
+(c) 
+\begin {algorithm}
+sort(A)\;
+sort(B)\;
+initialize array L\;
+\For {$i = 0; i < A.length; i++$}{
+L[i] = (A[i], B[i])\;
+}
+return L\;
+\end {algorithm}
+\\
+(d) From part b, the optimal pairings are the ones where the pairs are in asending order of heights. The algorithm extends this to n pairs, which is optimal.\\
+(e)\\
+For proof by contradiction, assume that the algorthim returns a non-optimal solution L. $L = \{l_1,l_2,\ldots,l_n\}$. Let an optimal solution be $O = \{o_1,o_2,\ldots,o_n\}$, where $O$ is a permutation of people and skis. As our greedy solution has the heights of skis in ascending order, there must be some $o_j=(h_j, s_{j+1})$ and $o_{j+1}=(h_{j+1}, s_j)$ in $O$. We can then swap the skis in the pairs $o_j$ and $o_{j+1}$ to obtain $o_j=(h_j, s_j)$ and $o_{j+1}=(h_{j+1,} s_{j+1})$. It is more optimal to have pairs in ascending order, as proved in part (b), so the solution $O'$ containing the new pairs is more optimal. This can be repeated for all elements in $O$. Then, all the elements in $O'$ are paired in ascending order, and $O'$ is still optimal. The greedy solution is optimal, as $L = O'$.\\
+(f) The first two lines are both in nlogn, so 2nlogn. The third line is constant and the for loop iterates n times. The body of the loop is constant.
+\begin {align*}
+&nlogn + nlogn + \sum_{i=0}^{n} c\\
+&= 2nlogn + n * c\\
+\end{align*}
+We then prove that the asymptotic runtime of the algorithm is in $\Theta (nlogn)$:\\
+\begin{align*}
+&\lim_{n\rightarrow \infty} \frac{2nlogn + n * c}{nlogn}\\
+&\lim_{n\rightarrow \infty} \frac{2logn + 2 + c}{logn + 1}\\
+&\lim_{n\rightarrow \infty} \frac{2 + 2/logn + c/logn}{1 + 1/logn}\\
+&= 2\\
+\end {align*}
+Through using L'Hopital's rule, the limit resolves to a constant. Therefore, the run time of the algorithm is in $\Theta (nlogn).$
+\end{answer}
+
+\end{problemlist}
+\end{document}

@@ -1,0 +1,134 @@
+\documentclass{assignment}
+
+\coursetitle{Design and Analysis of Algorithms 1}
+\courselabel{CPSC 413}
+\exercisesheet{Home Work \#3}{Individual submission version}
+\student{Tom Crowfoot - 10037477}
+\semester{Winter 2014}
+\usepackage{amsmath}
+\usepackage[boxed]{algorithm2e}
+
+\begin{document}
+\begin{problemlist}
+\pbitem
+\begin{problem}
+\end{problem}
+\begin{answer}
+\\
+For (a):\\
+i. $1\rightarrow 2\rightarrow 3\rightarrow 4\rightarrow 6\rightarrow 5\rightarrow 7\rightarrow 8$\\
+ii. $1\rightarrow 2\rightarrow 3\rightarrow 4\rightarrow 6\rightarrow 5\rightarrow 7\rightarrow 8$\\
+iii. Yes, $G$ is connected. To make it unconnected, remove the edge between nodes 4 and 6.\\
+iv. Yes, $G$ contains a cycle. One example cycle is $1\rightarrow 2\rightarrow 3\rightarrow 1$.\\
+v. No, $G$ is not a tree because it contains a cycle.\\
+\\For (b):\\
+i. A DFS tree of a completed graph would be one path throughout the entire tree.\\
+ii. A BFS tree of a complete graph would have an edge between the root and every other node.\\
+\\For (c):\\
+You could create a one dimensional array, and fill it in with the values for each adjacent node. Then you could binary search this array in $logn$ time to determine adjacency.\\
+\\For (d):\\
+True.\\
+Assume that there is a graph $G$ with $n$ nodes and every node has $deg(n/2)$, and that $G$ is not connected. Then for $v\in G$, $v$ must be connected to atleast $n/2$ other nodes. By assumption that $G$ is not connected, there must be a node $x$ that is not connected to $v$. As there are at most $n/2 -1$ nodes not connected to $v$, and there must be $n/2$ nodes connected to $x$, there must be an edge connecting $x$ to something that is connected to $v$, which is a contradiction.\\
+\end{answer}
+\clearpage
+\pbitem
+\begin{problem}
+\end{problem}
+\begin{answer}
+\\
+Input: An undirected graph $G$.\\
+Output: Either that the graph does not contain a cycle, or a single cycle that was found.\\
+Algorithm:\\
+Pick a node in the graph.\\
+Start doing breadth first search through graph.\\
+If you come across a node that you have already visited, you have a cycle.\\
+If you have visited every node in the graph, there is no cycle.\\
+The algorithm is correct, and runs in $O(m+n)$ because it is exactly the same as the breadth first search.\\
+\end{answer}
+\clearpage
+\pbitem
+\begin{problem}
+\end{problem}
+\begin{answer}
+\\
+For (a):\\
+It has 6.\\
+a,b,c,d,e,f\\
+a,b,d,c,e,f\\
+a,b,d,e,c,f\\
+a,d,e,b,c,f\\
+a,d,b,e,c,f\\
+a,d,b,c,e,f\\
+\\For (b):\\
+Precondition: the graph is a DAG, of size n\\
+Post condition: a valid topological ordering for the DAG\\
+\begin{algorithm}
+  FindTO(G, n):\\{
+    compute degreeincoming for each node\;
+    push all nodes with degreeincoming == 0 onto stack\;
+    add all nodes to arrayTO inorder\;
+    \While{stack is not empty}{
+      pop the stack = v\;
+      add v to arrayTO\;
+      \For{each edge between v and x}{
+        degreeincoming(x)-1\;
+        \If{degreeincoming(x)==0}{
+          push(x)\;
+        }
+      }
+    }
+    return arrayTO\;
+  }
+\end{algorithm}
+\\
+step one will cost n, as it must work for each node in the graph.\\
+setp two is constant\\
+step three is same as two\\
+the while loop will iterate n times, once for each node in the DAG\\
+poping stack is constant, as well as adding element to array\\
+the for loop will iterate m times, once for each edge\\
+subtraction is constant, as is conditional and push\\
+return is constant\\
+so $n + c + \sum_{i=1}^n {c + m(c)} + c$\\
+$n + \sum_{i=1}^n {c + m(c)} + c$\\
+$n(c + mc) + n + c$\\
+$nc + mc + n + c$\\
+$n(c+1)+mc+c$\\
+$n+m$\\
+\\For (c):\\
+Precondition: the graph is a directed graph, of size n\\
+Post condition: a valid topological ordering for the DAG\\
+\begin{algorithm}
+  FindTO(G, n):\\{
+    compute degreeincoming for each node\;
+    push all nodes with degreeincoming == 0 onto stack\;
+    add all nodes to arrayTO inorder\;
+    \While{stack is not empty}{
+      pop the stack = v\;
+      add v to arrayTO\;
+      \For{each edge between v and x}{
+        degreeincoming(x)-1\;
+        \If{degreeincoming(x)==0}{
+          push(x)\;
+        }
+      }
+    }
+    \eIf{number of elements in arrayTO == n}{
+      return arrayTO\;
+    }
+    \Else{      
+      call algorithm from question two\;
+    }
+  }
+\end{algorithm}
+\\
+proof of runtime:\\
+it is a mash of two algorithms\\
+first one is $O(n+m)$ and second one is also $O(m+n)$\\
+so this one is $n+m +n+m= 2n+2m\Rightarrow O(m+n)$\\
+the algorithm is correct because the two algorithms it uses are correct.
+the modification will allow it to be non asyclic, in which case the while loop will terminate before all n nodes have been examined. thus the number of elements in arrayTO will be less than n, and it will call the cycle finding algorithm.\\
+\end{answer}
+
+\end{problemlist}
+\end{document}

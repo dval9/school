@@ -1,0 +1,152 @@
+\documentclass{assignment}
+
+\coursetitle{Design and Analysis of Algorithms 1}
+\courselabel{CPSC 413}
+\exercisesheet{Home Work \#4}{individual version}
+\student{Tom Crowfoot - 10037477}
+\semester{Winter 2014}
+\usepackage{amsmath}
+\usepackage[linesnumbered]{algorithm2e}
+
+\begin{document}
+
+\begin{problemlist}
+\pbitem
+\begin{problem}
+\end{problem}
+\begin{answer}
+\\
+The algorithm given in class was to devide the the change amount by the highest denomination smaller than the change amount. The quotient is the number of that denomination to take for the solution, and then repeat this for the remainder, until you get to a remainder of 0.\\
+Proof of optimality:\\
+Assume for way of contradiction that the algorithm does not produce an optimal solution. Then let $K=\{k_0,k_1,\ldots,k_n\}$ be the solution produced by the algorithm, and let $O=\{o_0,o_1,\ldots,o_n\}$ be the optimal solution; let these be sorted in ascending order according to their denomination value. By assumption we know that $\sum_{i=0}^n k_i > \sum_{i=0}^n o_i$. Let $x$ then be the first element of these sets where $K$ and $O$ differ, that is $k_x\neq o_x$, but $k_n=o_n,\ldots,k_{x+1}=o_{x+1}$. Then as the greedy algorithm will always choose the highest possible amount of each coin denomination, $k_x > o_x$, so we see that $\sum_{i=0}^{x-1} o_ic^i \ge c^x$. However as each denomination is a multiple of eachother, i.e. $c^x=c^{x-1}*c$, we see that in order to make that inequality true, it will not provide an optimal solution. Thus we can replace the value $o_x$ with $k_x$ to obtain $O'=\{o_0,\ldots,k_x,\ldots,o_n\}$, which is an optimal solution. We can repeat this process for every element of $K$ and $O$ that do not match until all elements have been considered. Thus we contradict out assumption that $\sum_{i=0}^n k_i > \sum_{i=0}^n o_i$, and so our greedy algorithm must produce an optimal solution.\\
+\end{answer}
+\clearpage
+\pbitem
+\begin{problem}
+\end{problem}
+\begin{answer}
+\\
+For (a):\\
+Pre-conditions: an array $A$ of length $n$, where each element refers to a house along the road.\\
+Post-conditions: an array of length $m$, where $m$ is the location of each tower, and $m$ is the smallest possible number for a valid solution.\\
+For (b):\\
+\begin{algorithm}
+  sort(A)\;
+  array sol\;
+  int c = 0\;
+  sol[c++]=b[0]+4;
+  \For{$i=1;i<A.length;i++$}{
+    \If{$A[i]-sol[c] > 4$}{
+      sol[c++]=A[i]+4\;
+    }
+  }
+  return sol\;
+\end{algorithm}
+\\For (c):\\
+The algorithm returns an optimal solution, by ensuring that each time it adds a tower, it will be on the boundry of the last house that needed it, ensuring that there is no overlap between towers. Thus this will provide the smallest number of towers required to cover all houses, and thus be an optimal solution.\\
+For (d):\\
+No this is not the only possible solution for the inputs. The algorithm could have added towers in desending order, and this would also have provided an optimal solution, which would be different.\\
+For (e):\\
+It is trivial to see that the algorithm is correct, and that it terminates.\\
+Proof of optimality:\\
+Assume for by way of contradiction that the algorithm does not return an optimal solution. Then call the solution returned by the algorithm $A=\{a_0,\ldots,a_n\}$ and let the optimal solution be $O=\{o_0,\ldots,o_m\}$. By assumption, we know that $n>m$, as our algorithm solution was not optimal, i.e. it had more towers in it's solution than needed. Then let $c$ be the first element in which $A$ and $O$ differ, that is $a_c \neq o_c$ but $a_0=o_0,\ldots,a_{c-1}=o_{c-1}$. By the way our algorithm choose places to put the towers, we know that $a_c$ is the farthest from the next house we could have placed the tower inorder to insure that all houses had coverage, so $a_c$ must be the best place to put the tower for a solution. We can then swap the value of $o_c$ for that of $a_c$ to obtain $O'=\{o_0,\ldots,a_c,\ldots,o_m\}$, which will be an optimal solution. We repeat this until every value of $O$ has been considered, and find that $A$ is the same as $O'$ for $m$ values, and so $A$ is optimal for the first $m$ values, and then also $A$ must cover all houses with it's first $m$ values, and so we see that $A$ must only have $n=m$ values. This contradicts our assumption that $n>m$, and thus $A$ is an optimal solution.\\
+For (f):\\
+The runtime of the first line is $nlogn$, which is the best an array of length $n$ can be sorted in. The runtime of lines 2,3,4 are all constant. The for loop will iterate $n-1$ times, and the work inside the loop is all constant runtime. We then find:
+\begin{align*}
+&1 + nlogn + \sum_{i=1}^{n-1} 1\\
+=&1 + nlogn + n-1\\
+=&n + nlogn\\
+&\lim_{n\rightarrow \infty} \frac{n + nlogn}{nlogn}\\
+=&\lim_{n\rightarrow \infty} \frac{logn + 2}{logn + 1}\\
+=&\lim_{n\rightarrow \infty} \frac{1 + 2/logn}{1 + 1/logn}\\
+=&1\\
+\end{align*}
+Using L'Hopital's rule we find that the limit resolves to a constant, and so the runtime of the algorithm is $\Theta (nlogn)$.\\
+\end{answer}
+\clearpage
+\pbitem
+\begin{problem}
+\end{problem}
+\begin{answer}
+\\
+For (a):\\
+Pre-conditions: an array $A$ of length $n$, where each element refers to how many days it will take to read.\\
+Post-conditions: an array that contains the optimal order to return books sorted in ascending order.\\
+For (b):\\
+The optimal solution will be to return the books in order $t_2,t_3,t_1$, which will give a total cost of $5*3+8*2+10*1=41$.\\
+For (c):\\
+\begin{algorithm}
+  sort(A)\;
+  return A\;
+\end{algorithm}
+\\For (d):\\
+Each book costs $\$1$ a day that you have it, so you want to get rid of books as fast as possible. To do this you read the books in order of how long they will take, so you can get rid of books as fast as possible. Having less books will cost you less, so the algorithm is optimal.\\
+For (e):\\
+Let $A=\{a_1,\ldots,a_n\}$ be the order returned by the algorithm. Let $O=\{o_1,\ldots,o_n\}$ be an optimal solution for the problem. By induction we show that the solution returned by the algorithm is optimal. The cost of late fees can be represented by $\sum_{i=1}^{n} (n-i+1)t_i$ where $t_i$ is the length of time it will take to read the $i$th element of the solution.
+Base cases:\\
+If $n=1$, then we find $n*t_{a1} \le n*t_{o1}$ as our algorithm always chooses the shortest book to read first, so $t_{a1}\le t_{o1}$.
+Inductive hypothesis: assume that $\sum_{i=1}^{m} (n-i+1)t_{ai}\le \sum_{i=1}^{m} (n-i+1)t_{oi}$ for some $1\le m\le n$.\\
+Then 
+\begin{align*}
+\sum_{i=1}^{m+1} (n-i+1)t_{ai}&\le \sum_{i=1}^{m+1} (n-i+1)t_{oi}\\
+\sum_{i=1}^{m} (n-i+1)t_{ai}+(n-m)*t_{a(m+1)} &\le \sum_{i=1}^{m} (n-i+1)t_{oi}+(n-m)*t_{o(m+1)}\\
+\end{align*}
+Then either $t_{a(m+1)}\le t_{o(a+1)}$. If it is, then $(n-m)*t_{a(m+1)} \le (n-m)*t_{o(m+1)}$ so $\sum_{i=1}^{m+1} (n-i+1)t_{ai} \le \sum_{i=1}^{m+1} (n-i+1)t_{oi}$ is true. If $t_{a(m+1)} > t_{o(m+1)}$, we know that there must be $t_{ax} < t_{ox}$ for $1\le x < m+1$, as the algorithm always picks the shortest read time. So then $(n-x+1)*t_{ax} < (n-x+1)*t_{ox}$, and then 
+\begin{align*}
+(n-x+1)*t_{ax} +(n-m)*t_{a(m+1)} \le (n-x+1)*t_{ox} + (n-m)*t_{o(m+1)}\\
+n((2-x)*t_{ax}+(-m)*t_{a(m+1)}) \le n((2-x)*t_{ox}+(-m)*t_{o(m+1)})\\
+(2-x)*t_{ax}+(-m)*t_{a(m+1)} \le (2-x)*t_{ox}+(-m)*t_{o(m+1)}\\
+(-m)*t_{a(m+1)}-(-m)*t_{o(m+1)}\le (2-x)*t_{ox}-(2-x)*t_{ax}\\
+\end{align*}
+so we see that $\sum_{i=1}^{m+1} (n-i+1)t_{ai}\le \sum_{i=1}^{m+1} (n-i+1)t_{oi}$ is true still.\\
+Thus the algorithm must return the optimal solution.\\
+For (f):\\
+The cost to sort an array of length $n$ will cost $nlogn$.\\
+\begin{align*}
+&nlogn\\
+&\lim_{n\rightarrow \infty} \frac{nlogn}{nlogn}\\
+=&\lim_{n\rightarrow \infty} \frac{1}{1}\\
+=&1\\
+\end{align*}
+As the limit resolves to a constant, the runtime of the algorithm is $\Theta (nlogn)$.\\
+\end{answer}
+\clearpage
+\pbitem
+\begin{problem}
+\end{problem}
+\begin{answer}
+\\
+For (a):\\
+Pre-conditons: an array $A$ of lengths of skis available; an array $B$ of the height of people.\\
+Post-conditons: an array containing the best matching of people to skis, so that to match height as closly as possible.\\
+For (b):\\
+Let $h_1<h_2$ and $s_1<s_2$ be the skiers and skis respectively. Then match $h_1,s_1$ and $h_2,s_2$. This is optimal, as $(h_1-s_1)+(h_2-s_2) \le (h_1-s_2)+(h_2-s_1)$ which is easy to check.\\
+For (c):\\
+\begin{algorithm}
+  sort(A)\;
+  sort(B)\;
+  array sol\;
+  \For{$i=0;i<B.length;i++$}{
+    sol[i]=(A[i],B[i])\;
+  }
+  return sol\;
+\end{algorithm}
+\\For (d):\\
+The algorithm will order the skiers and skis, and then assign the shortest skier with the shortest ski, and so forth. This is optimal, because the solution will not contain any permutations which would cause a les optimal solution, as proved with the two case example in (b).\\
+For (e):\\
+Let $A=\{a_1,\ldots,a_n\}$ be the solution returned by the algorithm, that is not optimal. Then let $O=\{o_1,\ldots,o_n\}$ be an optimal solution to the problem. Then let $x$ be the first element that differes between $A$ and $O$. So let the different element in $O$ be $(ho_x,so_y)$, then there must also be an element $(ho_y,so_x)$ corresponding. So we can compare these two differences to the elements $(ha_x,sa_x)$ and $(ha_y,sa_y)$ in $A$ such that $x<y$. Then from considering the case of two pairs in part (b), we see that the solution in $A$ is at least as optimal, so we replace the elements in $O$ with that of $A$, and the new solution $O'$ will still be optimal. We can then repeat this until $A=O'$, and thus the solution returned by our algorithm is indeed optimal.\\
+For (f):\\
+Lines 1,2 are $nlogn$ to sort an $n$ length array. The for loop will iterate n times, and the body of the for loop is constant.
+\begin{align*}
+&nlogn + nlogn + \sum_{i=1}^{n} n\\
+=&2nlogn + n\\
+&\lim_{n\rightarrow \infty} \frac{2nlogn+n}{nlogn}\\
+=&\lim_{n\rightarrow \infty} \frac{2logn+3}{logn+1}\\
+=&\lim_{n\rightarrow \infty} \frac{2+3/logn}{1+1/logn}\\
+=&2\\
+\end{align*}
+Using L'Hopital's rule, we see that the limit resolves to a constant, so the runtime is $\Theta (nlogn)$.\\
+\end{answer}
+
+\end{problemlist}
+\end{document}

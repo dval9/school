@@ -1,0 +1,141 @@
+\documentclass{assignment}
+
+\coursetitle{Design and Analysis of Algorithms 1}
+\courselabel{CPSC 413}
+\exercisesheet{Home Work \#2}{Individual submission version}
+\student{Tom Crowfoot - 10037477}
+\semester{Winter 2014}
+\usepackage{amsmath}
+
+\begin{document}
+\bigskip
+\begin{problemlist}
+\pbitem
+\begin{problem}
+\end{problem}
+\begin{answer}
+\\
+For (a):\\
+\begin{align*}
+  (2n)^2&=4n^2\\
+  (n+1)^2&=n^2+2n+1\\
+\end{align*}
+For (b):\\
+\begin{align*}
+  (2n)^3&=8n^3\\
+  (n+1)^3&=n^3+3n^2+3n+1\\
+\end{align*}
+For (c):\\
+\begin{align*}
+  100(2n)^2&=400n^2\\
+  100(n+1)^2&=100n^2+200n+100\\
+\end{align*}
+For (d):\\
+\begin{align*}
+  (2n)log(2n)&=2n(log(n)+log(2))\\
+  (n+1)log(n+1)&=nlog(n+1)+log(n+1)\\
+\end{align*}
+For (e):\\
+\begin{align*}
+  2^{2n}&=4^n\\
+  2^{n+1}&=2^n*2\\
+\end{align*}
+\end{answer}
+\pbitem
+\begin{problem}
+\end{problem}
+\begin{answer}
+\\
+$f_2$ is the root of a linear, so it should grow slower than $f_3$ which is linear. Logarithms grow slower than polynomials, so $f_6$ grows slower than $f_1$ but both grow faster than the two linear functions. $f_4$ and $f_5$ are both have exponential growth, so they are last, with $f_5$ being ten times larger than $f_4$.\\
+\end{answer}
+\pbitem
+\begin{problem}
+\end{problem}
+\begin{answer}
+\\
+We can seperate the set into two groups, $g_1,g_3,g_4$ which are polynomial, and the rest which are exponential. $g_1$ can be reduced to an almost linear function, so it has the slowest growth rate. $g_4$ has a logarithm as it's dominating term, so it grows slower than $g_3$. As the rest are all exponential, just compare their exponents. $g_5$ has a logarithm for it's exponent, so it grows the slowest. $g_2$ and $g_6$ both have linear exponents, where $g_6$ is twice as large as $g_2$. $g_7$ is then last as it's exponent is polynomial.\\ 
+\end{answer}
+\pbitem
+\begin{problem}
+\end{problem}
+\begin{answer}
+\\
+For (a):\\
+If $f(n)\in O(g(n))$ then $\exists~c,n_0$ such that $f(n) \le c\cdot g(n)~\all~n\ge n_0$\\
+Then if $g(n)> 1$ we find $log(f(n))\le log(c\cdot g(n)) = log(c) + log(g(n)) \le log(c)\cdot log(g(n)) + log(g(n)) = (log(c) + 1)\cdot log(g(n))$ so it is true.\\
+Then if $g(n)\le 1$ we find $log(f(n))\le log(c\cdot g(n)) = log(c) + log(g(n)) > log(c)\cdot log(g(n)) + log(g(n)) = (log(c) + 1)\cdot log(g(n))$ and it is false.\\
+\\For (b):\\
+If $f(n)\in O(g(n))$ then $\exists~c,n_0$ such that $f(n) \le c\cdot g(n)~\all~n\ge n_0$\\
+Then if we pick $f(n) = 2n$ and $g(n) = n$ this is false.\\
+So $2^{f(n)} = 2^{2n} \le 2^{c\cdot g(n)} = 2^ \Rightarrow log(2^{f(n)}) \le log(2^{c\cdot g(n)}) \Rightarrow f(n) \le c\cdot g(n) \Rightarrow 2n \le c\cdot n \Rightarrow n \le c$\\
+As n has a growth rate, it cannot always be less than a constant and thus this is contradiction.\\
+\\For (c):\\
+If $f(n)\in O(g(n))$ then $\exists~c,n_0$ such that $f(n) \le c\cdot g(n)~\all~n\ge n_0$\\
+So $f(n)^2 \le (c\cdot g(n))^2 = c^2\cdot g(n)^2$ so it is true.\\
+\end{answer}
+\pbitem
+\begin{problem}
+\end{problem}
+\begin{answer}
+\\
+For (a):\\
+$\lim_{n\rightarrow \infty} (2n^2 + \sqrt{n}) / n = \lim_{n\rightarrow \infty} (2n + \sqrt{n}/n)/1 = \infty$\\
+\\For (b):\\
+$\lim_{n\rightarrow \infty} (5n^3+3.5n^2-7n+19)/n^3 = \lim_{n\rightarrow \infty} (5+3.5/n-7/n^2+19/n^3)/1 = 5$\\
+\\For (c):\\
+$\lim_{n\rightarrow \infty} n^4/2^n \Rightarrow 4n^3/2^nlog(2) \Rightarrow 12n^2/2^nlog^2(2) \Rightarrow 24n/2^nlog^3(2) \Rightarrow 24/2^nlog^4(2) = 0$
+\\For (d):\\
+$\lim_{n\rightarrow \infty} (20n^2 + nlogn)/n^2 = \lim_{n\rightarrow \infty} (20 + logn/n)/1 = 20$\\
+\end{answer}
+\pbitem
+\begin{problem}
+\end{problem}
+\begin{answer}
+\\
+(a) takes ordered linked-list length n of men, ordered array length n of women, man structure contains a ordered linked-list of preferences and who he is engaged to, woman structure contains an ordered array of preferences, flag if she is engaged, who she is engaged to.\\
+(b) this is true by preconditions, man is denoted free by being in the queue of men, woman is denoted free by having her flag set to free. this is all initialized before given to algorithm, constant run time.\\
+(c) while loop, loop stops when list of men is empty, constant time to check.\\
+(d) get the head of the list, constant cost.\\
+(e) get the head of that man from (d) preferences list, constant cost.\\
+(f) check flag on the woman got from (e), constant cost.\\
+(g) update fields in the man and woman structures that are being used, add the pair to new array length n at the position of the man's number, everything constant time cost.\\
+(h) fallthrough from (f), no work to be done so constant cost.\\
+(i) get the preferences of the woman from her array for the man she is currently engaged to, and the new man, compare values, replace new man into list of men, everything constant time cost.\\
+(j) in comparison from (i) new man was better, update fields on new man and woman, add new pair to final solution array, remove old pair from final solution list, everything constant time operation.\\
+(k) clear fields from old man, place man back into list of men, constant time cost.\\
+(l) return reference to solution array, constant cost.\\
+(m) cost of lines 2 to 12 is constant, loop executes worst cast $n^2$ times, cost of lines 1 and 16 are constant cost, total cost of algorithm is $c_1*n^2 + c_2$\\
+(n) $\lim {n\rightarrow \infty} c_1n^2+c_2/n^2 = c_1$ so it is $\Theta (n^2)$.
+\end{answer}
+\pbitem
+\begin{problem}
+\end{problem}
+\begin{answer}
+\\
+For (a):\\
+The cost of the inner for loop is similar to the sum of 1 to n, so can be written as $(n-i)(n+1-i)/2$. The total cost then is $f(n)=\sum_1^n (n-i)(n+1-i)/2 \Rightarrow n(n-i)(n+1-i)/2$ roughly. Then $\lim f(n)/n^3 = 1$ which implys it is in $O(n^3)$.\\
+\\For (b):\\
+From (a), the limit goes to a constant, which implys $\Omega (n^3)$.\\
+\\For (c):\\
+$for i=1..n$\\
+$B[i,i+1]=A[i]+A[i+1]$\\
+$for j = i+2..n$\\
+$B[i,j]=B[i,j-1]+A[j]$\\
+This new algorithm has $O(n^2)$ so it is better than the given algorithm.\\
+\end{answer}
+\pbitem
+\begin{problem}
+\end{problem}
+\begin{answer}
+\\
+For (a):\\
+Lines one and six take constant time. The outer for loop iterates $n-1$ times, line two costs $log~i$, the inner for loop in worst case costs $i$ iterations, lines four and five are constant. So $c + \sum_1^{n-1} (log~i + c*i + c) = c + log((n-1)!) + c(n)(n-1)/2 + c$ so the algorithm is clearly running in $n^2$.\\
+\\For (b):\\
+$\lim (c + log((n-1)!) + c(n)(n-1)/2 + c)/n^2 = c$, so it is in $\Theta (n^2)$\\
+\\For (c):\\
+see (b)\\
+\\For (d):\\
+see (b)\\
+\end{answer}
+\end{problemlist}
+\end{document}

@@ -1,0 +1,50 @@
+\documentclass{assignment}
+
+\coursetitle{Introduction to Complexity Theory}
+\courselabel{CPSC 511}
+\exercisesheet{Assignment \#2}{}
+\student{Tom Crowfoot - 10037477
+\\Jameson Weber 10080614}
+\semester{Fall 2014}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+
+\begin{document}
+
+\begin{problemlist}
+\pbitem
+\begin{problem}
+You are given a box and a collection of cards as indicated in the following figure. Because of the pegs in the box and the notches in the cards, each card will fit in the box in either of two ways. Each card contains two columns of holes, some of which may not be punched out. The puzzle is solved by placing all the cards in the box so as to completely cover the bottom of the box(i.e., every hole position is blocked by at lease one card that has no hole there). Let $PUZZLE=\{ \langle c_1,\ldots,c_k\rangle |$ each $c_i$ represents a card and this collection of cards has a solution$\}$. Show that $PUZZLE$ is $NP$-complete.
+\end{problem}
+\begin{answer}
+\\
+$PUZZLE \in NP$:\\
+Let $\Sigma_{card} = \{(, ), T, F, ;\}$, so a card can be encoded by $C_i=(x_1x_2;x_3x_4;\ldots;x_{m-1}x_m)$ where $x_j=$ $T$ or $F$, $n=2k$ where $k$ is the number of rows on the card, $x_j$ is $T$ if there is no hole on the card in that position, otherwise $F$, $x_{j-1}x_j$ is the $k$th row on the card. The deck can then be encoded by concatenating cards, such as $C_1C_2\ldots C_n$ where $n$ is the number of cards in the deck. Without loss of generality, we can assume that a deck starts with each card facing up. Let $\Sigma_{cert}=\{U, D\}$. The certificate can then be represented by a string $CERT$ of $U$'s and $D$'s of length $n$. If the $i$th symbol is a $U$, then the card has not been flipped from its original position, if the $i$th symbol is a $D$, then the card has been flipped from its original position. The input to the verification TM $M$ will then be $C_1C_2\ldots C_n\#CERT$. \\
+Clearly the certificate is polynomial in the length of the input, as the length of the input is the number of cards. 
+The verifier should do the following:
+\begin{enumerate}
+\item Reject if the input is not in $\Sigma_{card}\# \Sigma_{cert}$.
+\item Reject if the length of the string to the right of $\#$ is not $n$, the number of cards.
+\item Sweeping over the string, make a copy on a second tape such that if the $i$th symbol in the certificate is $U$, the copied substring is the same, if the $i$th symbol in the certificate is $D$, the pairs of $T$ and $F$ in each row of the $i$th card are mirrored, i.e. if the $i$th card was originally $(TF,FT,\dots,TT)$ then the resulting copy would be $(FT,TF,\ldots,TT)$.
+\item Starting at the leftmost of the second tape, scanning to the right copy the first card to a third tape. Move the head of the third tape all the way to the left. Continuing to scan to the right, if there is a $T$ on the second tape where there is a $F$ on the third tape, replace the $F$ with a $T$ on the third tape. If there is a $F$ on the second tape, do not overwrite anything. Repeat this for all the cards on the second tape.
+\item Scan over the third tape from left to right, if there is any $F$ remaining, then reject. Else accept.
+\end{enumerate}
+Steps $1$ and $2$ will take polynomial run time to compute.\\
+Step $3$ will take quadratic time to compute, scanning back and forth over the first input tape.\\
+Step $4$ will take linear time to compute, scanning a single time over the second tape, which has the same length as the first input tape.\\
+Step $5$ will take less than linear time, scanning over the length of the encoding of a card, which is less than the length of the encoding of a deck.\\
+The total runtime of the verifier will then be polynomial in the input.\\
+\\$PUZZLE \in NP-hard$:\\
+We will show $CNFSAT \le_p PUZZLE$. Let $x_1,x_2,\ldots,x_n$ be the variables in the formula, where $n$ is the number of cards in the problem. Let $C_1,C_2,\ldots,C_n$ be the cards in the deck. Let the number of disjuncts in the CNF expression be $k$, where $k$ is the number of rows of holes on a card. Let $1\le i \le n$ and $1 \le t \le k$.\\
+If the variable $x_i$ appears in the $t$th disjunct of the expression, then the card $C_i$ has a hole arrangement of $TF$ in the $t$th row, i.e. there is a hole on the left and no hole on the right.\\
+If the variable $-x_i$ appears in the $t$th disjunct of the expression, then the card $C_i$ has a hole arrangement of $FT$ in the $t$th row, i.e. there is no hole on the left and a hole on the right.\\
+If the variables $x_i \vee -x_i$ appears in the $t$th disjunct of the expression, then the card $C_i$ has a hole arrangement of $TT$ in the $t$th row, i.e. there is a hole on the left and a hole on the right.\\
+If the $t$th disjunct of the expression does not depend on the variable $x_i$, then the card $C_i$ has a hole arrangement of $FF$ in the $t$th row, i.e. there is no hole on the left and no hole on the right.\\
+If card $C_i$ is face up, as defined in the proof of $PUZZLE \in NP$, then give the variable $x_i$ the assignment $T$, if card $C_i$ is face down give the variable $x_i$ the assignment $F$. Then the right hand hole of the $t$th row will be covered if and only if the $t$th disjunct in the expression is true. Therefore all holes in the right hand column will be covered if and only if the entire CNF expression is true.\\
+Now assign the opposite truth values to each variable, i.e. if $x_i=T$, change it to $x_i=F$. Then the left hand hole of the $t$th row will be covered if and only if the $t$th disjunct in the expression still evaluates to true. Therefore all holes in the left hand column will be covered if and only if the entire CNF expression still evaluates to true.\\
+Therefore, if the CNF expression evaluates to true for both assignments of truth values, then both columns will be covered. Thus $CNFSAT$ is true if and only if $PUZZLE$ is true.\\
+Transforming from an encoding of $CNFSAT$ to $PUZZLE$ will require scanning over each disjunct in the expression, and copy the correct assignment of holes to the instance of puzzle. Moving over the first disjunct and copying will take $O(|\omega|)$ steps, and this will have to be done for each disjunct. Assuming that the number of cards is much greater than the number of rows on each card, the total number of operations required to preform the transformation will be $O(|\omega|^2)$.\\
+Therefore $CNFSAT \le_p PUZZLE$.\\
+\end{answer}
+\end{problemlist}
+\end{document}

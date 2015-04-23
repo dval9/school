@@ -1,0 +1,247 @@
+\documentclass{assignment}
+
+\coursetitle{Design and Analysis of Algorithms 1}
+\courselabel{CPSC 413}
+\exercisesheet{Home Work \#6}{Individual version}
+\student{Tom Crowfoot - 10037477}
+\semester{Winter 2014}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage[linesnumbered,noline]{algorithm2e}
+\usepackage{mathtools}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+
+\begin{document}
+\begin{center}
+\renewcommand{\arraystretch}{2}
+\begin{tabular}{|c|c|c|} \hline
+Problem & Marks \\ \hline \hline
+1 & \\ \hline
+2 & \\ \hline
+Total & \\ \hline
+\end{tabular}
+\end{center}
+
+\bigskip
+
+\begin{problemlist}
+
+\clearpage
+\pbitem
+\begin{problem}
+\end{problem}
+\begin{answer}
+\\
+\begin{enumerate}
+\item
+Consider the jobs $H=\{50,0,0\}$ and $L=\{10,10,10\}$. Then $h_2 < l_1 + l_2$, so it will choose $l_1$, then $h_3 < l_2 + l_3$, so it will choose $l_2$, finally $h_4 < l_3 + l_4$, so it will choose $l_3$. Then the maximum value of $\{l_1,l_2,l_3\}$ is $30$. However it is clear the best result would be to choose $h_1,l_2,l_3$, to get a maximum of $70$.
+\item
+Pre-conditions: an array H which contains the profits for completing high-stress jobs, length H =  n; an array L which contains the profits for completing low-stress jobs, length L = n.\\
+Post-conditions: the maximum value that can be earned, x.
+\item
+Sub-problem: find the maximum profit for up to week $i$. An expression for the maximum value of week $i$ would be $bestjobs(i) = max(h_i + bestjobs(i-2), l_i + bestjobs(i-1))$ for $i>2$, $bestjobs(2) = max(h_2, l_2 + bestjobs(i-1))$, and $bestjobs(1) = max(h_1, l_1)$.
+\item
+Recursive algorithm to compute maximum value:\\
+\IncMargin{3em}
+\begin{algorithm}
+  int maxRec(H, L, n)\\\{\\
+  \Indp
+  \uIf{$n==1$}{\Return{$max(h_1,l_1)$}\;}
+  \uIf{$n==2$}{\Return{$max(h_2, l_2+maxRec(H,L,n-1))$}\;}
+  \Return{$max(h_n + maxRec(H,L,n-2), l_n + maxRec(H,L,n-1))$\;}
+  \Indm
+  \}
+\end{algorithm}
+\DecMargin{3em}
+\item
+$T(n) = c + T(n-2) + T(n-1)$, for $n>2$.
+\item
+$T(6) = c + T(4) + T(5)$\\
+$T(6) = 3c + T(2) + T(3) + T(3) + T(4)$\\
+$T(6) = 7c + T(1) + T(2) + T(1) + T(2) + T(2) + T(3)$\\
+$T(6) = 13c + T(1) + T(2)$\\
+$T(6) = 15c$\\
+A guess is that $T(n)\in O(2^n)$.\\
+Claim: $T(n) = c + T(n-2) + T(n-1) \le a*2^n$.\\
+Base case: If $n \le 2$, then $T(n) = c \le a*2^n$.\\
+We can then pick $a=c$, and this is true.\\
+Inductive Hypothesis: $T(k) = c + T(k-2) + T(k-1) \le a*2^k$, for $k<n$.\\
+\begin{align*}
+T(n) =& c + T(n-2) + T(n-1)\\
+\le&c + a*2^{n-2} + a*2^{n-1}\\
+\le&c + a*2^n*2^{-2} + a*2^n*2^{-1}\\
+\le&c + a*2^n(2^{-2} + 2^{-1})\\
+\le&c + \frac{3a}{4}2^n\\
+\le&a*2^n\\
+\end{align*}
+If we choose $a=1$, then we find that $T(n)\in O(2^n)$.
+\clearpage
+\item
+Dynamic algorithm to compute maximum value, and the choices made:\\
+\IncMargin{3em}
+\begin{algorithm}
+  int maxDyn(H, L, n)\\\{\\
+  \Indp
+  P[n]\;
+  J[n]\;
+  $a_1 = h_1$\;
+  $a_2 = l_2$\;
+  P[1] = max($a_1, a_2$)\;
+  \uIf{$a_1 > a_2$}{$J[1] = 1$\;}
+  \uElse{$J[1] = 0$\;}
+  $a_1 = h_2$\;
+  $a_2 = l_2 + P[1]$\;
+  P[2] = max($a_1, a_2$)\;
+  \uIf{$a_1 > a_2$}{$J[2] = 1$\;}
+  \uElse{$J[2] = 0$\;}
+  \For{$i=3~to~n$}{
+    $a_1 = h_i + P[i-2]$\;
+    $a_2 = l_i + P[i-1]$\;
+    P[i] = max($a_1, a_2$)\;
+    \uIf{$a_1 > a_2$}{$J[i] = 1$\;}
+    \uElse{$J[i] = 0$\;}
+  }
+  print(Maximum profit=P[n])\;
+  \For{$i=n~to~1$}{
+    \uIf{$J[i] == 1$}{print(Take high-stress job in week $i$, Take no job in week $i-1$)\;$i-=2$\;}
+    \uElse{print(Take low-stress job in week $i$)\;$i-=1$\;}
+  }
+  \Indm
+  \}
+\end{algorithm}
+\DecMargin{3em}
+\item
+The algorithm consists of a two for loops doing constant time work, each of size $n$.
+The runtime of the algorithm is then $c + 2*\sum_{i=1}^n(c)$.\\
+We can then use the limit test to find the tight bound:
+\begin{align*}
+&c + 2*\sum_{i=1}^n(c)\\
+=&c + 2*c*n\\
+&\lim_{n\rightarrow \infty} \frac{c + 2*c*n}{n}\\
+=&\lim_{n\rightarrow \infty} \frac{c/n + 2*c}{1}\\
+=&2*c\\
+\end{align*}
+As the limit resolves to a constant, the runtime is $\Theta (n)$.\\
+\end{enumerate}
+\end{answer}
+
+\clearpage
+\pbitem
+\begin{problem}
+\end{problem}
+\begin{answer}
+\\
+\begin{enumerate}
+\item
+Pre-conditions: An array p[n][n] representing a checker board that contains the cost for moving to that square.\\
+Post-conditions: A path of length n, starting at the bottom of the checker board going to the top, that maximizes the dollars gathered, of value d.
+\item
+$d[i,j] = max(d[i-1,j-1]+p[i][j], d[i-1,j]+p[i][j], d[i-1,j+1]+p[i][j])$, where $i$ is the row, and $j$ is the column. Out of bound elements have a value of $0$.
+\item
+Recursive algorithm to compute maximum value for some square:\\
+\IncMargin{3em}
+\begin{algorithm}
+  int maxRec(p, i, j)\\\{\\
+  \Indp
+  \uIf{$i\le 0 || i>n || j\le 0 || j>n$}{\Return{$0$\;}}
+  \uIf{$i==1$}{\Return{$p[i][j]$\;}}
+  \Else{\Return{$max(maxRec(p,i-1,j-1)+p[i][j], maxRec(p,i-1,j)+p[i][j],maxRec(p,i-1,j+1)+p[i][j])$}\;}
+  \Indm
+  \}
+\end{algorithm}
+\DecMargin{3em}
+Driver program to compute maximal value:\\
+\IncMargin{3em}
+\begin{algorithm}
+  int maxRecDriver(p, i, j)\\\{\\
+  \Indp
+  $d=-\infty$\;
+  \For{$j=1~to~n$}{
+    $max=maxRec(p, n, j)$\;
+    \uIf{$max > d$}{$d = max$\;}
+  }
+  print(Max value = d)\;
+  \Indm
+  \}
+\end{algorithm}
+\DecMargin{3em}
+\item
+$T(n) = c + 3T(n-1)$.
+\item
+$T(6) = c + 3T(5)$\\
+$T(6) = 4c + 9T(4)$\\
+$T(6) = 13c + 27T(3)$\\
+$T(6) = 40c + 81T(2)$\\
+$T(6) = 121c + 243T(1)$\\
+$T(6) = 364c$\\
+A guess is that $T(n)\in O(3^n)$.\\
+Claim: $T(n) = c + 3T(n-1) \le a*3^n$.\\
+Base case: If $n = 1$, then $T(n) = c \le a*3^n$.\\
+We can then pick $a=c$, and this is true.\\
+Inductive Hypothesis: $T(k) = c + 3T(k-1) \le a*3^k$, for $k<n$.\\
+\begin{align*}
+T(n) =& c + 3T(n-1)\\
+\le&c + 3*a*3^{n-1}\\
+\le&c + a*3^n\\
+\le&a*3^n\\
+\end{align*}
+If we choose $a=1$, then we find that $T(n)\in O(3^n)$.
+\clearpage
+\item
+Dynamic algorithm to compute maximum value, and the choices made:\\
+\IncMargin{3em}
+\begin{algorithm}
+  int maxDyn(p, n)\\\{\\
+  \Indp
+  d[n][n], c[n][n]\;
+  \For{$j=1~to~n$}{
+    $d[1][j]=p[1][j]$\;
+  }
+  \For{$i=2~to~n$}{
+    \For{$j=1~to~n$}{
+      $a_1=d[i-1][j-1]+p[i][j]$\;
+      $a_2=d[i-1][j]+p[i][j]$\;
+      $a_3=d[i-1][j+1]+p[i][j]$\;
+      $d[i][j]=max(a_1, a_2, a_3)$\;
+      \uIf{$a_1 \ge a_2 \&\& a_1 \ge a_3$}{$c[i][j]=0$\;}
+      \uIf{$a_2 \ge a_1 \&\& a_2 \ge a_3$}{$c[i][j]=1$\;}
+      \uIf{$a_3 \ge a_1 \&\& a_3 \ge a_2$}{$c[i][j]=2$\;}
+    }
+  }
+  $d = -\infty$, $c = -1$\;
+  \For{$j=1~to~n$}{
+    \uIf{$d[n][j] > d$}{$d = d[n][j]$\;$c=j$\;}
+  }
+  print(Max profit to be made is d)\;
+  \For{$i=n~to~1$}{
+    print(Choose square i,c)\;
+    \uIf{$c[i][c]==0$}{$c-=1$\;}
+    \uIf{$c[i][c]==1$}{$c=c$\;}
+    \uIf{$c[i][c]==2$}{$c+=1$\;}
+  }
+  \Indm
+  \}
+\end{algorithm}
+\DecMargin{3em}
+\item
+The algorithm consists of two for loops of size $n$ doing constant work, and one double for loop from with one size $n-1$ and the other $n$ doing constant work.\\
+Thus the runtime of the algorithm is $c + 2*\sum_{i=1}^n(c) + \sum_{j=1}^{n-1}\sum_{k=1}^{n}(c)$.\\
+We can then use the limit test to find the tight bound:
+\begin{align*}
+&c + 2*\sum_{i=1}^n(c) + \sum_{j=1}^{n-1}\sum_{k=1}^n(c)\\
+=&c + 2*c*n + \sum_{j=1}^{n-1}(c*n)\\
+=&c + 2*c*n + c*n*(n-1)\\
+=&c + c*n^2\\
+&\lim_{n\rightarrow \infty} \frac{c + c*n^2}{n^2}\\
+=&\lim_{n\rightarrow \infty} \frac{c/n^2 + c}{1}\\
+=&c\\
+\end{align*}
+As the limit resolves to a constant, the runtime is $\Theta (n^2)$.\\
+\end{enumerate}
+\end{answer}
+
+\end{problemlist}
+\end{document}
+

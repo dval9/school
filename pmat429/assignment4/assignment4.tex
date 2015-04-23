@@ -1,0 +1,157 @@
+\documentclass{assignment}
+\usepackage{amsmath, amssymb, amsfonts}
+
+\coursetitle{Cryptography}
+\courselabel{PMAT 429}
+\exercisesheet{Home Work \#4}{}
+\student{Tom Crowfoot - 10037477}
+\semester{Winter 2015}
+
+\begin{document}
+
+\begin{problemlist}
+\pbitem
+\begin{problem}
+\end{problem}
+\begin{answer}
+  \\
+  $280=2^3*5*7$\\
+  $3^{280/7}$ $mod$ $281=249$\\
+  $3^{280/5}$ $mod$ $281=86$\\
+  $3^{280/2}$ $mod$ $281=280$\\
+  $3^{280}$ $mod$ $281=1$\\
+  Then $281$ is prime, and $3$ has order $280$ in $\mathbb{Z}_281^*$.\\
+\end{answer}
+
+\pbitem
+\begin{problem}
+\end{problem}
+\begin{answer}
+  \\
+  \begin{enumerate}
+  \item
+    $256=2^8$\\
+    $3^{256/2}$ $mod$ $257 = 256$\\
+    $3^{256}$ $mod$ $257 = 1$\\
+    Then $257$ is prime.\\
+  \item
+    Let $3738323-1=RF$\\
+    Then $RF=3738322=2*1869161=2*7*267023=(1039)(2*7*257)$\\
+    So $R=1039$, $F=2*7*257$.\\
+    $5^{3738322}$ $mod$ $3738323=1$\\
+    $gcd(5^{3738322/2}-1,n)=1$\\
+    $gcd(5^{3738322/7}-1,n)=1$\\
+    $gcd(5^{3738322/257}-1,n)=1$\\
+    Then $3738323$ is prime.\\
+  \end{enumerate}
+\end{answer}
+
+\clearpage
+\pbitem
+\begin{problem}
+\end{problem}
+\begin{answer}
+  \\
+  I wrote a program to find this example.
+  Choose $n=28$, $a=9$. Then $9^{28-1}$ $mod$ $28 = 1$\\
+  Then $9\in F(28)$.\\
+\end{answer}
+
+\pbitem
+\begin{problem}
+\end{problem}
+\begin{answer}
+  \\
+  $n$ is a Carmichael number if for all $1<a<n$ such that $gcd(a,n)=1$, $a^{n-1}=1$ $mod$ $n$\\
+  Let $n\in \mathbb{Z}$ such that it is square-free and $(p-1)|(n-1)$ for $p|n$.\\
+  Then $n=p_1*p_2*...*p_n$. By Fermat's Little Theorem, $a^{p_i-1}=1$ $mod$ $p_i$ for $a\in \mathbb{Z}_n^*$.\\
+  Then $a^{n-1} = 1$ $mod$ $p_i$ as $p_i-1|n-1$.\\
+  If $gcd(a,p_i) > 1$, then $p_i | a$, and then $a^n=0$ $mod$ $p_i$.\\
+  Then by the chinese remainder theorem, $a^{n-1} = 1$ $mod$ $n$ for all $a\in \mathbb{Z}_n^*$.\\\\
+  To show $561$ is a carmichael number, $561=3*11*17$, so it is square free. $2 | 560$, $10 | 560$, $16 | 560$, so $p-1 | n-1$ for all $p|n$. Then $561$ is a carmichael number.
+\end{answer}
+
+\pbitem
+\begin{problem}
+\end{problem}
+\begin{answer}
+  \\
+  \begin{enumerate}
+  \item
+    $E(n)=\{a\in \mathbb{Z}_n^* | a^{(n-1)/2}=\Big(\frac{a}{n}\Big)\}$\\
+    Clearly $E(n)\subseteq \mathbb{Z}_n^*$ is non-empty, and $\mathbb{Z}_n^*$ is finite.\\
+    If $g,h\in E(n)$.\\
+    Then
+    \begin{align*}
+      &(gh)^{(n-1)/2}=g^{(n-1)/2}h^{(n-1)/2}\\
+      =&\Big(\frac{g}{n}\Big)\Big(\frac{h}{n}\Big)\\
+      =&\Big(\frac{gh}{n}\Big)
+    \end{align*}
+    Since $gh\in E(n)$, by the finite subgroup test, $E(n)$ is a subgroup of $\mathbb{Z}_n^*$.\\
+  \item
+    $F(n)=\{a\in \mathbb{Z}_n^* | a^{n-1} = 1$ $mod$ $n\}$\\
+    Clearly $F(n)\subseteq \mathbb{Z}_n^*$ is non-empty.\\
+    If $g,h\in F(n)$, $h*h^{-1}=h^{n-1}=1$ $mod$ $n$, so $h^{-1}=h^{n-2}$.\\
+    Then
+    \begin{align*}
+      &(gh^{-1})^{n-1}\\
+      =&(g^{n-1}h^{n-2})^{n-1}\\
+      =&g^{(n-1)*(n-1)}h^{(n-1)*(n-2)}\\
+      =&g^{(n-1)^{n-1}}h^{(n-1)^{n-2}}\\
+      =&1^{n-1}1^{n-2}\\
+      =&1
+    \end{align*}
+    Since $gh^{-1}\in F(n)$, by the subgroup test, $F(n)$ is a subgroup of $\mathbb{Z}_n^*$.\\
+  \item
+    $S(n)$ is not a subgroup of $\mathbb{Z}_n^*$.\\
+    From lecture, $S(65) = \{1,8,18,47,57,64\}$\\
+    Then $8*18=14$ $mod$ $65$, and $14\notin S(65)$, so $S(65)$ is not closed.\\
+    Then $S(n)$ is not a subgroup.\\
+  \end{enumerate}
+\end{answer}
+
+\pbitem
+\begin{problem}
+\end{problem}
+\begin{answer}
+  \\
+  \begin{enumerate}
+  \item
+    $\lfloor \sqrt{151} \rfloor = 12$, $2\nmid 151$, $3\nmid 151$, $5\nmid 151$, $7\nmid 151$, $11\nmid 151$, so $151$ is prime.\\
+    \begin{align*}
+      \Big(\frac{151}{379}\Big)=&-\Big(\frac{379}{151}\Big)\\
+      =&-\Big(\frac{77}{151}\Big)\\
+      =&-\Big(\frac{11}{151}\Big)\Big(\frac{7}{151}\Big)\\
+      =&-\Big(\frac{151}{11}\Big)\Big(\frac{151}{7}\Big)\\
+      =&-\Big(\frac{2^3}{11}\Big)\Big(\frac{2^2}{7}\Big)\\
+      =&-\Big(\frac{2}{11}\Big)^3\Big(\frac{2}{7}\Big)^2\\
+      =&-((-1)^{11^2-1/8})^3((-1)^{7^2-1/8})^2\\
+      =&1
+    \end{align*}
+  \item
+    $gcd(507,309)=3$ so $\Big(\frac{507}{309}\Big)=0$.\\
+  \end{enumerate}
+\end{answer}
+
+\pbitem
+\begin{problem}
+\end{problem}
+\begin{answer}
+  \\
+  \begin{enumerate}
+  \item
+    $3^{341-1}$ $mod$ $341 = 56$\\
+    Then $341$ is not prime.
+  \item
+    $3^{561-1}$ $mod$ $561 = 441$\\
+    Then $561$ is not prime.
+  \item
+    $2047=1+2^1*1023$\\
+    $3^{1023}$ $mod$ $n=1565 \neq \pm1$\\
+    $j=1\not \le s=1$, and $b \neq n-1$.\\
+    Then $2047$ is not prime.\\
+  \end{enumerate}
+\end{answer}
+
+\end{problemlist}
+\end{document}

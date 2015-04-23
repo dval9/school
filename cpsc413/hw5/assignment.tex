@@ -1,0 +1,220 @@
+\documentclass{assignment}
+
+\coursetitle{Design and Analysis of Algorithms 1}
+\courselabel{CPSC 413}
+\exercisesheet{Home Work \#5}{}
+\student{Julie Katayama - 10092143\\
+Etienne Pitout - 10075802\\
+Tom Crowfoot - 10037477\\
+Thomas King - 10074105}
+\semester{Winter 2014}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage[linesnumbered,noline]{algorithm2e}
+\usepackage{mathtools}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+
+\begin{document}
+\begin{center}
+\renewcommand{\arraystretch}{2}
+\begin{tabular}{|c|c|c|} \hline
+Problem & Marks \\ \hline \hline
+1 & \\ \hline
+2 & \\ \hline
+3 & \\ \hline
+4 & \\ \hline \hline
+Total & \\ \hline
+\end{tabular}
+\end{center}
+
+\bigskip
+
+\begin{problemlist}
+
+\clearpage
+\pbitem
+\begin{problem}
+Consider the following recurrence relation:
+\begin{align*}
+T(n)=T(\floor{n/2})+T(\floor{n/4})+T(\floor{n/8})+n.
+\end{align*}
+\begin{enumerate}
+\item Use the iteration method to come up with a good guess for a tight asymptotic bound for the recurrence.
+\item Prove that your guess is correct.
+\end{enumerate}
+\end{problem}
+\begin{answer}
+\\
+\begin{enumerate}
+\item
+\begin{align*}
+T(n)=&T(\floor{n/2}) + T(\floor{n/4}) + T(\floor{n/8}) + n\\
+\le&T(n/2) + T(n/4) + T(n/8) + n\\
+\le&T(7n/8) + n\\
+=&T(7^2n/8^2) + 7n/8 + n\\
+=&T(7^3n/8^3) + 7^2n/8^2 + 7n/8 + n\\
+\Rightarrow&\sum_{i=0}^\infty (7/8)^in\\
+=&(\frac{1}{1-\frac{7}{8}})n\\
+\end{align*}
+A guess for the tight asymptotic bound is $\Theta (n)$.\\
+\item
+Claim: $T(n)=T(\floor{n/2})+T(\floor{n/4})+T(\floor{n/8})+n \le c*n$.\\
+Base case: If $1 \le n \le 1000$, then $T(n) = t \le c*n$.\\
+We can then pick $c=t$.\\
+Inductive Hypothesis: $T(k)=T(\floor{k/2})+T(\floor{k/4})+T(\floor{k/8})+k \le c*k$, for some $k < n$.\\
+\begin{align*}
+T(n)=&T(\floor{n/2}) + T(\floor{n/4}) + T(\floor{n/8}) + n\\
+\le&a*\floor{n/2} + a*\floor{n/4} + a*\floor{n/8} + n\\
+\le&a*(n/2) + a*(n/4) + a*(n/8) + n\\
+=&a*(7n/8) + n\\
+=&(7a/8 + 1) * n\\
+\le&c*n\\
+\end{align*}
+If we choose $c=(7a/8 + 1)$, then we find $T(n)\in O(n)$.\\
+
+Claim: $T(n)=T(\floor{n/2})+T(\floor{n/4})+T(\floor{n/8})+n \ge c*n$.\\
+Base case: If $1 \le n \le 1000$, then $T(n) = t \ge c*n$.\\
+We can then pick $c=t/1000$.\\
+Inductive Hypothesis: $T(k)=T(\floor{k/2})+T(\floor{k/4})+T(\floor{k/8})+k \ge c*k$, for some $k < n$.\\
+\begin{align*}
+T(n)=&T(\floor{n/2}) + T(\floor{n/4}) + T(\floor{n/8}) + n\\
+\ge&a*\floor{n/2} + a*\floor{n/4} + a*\floor{n/8} + n\\
+\ge&a*(n/2) + a*(n/4) + a*(n/8) + n\\
+=&a*(7n/8) + n\\
+=&(7a/8 + 1) * n\\
+\ge&c*n\\
+\end{align*}
+If we choose $c=(7a/8 + 1)$, then we find $T(n)\in \Omega(n)$.\\
+As $T(n)\in \Omega(n)$ and $T(n)\in O(n)$, we can conclude $T(n)\in \Theta (n)$.\\
+\end{enumerate}
+\end{answer}
+
+\clearpage
+\pbitem
+\begin{problem}
+Use the Master Theorem to obtain tight asymptotic bounds on the following recurrences:
+\begin{enumerate}
+\item $T(n)=2T(\frac{n}{2})+n^3$.
+\item $T(n)=2T(\frac{n}{2})+n$.
+\item $T(n)=2T(\frac{n}{2})+\sqrt{n}$.
+\item $T(n)=4T(\frac{n}{8})+\sqrt{n}lg^2~n$.
+\item $T(n)=16T(\frac{n}{7})+n^2$.
+\end{enumerate}
+\end{problem}
+\begin{answer}
+\\
+\begin{enumerate}
+\item
+Using case 3 of the Master theorem, $T(n)=2T(n/2)+n^3$, $a=2$, $b=2$, $log_22=1$, $f(n)=n^3=\Omega (n^{1+\epsilon})$, $0< \epsilon \le 2$, $2(n^3/8)\le cn^3$, $c=1/4$.\\
+Thus, $T(n) = \Theta(f(n)) = \Theta(n^3)$.\\ 
+\item
+Using case 2 of the Master theorem, $T(n)=2T(n/2)+n$, $a=2$, $b=2$, $log_22=1$, $f(n)=n=\Theta (n^1)$.\\
+Thus, $T(n) = \Theta(nlogn)$.\\
+\item
+Using case 1 of the Master theorem, $T(n)=2T(n/2)+\sqrt(n)$, $a=2$, $b=2$, $log_22=1$, $f(n)=\sqrt{n}=O(n^{1-\epsilon})$, $0<\epsilon \le 1/2$.\\
+Thus, $T(n)=\Theta(n)$.\\
+\item
+Using case 1 of the Master theorem, $T(n)=4T(n/8)+\sqrt{n}log^2n$, $a=4$, $b=8$, $log_84=2/3$, $f(n)=\sqrt{n}log^2n$\\
+\begin{align*}
+&\lim_{n\rightarrow \infty}\frac{\sqrt{n}log^2n}{n^{2/3}}=\lim_{n\rightarrow \infty}\frac{log^2n}{n^{1/6}}=\lim_{n\rightarrow \infty}\frac{\frac{2logn}{n}}{\frac{1}{6}n^{-5/6}}\\
+=&12\lim_{n\rightarrow \infty}\frac{logn}{n^{1/6}}=12\lim_{n\rightarrow \infty}\frac{n^{-1}}{\frac{1}{6}n^{-5/6}}=72\lim_{n\rightarrow \infty}\frac{1}{n^{1/6}}\\
+=&0\\
+\end{align*}
+Using L'Hopitals rule, we see that $f(n)=o(g(n))$, so $f(n)=\sqrt{n}log^2n=O(n^{2/3-\epsilon})$, $0<\epsilon$.\\
+Thus, $T(n)=\Theta (n^{2/3})$.\\
+\item
+Using case 3 of the Master theorem, $T(n)=16T(n/7)+n^2$, $a=16$, $b=7$, $f(n)=n^2=\Omega (n^{log_7 16 + \epsilon})$, $0<\epsilon \le 2-log_716$, $16(n^2/49)\le cn^2$, $k=16/49$.\\
+Thus, $T(n)=\Theta (n^2)$.\\
+\end{enumerate}
+\end{answer}
+
+\clearpage
+\pbitem
+\begin{problem}
+Consider the problem of multiplying two $n\times n$ matrices where $n$ is not a power of 2.
+\begin{enumerate}
+\item Describe how Strassen's Algorithm can be modified to handle this case.
+\item Prove that your modified algorithm runs in time $\Theta(n^{lg~7})$.
+\end{enumerate}
+\end{problem}
+\begin{answer}
+\\
+\begin{enumerate}
+\item
+The modification will be to increase the size of the matrices that are being multiplied from $n\times n$, where $n \neq 2^i,~i\in \mathbb{Z}$ to a $m\times m$ matrix, such that $2^{i-1}< n < 2^i = m$, and all the new elements $a_{ij}=0$, $n < i,j < m$. After multiplying these two modified matrices, the result is a $m\times m$ matrix. The top left $n\times n$ elements can then be extracted from the resulting $m\times m$ matrix to get the desired result.\\
+\item
+By assumption $n \neq 2^i,~i\in \mathbb{Z}$, so let $2^{i-1}< n < 2^i = m$. We also find the relation $2*2^{i-1}< 2*n \Rightarrow 2^i< 2n$, which gives us the total relation $2^{i-1}< n < 2^i = m < 2n$. So the runtime of our $m\times m$ algorithm will be $\Theta (m^{lg~7}) < \Theta ((2n)^{lg~7}) = \Theta (2^{lg~7}n^{lg~7}) = \Theta (n^{lg~7})$. Thus, the runtime of the algorithm after modification is still the same.\\
+\end{enumerate}
+\end{answer}
+
+\clearpage
+\pbitem
+\begin{problem}
+Let $X$ and $Y$ be two arrays, each containing $n$ distinct integers in ascending order. The problem is to compute the median of all $2n$ elements in time $\Theta(lg~n)$.
+\begin{enumerate}
+\item Give a formal definition (pre- and post-conditions) of the problem described.
+\item Give a divide-and-conquer algorithm for solving the problem.
+\item Prove that your algorithm is correct.
+\item Express the run-time of your algorithm as a recurrence relation. Explain why your recurrence relation is correct.
+\item Prove a tight asymptotic bound on the run-time of your algorithm (proving upper and lower bounds separately if necessary). You may use the master theorem, or a version of the ``guess and prove" method.
+\end{enumerate}
+Note: Algorithms that do not use divide-and-conquer will recieve no credit. Divide-and-conquer algorithms with runtime in $\omega(lg~n)$ will receive partial credit.
+\end{problem}
+\begin{answer}
+\\
+\begin{enumerate}
+\item
+Pre-conditions: Two arrays $X$ and $Y$, which are sorted in ascending order. All elements in $X$ are distinct and all elements in $Y$ are distinct. $X$ contains $n$ elements and $Y$ contains $n$ elements.\\
+Post-conditions: An integer $b$, such that $b \in X \cup Y$, and $b$ is the median of $X \cup Y$.\\
+\item
+Algorithm to find the median of two sorted arrays, $X$ and $Y$, of length $n$.\\
+\IncMargin{3em}
+\begin{algorithm}
+  int median(X, Y, n)\\\{\\
+  \Indp
+  m1 = X[$\ceil{n/2}$]\;
+  m2 = Y[$\ceil{n/2}$]\;
+  \uIf{$n == 1$}{
+    \Return{min(X[0], Y[0])}\;
+  }
+  \uElseIf{$m1 == m2$}{
+    \Return{m1}\;
+  }
+  \uElseIf{$m1 > m2$}{
+    \Return{median(X[0..$\ceil{n/2}$], Y[$\ceil{n/2}$..n], $\ceil{n/2}$)}\;
+  }
+  \uElseIf{$m1 < m2$}{
+    \Return{median(X[$\ceil{n/2}$..n], Y[0..$\ceil{n/2}$], $\ceil{n/2}$)}\;
+  }
+  \Indm
+  \}
+\end{algorithm}
+\DecMargin{3em}
+\item
+Base case: $n=1$.\\
+If $n=1$, then both arrays only have one element. The median will then be the minimum of those two elements, which the algorithm will return and terminate.\\
+Inductive Hypothesis: assume that the algorithm is correct for all inputs of size $1 \le k < n$.\\
+Let $X$ have the median, $m1$, and let $Y$ have the median, $m2$. Let the length of $X + Y = n$.\\
+If $m1 = m2$ then there will $n/2$ elements less than or equal to $m1$ and $n/2$ elements greater than or equal to $m1$.\\
+Similarly, there will $n/2$ elements less than or equal to $m2$ and $n/2$ elements greater than or equal to $m2$.\\
+There will be $n$ elements less than or equal to $m1=m2$ and $n$ elements greater than or equal to $m1=m2$, so the median of both arrays will be $m1=m2$. The algorithm will then return $m1$ and terminate.\\
+If $m1 > m2$, then the median of the two arrays must have a value, $a$, such that $m2 < a < m1$.\\
+Then $a$ must exist in either $X[0..i],~X[i]=m1$ or $Y[j..n/2],~Y[j]=m2$.\\
+The algorithm will then recursively call the algorithm on these two arrays of size $n/2$, which will be correct by the inductive hypothesis.\\
+If $m1 < m2$, then the median of the two arrays must have a value, $a$, such that $m1 < a < m2$.\\
+Then $a$ must exist in either $X[i..n/2],~X[i]=m1$ or $Y[0..j],~Y[j]=m2$.\\
+The algorithm will then recursively call the algorithm on these two arrays of size $n/2$, which will be correct by the inductive hypothesis.\\
+Therefor, the algorithm will always return the correct median and terminate. $\Box$\\
+\item
+The run-time of the algorithm can be given by $T(n) = T(\ceil{n/2}) + c$.\\
+There are only two recursive function calls in the algorithm, and only one of these will ever be called. The rest of the algorithm has constant run time.\\
+\item
+Using case 2 of the Master theorem on $T(n) = T(\ceil{n/2}) + c$, we find that $a=1$, $b=2$, $log_ba=log_21=0$, $f(n)=c=\Theta (n^{log_ba=0})$.\\
+Thus $T(n) = \Theta (lg~n)$.\\
+\end{enumerate}
+\end{answer}
+
+\end{problemlist}
+\end{document}

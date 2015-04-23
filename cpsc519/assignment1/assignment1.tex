@@ -1,0 +1,358 @@
+\documentclass{assignment}
+\usepackage{amsmath,amssymb,amsfonts}
+
+\coursetitle{Quantum Algorithms}
+\courselabel{CPSC 519}
+\exercisesheet{Homework \#1}{}
+\student{Tom Crowfoot - 10037477}
+\semester{Winter 2015}
+
+\def\squareforqed{\hbox{\rlap{$\sqcap$}$\sqcup$}}
+\def\qed{\ifmmode\squareforqed\else{\unskip\nobreak\hfil
+    \penalty50\hskip1em\null\nobreak\hfil\squareforqed
+    \parfillskip=0pt\finalhyphendemerits=0\endgraf}\fi}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{fact}[theorem]{Fact}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newenvironment{proof}{\begin{trivlist}\item[]{\flushleft\bf Proof }}
+               {\qed\end{trivlist}}
+               
+\newcommand{\ket}[1]{\ensuremath{|{#1}\rangle}}
+\newcommand{\bra}[1]{\ensuremath{\langle{#1}|}}
+\newcommand{\inner}[2]{\ensuremath{\langle{#1}|{#2}\rangle}}
+\newcommand{\tinner}[3]{\ensuremath{\langle{#1}|{#2}|{#3}\rangle}}
+\newcommand{\op}[1]{\ensuremath{\mathsf{#1}}}
+\newcommand{\id}{\ensuremath{\mathsf{1}}}
+\newcommand{\gand}{\ensuremath{\mathsf{AND}}}
+\newcommand{\gor}{\textsf{or}}
+\newcommand{\cnot}{\textsf{cnot}}
+\newcommand{\swap}{\textsf{swap}}
+\newcommand{\tof}{\textsf{Tof}}
+\newcommand{\cz}{\textsf{controlled}\textnormal{-}\op{Z}}
+\newcommand{\nth}[1]{\ensuremath{#1^{\textup{th}}}}
+\newcommand{\complex}{\mathbb C}
+\newcommand{\integers}{\mathcal{N}}
+\newcommand{\zo}{\{0,1\}}
+\newcommand{\TikZ}{Ti\textit{k}Z\xspace}
+               
+
+\begin{document}
+\begin{problemlist}
+
+  \pbitem
+  \begin{problem}
+  \end{problem}
+  \begin{answer}
+    \begin{enumerate}
+    \item 
+      \begin{align*}
+        &X \otimes Z \ket{\psi}\\
+        =&((\ket{0}\bra{1}+\ket{1}\bra{0}) \otimes (\ket{0}\bra{0}-\ket{1}\bra{1}))\ket{\psi}\\
+        =&(\ket{00}\bra{10}-\ket{01}\bra{11}+\ket{10}\bra{00}-\ket{11}\bra{01})\frac{1}{\sqrt{2}}(\ket{00}+\ket{10})\\
+        =&\frac{1}{\sqrt{2}}(\ket{00}+\ket{10})\\
+        =&\ket{\psi}
+      \end{align*}
+      \item \begin{align*}
+        X \otimes Z&=(\ket{0}\bra{1}+\ket{1}\bra{0}) \otimes (\ket{0}\bra{0}-\ket{1}\bra{1})\\
+        &=\ket{00}\bra{10}-\ket{01}\bra{11}+\ket{10}\bra{00}-\ket{11}\bra{01}\\
+        Z \otimes X&=(\ket{0}\bra{0}-\ket{1}\bra{1}) \otimes (\ket{0}\bra{1}+\ket{1}\bra{0})\\
+        &=\ket{00}\bra{01}+\ket{01}\bra{00}-\ket{10}\bra{11}-\ket{11}\bra{10}\\
+        (Z \otimes X)(X \otimes Z)&=-\ket{00}\bra{11} + \ket{01}\bra{10} + \ket{10}\bra{10} -\ket{11}\bra{00}\\
+        (X \otimes Z)(Z \otimes X)&=-\ket{00}\bra{11} + \ket{01}\bra{10} + \ket{10}\bra{10} -\ket{11}\bra{00}\\
+        (Z \otimes X)(X \otimes Z)&=(X \otimes Z)(Z \otimes X)
+      \end{align*}
+      \item
+        \[
+        Z = 
+        \begin{bmatrix}
+          1 & 0\\
+          0 & -1
+        \end{bmatrix}
+        =
+        \begin{bmatrix}
+          1^2 & 0\\
+          0 & i^2
+        \end{bmatrix}
+        =
+        \begin{bmatrix}
+          1 & 0\\
+          0 & i
+        \end{bmatrix}
+        \begin{bmatrix}
+          1 & 0\\
+          0 & i
+        \end{bmatrix}
+        \]\\
+        \[
+        S_Z = 
+        \begin{bmatrix}
+          1 & 0\\
+          0 & i
+        \end{bmatrix}
+        \]
+      \item
+        \begin{align*}
+        HZH &= X\\
+        HS_ZS_ZH &= X\\
+        HS_ZHHS_ZH &= X\\
+        HS_ZH &= S_X\\
+        S_XS_X &= X
+        \end{align*}
+    \end{enumerate}
+  \end{answer}
+
+  \pbitem
+  \begin{problem}
+  \end{problem}
+  \begin{answer}
+    \\
+    \begin{enumerate}
+    \item $B$\\
+      \begin{center}\large
+        \setlength{\unitlength}{.2in}
+        \begin{picture}(16.5,4)(0,1.5)
+          \put(2.5,2.5){\makebox(0,0){\framebox(1.5,1.5){}}}
+          \put(2.5,2.5){\makebox(0,0){$\op{H}$}}
+          %
+          \put(4.75,2.5){\line(0,1){2.35}}
+          \put(4.75,4.5){\circle{.7}}
+          \put(4.75,2.5){\circle*{.4}}
+          %
+          \put(6.75,2.25){\line(0,1){2.35}}
+          \put(6.75,2.5){\circle{.7}}
+          \put(6.75,4.5){\circle*{.4}}
+          \put(7.75,2.5){\line(0,1){2.35}}
+          \put(7.75,4.5){\circle{.7}}
+          \put(7.75,2.5){\circle*{.4}}
+          \put(8.75,2.25){\line(0,1){2.35}}
+          \put(8.75,2.5){\circle{.7}}
+          \put(8.75,4.5){\circle*{.4}}
+          %
+          \put(0.25,2.5){\line(1,0){1.5}}
+          \put(0.25,4.5){\line(1,0){3.5}}
+          \put(3.25,2.5){\line(1,0){8.25}}
+          \put(3.25,4.5){\line(1,0){8.25}}
+        \end{picture}
+      \end{center}
+    \item $B^\dagger(Z\otimes Z)B$\\
+      \begin{center}\large
+        \setlength{\unitlength}{.2in}
+        \begin{picture}(16.5,4)(0,1.5)
+          \put(2.5,2.5){\makebox(0,0){\framebox(1.5,1.5){}}}
+          \put(2.5,2.5){\makebox(0,0){$\op{H}$}}
+          %
+          \put(4.75,2.5){\line(0,1){2.35}}
+          \put(4.75,4.5){\circle{.7}}
+          \put(4.75,2.5){\circle*{.4}}
+          %
+          \put(6.75,2.25){\line(0,1){2.35}}
+          \put(6.75,2.5){\circle{.7}}
+          \put(6.75,4.5){\circle*{.4}}
+          \put(7.75,2.5){\line(0,1){2.35}}
+          \put(7.75,4.5){\circle{.7}}
+          \put(7.75,2.5){\circle*{.4}}
+          \put(8.75,2.25){\line(0,1){2.35}}
+          \put(8.75,2.5){\circle{.7}}
+          \put(8.75,4.5){\circle*{.4}}
+          %
+          \put(11.25,4.5){\makebox(0,0){\framebox(1.5,1.5){}}}
+          \put(11.25,4.5){\makebox(0,0){$\op{Z}$}}
+          \put(11.25,2.5){\makebox(0,0){\framebox(1.5,1.5){}}}
+          \put(11.25,2.5){\makebox(0,0){$\op{Z}$}}
+          %
+          %
+          \put(12.75,2.25){\line(0,1){2.35}}
+          \put(12.75,2.5){\circle{.7}}
+          \put(12.75,4.5){\circle*{.4}}
+          \put(13.75,2.5){\line(0,1){2.35}}
+          \put(13.75,4.5){\circle{.7}}
+          \put(13.75,2.5){\circle*{.4}}
+          \put(14.75,2.25){\line(0,1){2.35}}
+          \put(14.75,2.5){\circle{.7}}
+          \put(14.75,4.5){\circle*{.4}}
+          %
+          \put(15.75,2.5){\line(0,1){2.35}}
+          \put(15.75,4.5){\circle{.7}}
+          \put(15.75,2.5){\circle*{.4}}
+          %
+          \put(17.75,2.5){\makebox(0,0){\framebox(1.5,1.5){}}}
+          \put(17.75,2.5){\makebox(0,0){$\op{H}$}}
+          %
+          \put(0.25,2.5){\line(1,0){1.5}}
+          \put(0.25,4.5){\line(1,0){3.5}}
+          \put(3.25,2.5){\line(1,0){5.25}}
+          \put(3.25,4.5){\line(1,0){5.25}}
+          \put(8,2.5){\line(1,0){2.5}}
+          \put(8,4.5){\line(1,0){2.5}}
+          \put(12,4.5){\line(1,0){8}}
+          \put(12,2.5){\line(1,0){5}}
+          \put(18.5,2.5){\line(1,0){1.5}}
+        \end{picture}
+      \end{center}
+    \item
+      \begin{align*}
+        &(I \otimes H)CNOT_{2,1}(SWAP)(Z\otimes Z)(SWAP)CNOT_{2,1}(I \otimes H)\\
+        \Rightarrow&(I \otimes H)CNOT_{1,2}CNOT_{2,1}(Z\otimes Z)CNOT_{2,1}CNOT_{1,2}(I \otimes H)\\
+        \Rightarrow&(I \otimes H)CNOT_{1,2}(Z\otimes I)CNOT_{1,2}(I\otimes H)\\
+        \Rightarrow&(I \otimes H)(Z\otimes I)(I\otimes H)\\
+        \Rightarrow&(Z\otimes I)\\
+      \end{align*}
+    \end{enumerate}
+  \end{answer}
+  \clearpage
+  
+  \pbitem
+  \begin{problem}
+  \end{problem}
+  \begin{answer}
+    \\
+    \begin{enumerate}
+    \item
+      \begin{align*}
+        &\frac{1}{2}(\frac{1}{\sqrt{2}}\ket{00}+\ket{11})(\frac{1}{\sqrt{2}}\bra{00}+\bra{11})\\
+        &+\frac{1}{4}(\frac{1}{\sqrt{2}}\ket{00}-\ket{11})(\frac{1}{\sqrt{2}}\bra{00}-\bra{11})\\
+        &+\frac{1}{4}(\frac{1}{\sqrt{2}}\ket{01}+\ket{10})(\frac{1}{\sqrt{2}}\bra{01}+\bra{10})\\
+        =&\frac{1}{4}(\ket{00}\bra{00}+\ket{00}\bra{11}+\ket{11}\bra{00}+\ket{11}\bra{11})\\
+        &+\frac{1}{8}(\ket{00}\bra{00}-\ket{00}\bra{11}-\ket{11}\bra{00}+\ket{11}\bra{11})\\
+        &+\frac{1}{8}(\ket{01}\bra{01}+\ket{01}\bra{10}+\ket{10}\bra{01}+\ket{10}\bra{10})\\
+      \end{align*}    
+      \[
+      =\frac{1}{8}
+      \begin{bmatrix}
+        3 & 0 & 0 & 1\\
+        0 & 1 & 1 & 0\\
+        0 & 1 & 1 & 0\\
+        1 & 0 & 0 & 3
+      \end{bmatrix}
+      \]
+    \item
+      \[
+      \frac{1}{4}
+      \begin{bmatrix}
+        1 & 0 & 0 & 0\\
+        0 & 0 & 0 & 0\\
+        0 & 0 & 0 & 0\\
+        0 & 0 & 0 & 0
+      \end{bmatrix}
+      +\frac{1}{4}
+      \begin{bmatrix}
+        0 & 0 & 0 & 0\\
+        0 & 0 & 0 & 0\\
+        0 & 0 & 0 & 0\\
+        0 & 0 & 0 & 1
+      \end{bmatrix}
+      +\frac{1}{16}
+      \begin{bmatrix}
+        1 & 1 & 1 & 1\\
+        1 & 1 & 1 & 1\\
+        1 & 1 & 1 & 1\\
+        1 & 1 & 1 & 1
+      \end{bmatrix}
+      +\frac{1}{16}
+      \begin{bmatrix}
+        1 & -1 & -1 & 1\\
+        -1 & 1 & 1 & -1\\
+        -1 & 1 & 1 & -1\\
+        1 & -1 & -1 & 1
+      \end{bmatrix}
+      \]
+      \[
+      =\frac{1}{8}
+      \begin{bmatrix}
+        3 & 0 & 0 & 1\\
+        0 & 1 & 1 & 0\\
+        0 & 1 & 1 & 0\\
+        1 & 0 & 0 & 3
+      \end{bmatrix}
+      \]
+    \end{enumerate}
+  \end{answer}
+
+  \clearpage
+  \pbitem
+  \begin{problem}
+  \end{problem}
+  \begin{answer}
+    \\
+    $(H \otimes H)(Z \otimes I)(H \otimes H)$\\
+    \[
+    =\frac{1}{4}
+    \begin{bmatrix}
+      1 & 1 & 1 & 1\\
+      1 & -1 & 1 & -1\\
+      1 & 1 & -1 & -1\\
+      1 & -1 & -1 & 1\\
+    \end{bmatrix}
+    \begin{bmatrix}
+      1 & 0 & 0 & 0\\
+      0 & 1 & 0 & 0\\
+      0 & 0 & -1 & 0\\
+      0 & 0 & 0 & -1\\
+    \end{bmatrix}
+    \begin{bmatrix}
+      1 & 1 & 1 & 1\\
+      1 & -1 & 1 & -1\\
+      1 & 1 & -1 & -1\\
+      1 & -1 & -1 & 1\\
+    \end{bmatrix}
+    \]
+    \[
+    =
+    \begin{bmatrix}
+      0 & 0 & 1 & 0\\
+      0 & 0 & 0 & 1\\
+      1 & 0 & 0 & 0\\
+      0 & 1 & 0 & 0\\
+    \end{bmatrix}
+    \]
+    \begin{align*}
+      =&\ket{00}\bra{10}+\ket{01}\bra{11}+\ket{10}\bra{00}+\ket{11}\bra{01}\\
+      =&(\ket{0}\bra{1}+\ket{1}\bra{0})\otimes(\ket{0}\bra{0}+\ket{1}\bra{1})\\
+      =&X\otimes I\\
+    \end{align*}
+  \end{answer}
+
+  \clearpage
+  \pbitem
+  \begin{problem}
+  \end{problem}
+  \begin{answer}
+    \\
+    \[
+    \ket{\psi_1}=
+    \begin{bmatrix}
+      a\\
+      b
+    \end{bmatrix}
+    \]
+    \[
+    \ket{\psi_2}=
+    \begin{bmatrix}
+      c\\
+      d
+    \end{bmatrix}
+    \]
+    \[
+    \ket{\psi}=\ket{\psi_1}\otimes \ket{\psi_2}=
+    \begin{bmatrix}
+      ac\\
+      bd\\
+      bc\\
+      bd
+    \end{bmatrix}
+    \]
+    \begin{align*}
+      &|\bra{\psi}\ket{\phi^+}|^2\\
+      =&|\frac{ac}{\sqrt{2}} + \frac{bd}{\sqrt{2}}|^2\\
+      =&\frac{(ac)^2 + (bd)^2 + 2acbd}{2}\\
+      =&\frac{(ac + bd)^2}{2}\\
+      \le&\frac{(a^2 + b^2)(c^2+d^2)}{2}\\
+      \le&\frac{1}{2}\\
+    \end{align*}
+  \end{answer}
+  
+\end{problemlist}
+\end{document}
